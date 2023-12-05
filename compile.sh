@@ -1,0 +1,1 @@
+./boringcompile.sh | ./lolcat

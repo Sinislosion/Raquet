@@ -11,7 +11,7 @@ const unsigned int ppfbitmask[8] =
 	0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 
 };
 
-void LoadPPFData(const char* dir)
+int LoadPPFData(const char* dir)
 {
 	
 	SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
@@ -20,10 +20,7 @@ void LoadPPFData(const char* dir)
 	if (ppfdata != NULL) 
 	{
 		
-		if (SDL_RWread(ppfdata, CHARDATASET, 8, 1024))
-		{
-			
-		}
+		SDL_RWread(ppfdata, CHARDATASET, 8, 1024);
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -34,35 +31,25 @@ void LoadPPFData(const char* dir)
 			
 		} 
 
-		//std::cout << CHARDATASET << endl;
-
 		SDL_RWclose(ppfdata);
+		return 1;
 		
 	} 
 	else 
 	{
-		//std:: cout << "Failed to load - " << dir << endl;
-		
+		printf("Failed to load PPF");
+		return 0;
 	}
 
 }
 
-void PlaceCHR(int id, uint8_t x, uint8_t y, NES palette[3])
+SDL_Texture* LoadCHR(int id, NES palette[3])
 {
-	SDL_Rect dstrect;
-	dstrect.x = x;
-	dstrect.y = y;
-	dstrect.w = 8;
-	dstrect.h = 8;
 
 	SDL_Texture* tex = SDL_CreateTexture(
 		gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 8, 8);
 
 	Uint32 pixels[64];
-	for (int i = 0; i < 64; i++)
-	{
-		
-	}
 	
 	for (int y = 0; y < 8; y++)
 	{
@@ -97,20 +84,22 @@ void PlaceCHR(int id, uint8_t x, uint8_t y, NES palette[3])
 				break;
 			}
 
-			
 		}
 		
 	}
+
 	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
 	SDL_UpdateTexture(tex, NULL, pixels, 8 * sizeof(Uint32));
-	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
-	SDL_DestroyTexture(tex);
+	
+	return tex;
 }
 
-// place 4 8x8 tiles in a 16x16 formation
-void PlaceCHR16(int id, uint8_t x, uint8_t y, NES palette[3]) {
-	PlaceCHR(id, x, y, palette);
-	PlaceCHR(id + 1, x + 8, y, palette);
-	PlaceCHR(id + 2, x, y + 8, palette);
-	PlaceCHR(id + 3, x + 8, y + 8, palette);
+void PlaceCHR(SDL_Texture* tex, int x, int y) {
+	SDL_Rect dstrect;
+		dstrect.x = x;
+		dstrect.y = y;
+		dstrect.w = 8;
+		dstrect.h = 8;
+
+	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }

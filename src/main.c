@@ -21,7 +21,7 @@ SDL_Event e;
 #include "input.h"
 
 // CONSTANTS
-
+SDL_Texture* placeface;
 
 // GAME VARS
 SDL_Color backgroundColorControl = {255, 0, 255, 255};
@@ -44,7 +44,7 @@ int initsdl()
 	else
 	{
 		// Create window
-		gWindow = SDL_CreateWindow("Pixel Palette Format", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		gWindow = SDL_CreateWindow("Raquet! Game Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (gWindow == NULL)
 		{
 			printf("rip :p\n");
@@ -56,7 +56,7 @@ int initsdl()
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
-			SDL_GL_SetSwapInterval(1);
+			SDL_GL_SetSwapInterval(-1);	// Uncomment this for VSYNC
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
 		}
@@ -76,6 +76,8 @@ void quitit()
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 
+	SDL_DestroyTexture(placeface);
+
 	SDL_Quit();
 }
 
@@ -90,12 +92,20 @@ int runthedog()
 	// Draw our stuffs
 	SDL_SetRenderDrawColor(gRenderer, backgroundColorControl.r, backgroundColorControl.g, backgroundColorControl.b, 255);
 	SDL_RenderFillRect(gRenderer, NULL); 
-	
-	NES paltest[3] = {NES_PAL0D, NES_PAL00, NES_PAL20};
-	for (int y = 0; y < 30; y++) {
-		for (int x = 0; x < 32; x++)
+
+	if (placeface == NULL) {
+		NES paltest[3] = {NES_PAL0D, NES_PAL00, NES_PAL20};
+		placeface = LoadCHR(0, paltest);
+	}
+
+	for (int y = 0; y < SCREEN_WIDTH/8; y++) {
+		for (int x = 0; x < SCREEN_WIDTH/8; x++)
 		{
-			PlaceCHR(0, demox + (x * 8), demoy + (y * 8), paltest);
+			PlaceCHR(placeface, demox + (x * 8), demoy + (y * 8));
+			PlaceCHR(placeface, demox - (x * 8) - 8, demoy + (y * 8));
+
+			PlaceCHR(placeface, demox + (x * 8), demoy - (y * 8) - 8);
+			PlaceCHR(placeface, demox - (x * 8) - 8, demoy - (y * 8) - 8);
 		}
 	}
 
@@ -131,11 +141,7 @@ int main() {
 			}
 
 			// do our game stuff
-			printf("%d\n", key_a);
-			fflush(stdout);
 			runthedog();
-
-			SDL_Delay(1);
 			
 		}
 			

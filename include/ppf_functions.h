@@ -2,10 +2,11 @@
 char CHARDATASET[8192];
 
 // load the ppf file for the program and store it into a char
-void LoadPPFData(const char* dir);
+int LoadPPFData(const char* dir);
 
-// place 1 8x8 tile
-void PlaceCHR(int id, uint8_t x, uint8_t y, NES palette[3]);
+// load a ppf tile as a texture
+SDL_Texture* LoadCHR(int id, NES palette[3]);
 
-// place 4 8x8 tiles in a 16x16 formation
-void PlaceCHR16(int id, uint8_t x, uint8_t y, NES palette[3]);
+// place an 8x8 texture
+void PlaceCHR(SDL_Texture* tex, int x, int y);
+

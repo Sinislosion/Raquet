@@ -7,7 +7,7 @@ echo "Building..."
 if [ -e "build/prog" ]; then
 	rm build/prog
 fi
-clang src/main.c -O2 -o build/prog -lSDL2 -I include/
+clang -std=c99 src/main.c -Wall -O2 -o build/prog -lSDL2 -I include/
 if [ -e "build/prog" ]; then
 	echo "Copying Assets"
 	cp -r assets build/

@@ -75,12 +75,12 @@ SDL_Texture* LoadCHR(int id, NES palette[3])
 						pixels[dest] = palette[0].color;
 					} 
 					else {
-						pixels[dest] = palette[2].color;
+						pixels[dest] = palette[1].color;
 					}
 				break;
 
 				case 2:
-					pixels[dest] = palette[1].color;
+					pixels[dest] = palette[2].color;
 				break;
 			}
 

@@ -1,20 +1,7 @@
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
-#include <stdio.h>
-
-// WINDOW CONSTANTS
-const int SCREEN_WIDTH = 256;
-const int SCREEN_HEIGHT = 240;
-
-SDL_Window* gWindow = NULL;
-SDL_Renderer* gRenderer = NULL;
-
-SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-SDL_Event e;
+#include "Raquet.h"
 
 // Math and Graphical LIBS
 #include "math_functions.c"
-#include "nes.h"
 #include "ppf_functions.c"
 
 // GAME LIBS
@@ -29,56 +16,19 @@ SDL_Color backgroundColorControl = {255, 0, 255, 255};
 uint8_t demox = 0;
 uint8_t demoy = 0;
 
-int initsdl()
-{
+int initRaquet()
+{	
+	int ready = 1;
+	if (!initsdl())
+	{
+		printf("Failed to Initialize SDL\n");
+		ready = 0;
+	}
+	// PUT YOUR SETUP CODE HERE
 	LoadPPFData("./assets/test.ppf");
 	
-	// Init flag
-	int succ = 1;
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		printf("FAILED TO INITIALIZE. YOU SUCK.\n");
-		succ = 0;
-	}
-	else
-	{
-		// Create window
-		gWindow = SDL_CreateWindow("Raquet! Game Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-		if (gWindow == NULL)
-		{
-			printf("rip :p\n");
-			succ = 0;
-		}
-		else
-		{
-			// Init Window Renderer
-			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-			SDL_RenderSetViewport(gRenderer, NULL);
-			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
-			SDL_GL_SetSwapInterval(-1);	// Uncomment this for VSYNC
-			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
-			
-		}
-
-	}
-
-	return succ;
 	
-}
-
-void quitit()
-{
-	// Deallocate surface
-	SDL_DestroyRenderer(gRenderer);
-	gRenderer = NULL;
-	
-	SDL_DestroyWindow(gWindow);
-	gWindow = NULL;
-
-	SDL_DestroyTexture(placeface);
-
-	SDL_Quit();
+	return ready;
 }
 
 int runthedog()
@@ -90,8 +40,7 @@ int runthedog()
 	demoy += vmove;
 
 	// Draw our stuffs
-	SDL_SetRenderDrawColor(gRenderer, backgroundColorControl.r, backgroundColorControl.g, backgroundColorControl.b, 255);
-	SDL_RenderFillRect(gRenderer, NULL); 
+	RaquetClear(NES_PALINVALID);
 
 	if (placeface == NULL) {
 		NES paltest[3] = {NES_PAL0D, NES_PAL00, NES_PAL20};
@@ -110,19 +59,16 @@ int runthedog()
 	}
 
 	// Reset the Window
-	SDL_UpdateWindowSurface(gWindow);
-	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-	SDL_RenderPresent(gRenderer);
-	SDL_RenderClear(gRenderer);
+	RaquetUpdate();
 
 	return 1;
 }
 
 int main() {
 
-	if (!initsdl())
+	if (!initRaquet())
 	{
-		printf("ugh i hate writing error messages\n");
+		printf("Failed to Initialize\n");
 	}
 	else
 	{

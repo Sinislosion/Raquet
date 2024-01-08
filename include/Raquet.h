@@ -39,6 +39,24 @@ NES NES_PAL0C = {0x002E55FF};
 NES NES_PAL0D = {0x000000FF};
 NES NES_PAL0E = {0x000000FF};
 NES NES_PAL0F = {0x00000000};	// TRANSPARENCY
+
+NES NES_PAL10 = {0xB9BCB9FF};
+NES NES_PAL11 = {0x1850C7FF};
+NES NES_PAL12 = {0x4B30E3FF};
+NES NES_PAL13 = {0x9B22D6FF};
+NES NES_PAL14 = {0x951FA9FF};
+NES NES_PAL15 = {0x9D285CFF};
+NES NES_PAL16 = {0x983700FF};
+NES NES_PAL17 = {0x7F4C00FF};
+NES NES_PAL18 = {0x5E6400FF};
+NES NES_PAL19 = {0x227700FF};
+NES NES_PAL1A = {0x027E02FF};
+NES NES_PAL1B = {0x007645FF};
+NES NES_PAL1C = {0x006E8AFF};
+NES NES_PAL1D = {0x000000FF};
+NES NES_PAL1E = {0x000000FF};
+NES NES_PAL1F = {0x00000000};	// TRANSPARENCY
+
 NES NES_PALINVALID = {0xFF00FFFF};
 
 NES NES_PAL20 = {0xFFFFFFFF};
@@ -47,10 +65,6 @@ namespace NES
 {
 	static const Uint32
 		// RED, GREEN, BLUE, ALPHA
-		PAL00{0x6A6A6AFF}, PAL01{0x001380FF}, PAL02{0x1E008AFF}, PAL03{0x39007AFF},
-		PAL04{0x550056FF}, PAL05{0x5A0018FF}, PAL06{0x4F1000FF}, PAL07{0x3D1C00FF}, 
-		PAL08{0x253200FF}, PAL09{0x003D00FF}, PAL0A{0x004000FF}, PAL0B{0x003924FF},
-		PAL0C{0x002E55FF}, PAL0D{0x000000FF}, PAL0E{0x000000FF}, PAL0F{0x00000000},
 
 		PAL10{0xB9BCB9FF}, PAL11{0x1850C7FF}, PAL12{0x4B30E3FF}, PAL13{0x9B22D6FF},
 		PAL14{0x951FA9FF}, PAL15{0x9D285CFF}, PAL16{0x983700FF}, PAL17{0x7F4C00FF}, 
@@ -261,6 +275,28 @@ void RaquetClear(NES pal)
 	SDL_RenderFillRect(gRenderer, NULL); 
 }
 
+void RaquetDrawRectangle(int x1, int y1, int width, int height, NES pal, int alpha, int fill)
+{
+	SDL_Rect rect = {x1, y1, width,height};
+	Uint32 palr  = (pal.color >> 24) & 0x000000FF;
+	Uint32 palg  = (pal.color >> 16) & 0x000000FF;
+	Uint32 palb  = (pal.color >> 8) & 0x000000FF;
+
+	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+	
+	switch (fill)
+	{
+		default:
+			SDL_RenderDrawRect(gRenderer, &rect);
+		break;
+
+		case 1:
+			SDL_RenderFillRect(gRenderer, &rect);
+		break;
+	}
+
+}
+
 void RaquetUpdate()
 {
 	SDL_UpdateWindowSurface(gWindow);
@@ -370,8 +406,8 @@ SDL_Texture* LoadCHR(int id, NES palette[3])
 		for (int x = 0; x < 8; x++)
 		{
 			int dest = x + (y * 8);
-			int index = y + 8 + (8 * id);
-			int index2 = y + 16 + (16 * id);
+			int index = y + 8 + (8 * (id * 2));
+			int index2 = y + 16 + (16 * (id * 2));
 
 			int check1 = fsign(CHARDATASET[index] & ppfbitmask[x]);
 			int check2 = fsign(CHARDATASET[index2] & ppfbitmask[x]);
@@ -386,10 +422,10 @@ SDL_Texture* LoadCHR(int id, NES palette[3])
 				case 1:
 					if (check1)
 					{
-						pixels[dest] = palette[1].color;
+						pixels[dest] = palette[0].color;
 					} 
 					else {
-						pixels[dest] = palette[0].color;
+						pixels[dest] = palette[1].color;
 					}
 				break;
 
@@ -417,6 +453,8 @@ void PlaceCHR(SDL_Texture* tex, int x, int y) {
 
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
+
+
 
 void DestroyCHR(SDL_Texture* tex)
 {

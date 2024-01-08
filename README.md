@@ -1,6 +1,8 @@
 # Raquet Game Engine
 ![Sinislosion Raquet](/raquetlogo.png)<br>
 Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.
+<br><br>
+Palette created by FirebrandX at [firebranx.com](http://www.firebrandx.com/nespalette.html)
 
 ## Compilation
 ### Linux

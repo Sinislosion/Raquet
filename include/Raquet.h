@@ -1,6 +1,10 @@
 #define SDL_MAIN_HANDLED
+#ifndef SDL2
+#define SDL2
 #include "SDL.h"
+#endif
 #include <stdio.h>
+#include <gme/gme.h>
 
 // WINDOW CONSTANTS
 const int SCREEN_WIDTH = 256;
@@ -11,6 +15,39 @@ SDL_Renderer* gRenderer = NULL;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 SDL_Event e;
+
+/*
+************************
+*     AUDIO STUFFS     *
+************************
+* big thanks to gme btw, legally I must iterate this part of the
+* source code is licensed under LGPL2 yada yada libgme devs blah blah go to
+* https://github.com/libgme/game-music-emu for more info
+
+Copyright (C) 2005-2010 by Shay Green. Permission is hereby granted, free of
+charge, to any person obtaining a copy of this software module and associated
+documentation files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+to permit persons to whom the Software is furnished to do so, subject to the
+following conditions: The above copyright notice and this permission notice
+shall be included in all copies or substantial portions of the Software. THE
+SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/ 
+
+#include "Audio_Scope.cpp"
+#include "Music_Player.cpp"
+
+/*
+ ************************
+ *     PALETTE INFO     *
+ ************************
+*/
 
 typedef struct Palette
 {

@@ -12,78 +12,80 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 SDL_Event e;
 
-/*
- *****************************
- *     NES PALETTE STUFF     *
- *****************************
-*/
-
-typedef struct NES
+typedef struct Palette
 {
 	Uint32 color;
-} NES;
+} Palette;
 
-NES NES_PAL00 = {0x6A6A6AFF};
-NES NES_PAL01 = {0x001380FF};
-NES NES_PAL02 = {0x1E008AFF};
-NES NES_PAL03 = {0x39007AFF};
-NES NES_PAL04 = {0x550056FF};
-NES NES_PAL05 = {0x5A0018FF};
-NES NES_PAL06 = {0x4F1000FF};
-NES NES_PAL07 = {0x3D1C00FF};
-NES NES_PAL08 = {0x253200FF};
-NES NES_PAL09 = {0x003D00FF};
-NES NES_PAL0A = {0x004000FF};
-NES NES_PAL0B = {0x003924FF};
-NES NES_PAL0C = {0x002E55FF};
-NES NES_PAL0D = {0x000000FF};
-NES NES_PAL0E = {0x000000FF};
-NES NES_PAL0F = {0x00000000};	// TRANSPARENCY
+Palette PAL00 = {0x6A6A6AFF};
+Palette PAL01 = {0x001380FF};
+Palette PAL02 = {0x1E008AFF};
+Palette PAL03 = {0x39007AFF};
+Palette PAL04 = {0x550056FF};
+Palette PAL05 = {0x5A0018FF};
+Palette PAL06 = {0x4F1000FF};
+Palette PAL07 = {0x3D1C00FF};
+Palette PAL08 = {0x253200FF};
+Palette PAL09 = {0x003D00FF};
+Palette PAL0A = {0x004000FF};
+Palette PAL0B = {0x003924FF};
+Palette PAL0C = {0x002E55FF};
+Palette PAL0D = {0x000000FF};
+Palette PAL0E = {0x000000FF};
+Palette PAL0F = {0x00000000};	// TRANSPARENCY
 
-NES NES_PAL10 = {0xB9BCB9FF};
-NES NES_PAL11 = {0x1850C7FF};
-NES NES_PAL12 = {0x4B30E3FF};
-NES NES_PAL13 = {0x9B22D6FF};
-NES NES_PAL14 = {0x951FA9FF};
-NES NES_PAL15 = {0x9D285CFF};
-NES NES_PAL16 = {0x983700FF};
-NES NES_PAL17 = {0x7F4C00FF};
-NES NES_PAL18 = {0x5E6400FF};
-NES NES_PAL19 = {0x227700FF};
-NES NES_PAL1A = {0x027E02FF};
-NES NES_PAL1B = {0x007645FF};
-NES NES_PAL1C = {0x006E8AFF};
-NES NES_PAL1D = {0x000000FF};
-NES NES_PAL1E = {0x000000FF};
-NES NES_PAL1F = {0x00000000};	// TRANSPARENCY
+Palette PAL10 = {0xB9BCB9FF};
+Palette PAL11 = {0x1850C7FF};
+Palette PAL12 = {0x4B30E3FF};
+Palette PAL13 = {0x9B22D6FF};
+Palette PAL14 = {0x951FA9FF};
+Palette PAL15 = {0x9D285CFF};
+Palette PAL16 = {0x983700FF};
+Palette PAL17 = {0x7F4C00FF};
+Palette PAL18 = {0x5E6400FF};
+Palette PAL19 = {0x227700FF};
+Palette PAL1A = {0x027E02FF};
+Palette PAL1B = {0x007645FF};
+Palette PAL1C = {0x006E8AFF};
+Palette PAL1D = {0x000000FF};
+Palette PAL1E = {0x000000FF};
+Palette PAL1F = {0x00000000};	// TRANSPARENCY
 
-NES NES_PALINVALID = {0xFF00FFFF};
+Palette PAL20 = {0xFFFFFFFF};
+Palette PAL21 = {0x68A6FFFF};
+Palette PAL22 = {0x8C9CFFFF};
+Palette PAL23 = {0xB586F4FF};
+Palette PAL24 = {0xD975FDFF};
+Palette PAL25 = {0xE377B9FF};
+Palette PAL26 = {0xE58D68FF};
+Palette PAL27 = {0xD49D29FF};
+Palette PAL28 = {0xB3AF0CFF};
+Palette PAL29 = {0x7BC211FF};
+Palette PAL2A = {0x55CA47FF};
+Palette PAL2B = {0x46CB81FF};
+Palette PAL2C = {0x47C1C5FF};
+Palette PAL2D = {0x4A4D4AFF};
+Palette PAL2E = {0x000000FF};
+Palette PAL2F = {0x00000000};	// TRANSPARENCY
 
-NES NES_PAL20 = {0xFFFFFFFF};
-/*
-namespace NES
-{
-	static const Uint32
-		// RED, GREEN, BLUE, ALPHA
+Palette PAL30 = {0xFFFFFFFF};
+Palette PAL31 = {0xCCEAFFFF};
+Palette PAL32 = {0xDDDEFFFF};
+Palette PAL33 = {0xECDAFFFF};
+Palette PAL34 = {0xF8D7FEFF};
+Palette PAL35 = {0xFCD6D5FF};
+Palette PAL36 = {0xFDDBCFFF};
+Palette PAL37 = {0xF9E7B5FF};
+Palette PAL38 = {0xF1F0AAFF};
+Palette PAL39 = {0xDAFAA9FF};
+Palette PAL3A = {0xC9FFBCFF};
+Palette PAL3B = {0xC3FBD7FF};
+Palette PAL3C = {0xC4F6F6FF};
+Palette PAL3D = {0xBEC1BEFF};
+Palette PAL3E = {0x000000FF};
+Palette PAL3F = {0x00000000};	// TRANSPARENCY
 
-		PAL10{0xB9BCB9FF}, PAL11{0x1850C7FF}, PAL12{0x4B30E3FF}, PAL13{0x9B22D6FF},
-		PAL14{0x951FA9FF}, PAL15{0x9D285CFF}, PAL16{0x983700FF}, PAL17{0x7F4C00FF}, 
-		PAL18{0x5E6400FF}, PAL19{0x227700FF}, PAL1A{0x027E02FF}, PAL1B{0x007645FF}, 
-		PAL1C{0x006E8AFF}, PAL1D{0x000000FF}, PAL1E{0x000000FF}, PAL1F{0x00000000},
-
-		PAL20{0xFFFFFFFF}, PAL21{0x68A6FFFF}, PAL22{0x8C9CFFFF}, PAL23{0xB586F4FF},
-		PAL24{0xD975FDFF}, PAL25{0xE377B9FF}, PAL26{0xE58D68FF}, PAL27{0xD49D29FF},
-		PAL28{0xB3AF0CFF}, PAL29{0x7BC211FF}, PAL2A{0x55CA47FF}, PAL2B{0x46CB81FF},
-		PAL2C{0x47C1C5FF}, PAL2D{0x4A4D4AFF}, PAL2E{0x000000FF}, PAL2F{0x00000000},
-
-		PAL30{0xFFFFFFFF}, PAL31{0xCCEAFFFF}, PAL32{0xDDDEFFFF}, PAL33{0xECDAFFFF},
-		PAL34{0xF8D7FEFF}, PAL35{0xFCD6D5FF}, PAL36{0xFDDBCFFF}, PAL37{0xF9E7B5FF},
-		PAL38{0xF1F0AAFF}, PAL39{0xDAFAA9FF}, PAL3A{0xC9FFBCFF}, PAL3B{0xC3FBD7FF},
-		PAL3C{0xC4F6F6FF}, PAL3D{0xBEC1BEFF}, PAL3E{0x000000FF}, PAL3F{0x00000000};
-		
-}
-
-*/
+Palette PALINVALID = {0xFF00FFFF};
 
 /*
  *********************************
@@ -266,7 +268,7 @@ void quitit()
 	SDL_Quit();
 }
 
-void RaquetClear(NES pal)
+void RaquetClear(Palette pal)
 {
 	Uint32 palr  = (pal.color >> 24) & 0x000000FF;
 	Uint32 palg  = (pal.color >> 16) & 0x000000FF;
@@ -275,7 +277,7 @@ void RaquetClear(NES pal)
 	SDL_RenderFillRect(gRenderer, NULL); 
 }
 
-void RaquetDrawRectangle(int x1, int y1, int width, int height, NES pal, int alpha, int fill)
+void RaquetDrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill)
 {
 	SDL_Rect rect = {x1, y1, width,height};
 	Uint32 palr  = (pal.color >> 24) & 0x000000FF;
@@ -393,7 +395,7 @@ int LoadPPFData(const char* dir)
 
 }
 
-SDL_Texture* LoadCHR(int id, NES palette[3])
+SDL_Texture* LoadCHR(int id, Palette palette[3])
 {
 	
 	SDL_Texture* tex = SDL_CreateTexture(
@@ -416,7 +418,7 @@ SDL_Texture* LoadCHR(int id, NES palette[3])
 			switch (place)
 			{
 				case 0:
-					pixels[dest] = NES_PAL0F.color;
+					pixels[dest] = PAL0F.color;
 				break;
 
 				case 1:

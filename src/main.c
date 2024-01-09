@@ -6,8 +6,8 @@
 
 uint8_t demoy;
 uint8_t demox;
-NES palface[3];
-NES pallogo[3];
+Palette palface[3];
+Palette pallogo[3];
 
 SDL_Texture* placeface;
 SDL_Texture* RaquetLogo[12];
@@ -16,13 +16,13 @@ void createthedog()
 {
 	LoadPPFData("./assets/main.ppf");
 
-	 palface[0] = NES_PAL0D;
-	 palface[1] = NES_PAL00;
-	 palface[2] = NES_PAL20;
+	 palface[0] = PAL0D;
+	 palface[1] = PAL00;
+	 palface[2] = PAL20;
 
-	 pallogo[0] = NES_PAL20;
-	 pallogo[1] = NES_PAL0D;
-	 pallogo[2] = NES_PAL11;
+	 pallogo[0] = PAL20;
+	 pallogo[1] = PAL0D;
+	 pallogo[2] = PAL11;
 	
 	placeface = LoadCHR(0, palface);
 
@@ -48,7 +48,7 @@ void runthedog()
 	demoy++;
 
 	// Draw our stuffs
-	RaquetClear(NES_PAL12);
+	RaquetClear(PAL12);
 
 	for (int y = 0; y < SCREEN_WIDTH/8; y++) 
 	{
@@ -62,7 +62,7 @@ void runthedog()
 		}
 	}
 
-	RaquetDrawRectangle(96, 104, 56, 24, NES_PAL12, 255, 1);
+	RaquetDrawRectangle(96, 104, 56, 24, PAL12, 255, 1);
 	
 	for (int y = 0; y < 2; y++) 
 	{

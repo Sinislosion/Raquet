@@ -2,9 +2,6 @@
 ![Sinislosion Raquet](/raquetlogo.png)<br>
 Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.
 <br><br>
-# License
-Palette created by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) with no license specified (will be removed at the request of FirebrandX if asked)<br>
-"2A03_Kevvviiinnn-Superfusion.nsf" from Famitracker's demo included songs is licensed under the GPL v2.0
 
 ## Compilation
 ### Linux
@@ -16,3 +13,8 @@ Palette created by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nesp
 2. Run the compile.sh file
 
 That's it.
+
+# License
+Palette created by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) with no license specified (will be removed at the request of FirebrandX if asked)<br>
+"2A03_Kevvviiinnn-Superfusion.nsf" from Famitracker's demo included songs is licensed under the GPL v2.0<br>
+Everything else is licensed under the [WTFPL](http://www.wtfpl.net/about/)

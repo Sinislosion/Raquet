@@ -15,6 +15,6 @@ Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free 
 That's it.
 
 # License
-Palette created by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) with no license specified (will be removed at the request of FirebrandX if asked)<br>
-"2A03_Kevvviiinnn-Superfusion.nsf" from Famitracker's demo included songs is licensed under the GPL v2.0<br>
-Everything else is licensed under the [WTFPL](http://www.wtfpl.net/about/)
+- Palette created by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) with no license specified (will be removed at the request of FirebrandX if asked)<br>
+- "2A03_Kevvviiinnn-Superfusion.nsf" from Famitracker's demo included songs is licensed under the GPL v2.0<br>
+- Everything else is licensed under the [WTFPL](http://www.wtfpl.net/about/)

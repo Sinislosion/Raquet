@@ -35,6 +35,9 @@ void createthedog()
 			printf("%d\n", offset);
 		}
 	}
+	const char* nsfpath = "./assets/2A03_Kevvviiinnn-Superfusion.nsf";
+	Music_Player_load_file(gMusicPlayer, nsfpath);
+	Music_Player_start_track(gMusicPlayer, 0);
 
 	demox = 0;
 	demoy = 0;

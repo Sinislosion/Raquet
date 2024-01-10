@@ -1,10 +1,9 @@
 #define SDL_MAIN_HANDLED
-#ifndef SDL2
-#define SDL2
 #include "SDL.h"
-#endif
-#include <stdio.h>
 #include <gme/gme.h>
+#include "Music_Player.c"
+#include <stdio.h>
+
 
 // WINDOW CONSTANTS
 const int SCREEN_WIDTH = 256;
@@ -12,6 +11,7 @@ const int SCREEN_HEIGHT = 240;
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
+Music_Player* gMusicPlayer;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 SDL_Event e;
@@ -39,9 +39,6 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */ 
-
-#include "Audio_Scope.cpp"
-#include "Music_Player.cpp"
 
 /*
  ************************
@@ -287,8 +284,14 @@ int initRaquet()
 		printf("Failed to Initialize SDL\n");
 		ready = 0;
 	}
+
+	// Init Audio
+	gMusicPlayer = new_Music_Player();
+	Music_Player_init(gMusicPlayer, 44800);
+
 	// PUT YOUR SETUP CODE HERE
 	
+
 	return ready;
 }
 
@@ -301,6 +304,10 @@ void quitit()
 	
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
+
+	sound_stop();
+	sound_cleanup();
+	gme_free_info( gMusicPlayer->track_info_ );
 
 	SDL_Quit();
 }

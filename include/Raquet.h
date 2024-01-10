@@ -1,9 +1,7 @@
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
 #include <gme/gme.h>
-#include "Music_Player.c"
 #include <stdio.h>
-
 
 // WINDOW CONSTANTS
 const int SCREEN_WIDTH = 256;
@@ -11,7 +9,6 @@ const int SCREEN_HEIGHT = 240;
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
-Music_Player* gMusicPlayer;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 SDL_Event e;
@@ -20,25 +17,247 @@ SDL_Event e;
 ************************
 *     AUDIO STUFFS     *
 ************************
-* big thanks to gme btw, legally I must iterate this part of the
-* source code is licensed under LGPL2 yada yada libgme devs blah blah go to
+* big thanks to gme btw, the audio library this part of the code relies on
 * https://github.com/libgme/game-music-emu for more info
+*/
 
-Copyright (C) 2005-2010 by Shay Green. Permission is hereby granted, free of
-charge, to any person obtaining a copy of this software module and associated
-documentation files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use, copy, modify,
-merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-to permit persons to whom the Software is furnished to do so, subject to the
-following conditions: The above copyright notice and this permission notice
-shall be included in all copies or substantial portions of the Software. THE
-SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/ 
+typedef struct sample_t
+{
+    short* buf;
+    int size;
+} sample_t;
+
+typedef struct Raquet_Sound
+{
+	Music_Emu* emu_;
+	short* scope_buf;
+	int paused;
+	gme_info_t* track_info_;
+	int scope_buf_size;
+	long sample_rate;
+} Raquet_Sound;
+
+Raquet_Sound* gAudioPlayer;
+
+typedef void (*sound_callback_t)(void* data, short* out, int count);
+static sound_callback_t sound_callback;
+static void* sound_callback_data;
+
+static void sdl_callback( void* data, Uint8* out, int count )
+{
+	if (sound_callback)
+	{
+		sound_callback(sound_callback_data, (short*) out, count / 2);
+	}
+}
+
+static const char* soundInit(long sample_rate, int buf_size, sound_callback_t cb, void* data)
+{
+	sound_callback = cb;
+	sound_callback_data = data;
+	static SDL_AudioSpec as; 
+	as.freq     = sample_rate;
+	as.format   = AUDIO_S16SYS;
+	as.channels = 2;
+	as.callback = sdl_callback;
+	as.samples  = buf_size;
+	if (SDL_OpenAudio( &as, 0 ) < 0)
+	{
+		const char* err = SDL_GetError();
+		if ( !err )
+		{
+			err = "Couldn't open SDL audio";
+		}
+		return err;
+	}
+	return 0;
+}
+
+static void soundStart()
+{
+	SDL_PauseAudio( 0 );
+}
+static void soundStop()
+{
+	SDL_PauseAudio( 1 );
+
+	SDL_LockAudio();
+	SDL_UnlockAudio();
+}
+static void soundCleanup()
+{
+	soundStop();
+	SDL_CloseAudio();
+}
+
+Raquet_Sound* newRaquetSound() 
+{
+	Raquet_Sound* player = (Raquet_Sound*)malloc(sizeof(Raquet_Sound));
+	player->emu_ = NULL;
+	player->scope_buf = NULL;
+	player->paused = 0;
+	player->track_info_ = NULL;
+	if (player != NULL)
+	{
+    	printf("GME Initialized\n");
+    	fflush(stdout);
+	}
+	return player;
+}
+
+void RaquetSound_FillBuffer(void* data, short* out, int count) 
+{
+	Raquet_Sound* self = (Raquet_Sound*) data;
+	if (self->emu_)
+	{
+		gme_play(self->emu_, count, out);
+		if (self->scope_buf)
+		{
+			memcpy( self->scope_buf, out, self->scope_buf_size * sizeof *self->scope_buf );
+		}
+	}
+}
+
+gme_err_t InitRaquetSound(long rate) 
+{
+	gAudioPlayer->sample_rate = rate;
+ 	int min_size = gAudioPlayer->sample_rate * 2;
+	int buf_size = 512;
+	while (buf_size < min_size) { buf_size *= 2; }
+	return soundInit(gAudioPlayer->sample_rate, buf_size, RaquetSound_FillBuffer, gAudioPlayer);
+}
+
+void RaquetSound_StopSound() 
+{
+	soundStop();
+	gme_delete(gAudioPlayer->emu_);
+	gAudioPlayer->emu_ = NULL;
+}
+
+void RaquetSound_DestroySound() 
+{
+	RaquetSound_StopSound();
+	soundCleanup();
+	gme_free_info(gAudioPlayer->track_info_);
+	free(gAudioPlayer);
+}
+
+gme_err_t RaquetSound_LoadAudio(const char* path) 
+{
+	RaquetSound_StopSound();
+	gme_open_file(path, &(gAudioPlayer->emu_), gAudioPlayer->sample_rate);
+	char m3u_path [256 + 5];
+	strncpy(m3u_path, path, 256);
+	m3u_path [256] = 0;
+	char* p = strrchr(m3u_path, '.');
+	if (!p)
+	{
+		p = m3u_path + strlen(m3u_path);
+	}
+	strcpy(p, ".m3u");
+	gme_load_m3u(gAudioPlayer->emu_, m3u_path);
+	return 0;
+}
+
+/*
+ *	Return the amount of tracks in the currently playing file
+ *	@return int				returns the integer count of the tracks in the file
+*/
+int RaquetSound_TrackCount() {
+	return gAudioPlayer->emu_ ? gme_track_count(gAudioPlayer->emu_) : 0;
+}
+
+/*
+ *	Start the track in a given gme-compatible file
+ *	@param int track 		The track ID in the file
+ *	@param int fadeout 		0 to not fadeout at the end, anything else to fadeout
+ *	@return gme_err_t		returns nothing because this is basically a void
+*/
+gme_err_t RaquetSound_StartTrack(int track, int fadeout) {
+	if (gAudioPlayer->emu_)
+	{
+		gme_free_info(gAudioPlayer->track_info_);
+		gAudioPlayer->track_info_ = NULL;
+		gme_track_info(gAudioPlayer->emu_, &(gAudioPlayer->track_info_), track);
+
+		soundStop();
+		gme_start_track(gAudioPlayer->emu_, track);
+
+		if ( gAudioPlayer->track_info_->length <= 0 )
+		{
+			gAudioPlayer->track_info_->length = gAudioPlayer->track_info_->intro_length + gAudioPlayer->track_info_->loop_length * 2;
+		}
+		              
+		if ( gAudioPlayer->track_info_->length <= 0 )
+		{
+			gAudioPlayer->track_info_->length = (long) (2.5 * 60 * 1000);
+		}
+		
+		if (fadeout)
+		{
+			gme_set_fade( gAudioPlayer->emu_, gAudioPlayer->track_info_->length );
+		}
+		gAudioPlayer->paused = 0;
+		soundStart();
+	}
+	return 0;
+}
+
+void RaquetSound_PauseSound(int b) 
+{
+	gAudioPlayer->paused = b;
+	if (b) { soundStop(); } else { soundStart(); }
+}
+
+void RaquetSound_SuspendSound() 
+{
+	if (!gAudioPlayer->paused) {soundStop();}
+}
+
+void RaquetSound_ResumeSound() 
+{
+	if (!gAudioPlayer->paused) {soundStart();}
+}
+
+int RaquetSound_TrackEnded() 
+{
+	return gAudioPlayer->emu_ ? gme_track_ended( gAudioPlayer->emu_ ) : 0;
+}
+
+void RaquetSound_SetStereoDepth(double tempo) 
+{
+	RaquetSound_SuspendSound();
+	gme_set_stereo_depth( gAudioPlayer->emu_, tempo );
+	RaquetSound_ResumeSound();
+}
+
+void RaquetSound_EnableAccuracy(int b) 
+{
+	RaquetSound_SuspendSound();
+	gme_enable_accuracy( gAudioPlayer->emu_, b );
+	printf("Audio accuracy set to: %d\n", b);
+	fflush(stdout);
+	RaquetSound_ResumeSound();
+}
+
+void RaquetSound_SetTempo(double tempo) 
+{
+	RaquetSound_SuspendSound();
+	gme_set_tempo( gAudioPlayer->emu_, tempo );
+	RaquetSound_ResumeSound();
+}
+
+void RaquetSound_MuteVoices(int mask) {
+	RaquetSound_SuspendSound();
+	gme_mute_voices( gAudioPlayer->emu_, mask );
+	gme_ignore_silence( gAudioPlayer->emu_, mask != 0 );
+	RaquetSound_ResumeSound();
+}
+
+void RaquetSound_SetFadeout(int fade) 
+{
+	gme_set_fade( gAudioPlayer->emu_, fade ? gAudioPlayer->track_info_->length : -1 );
+}
 
 /*
  ************************
@@ -127,7 +346,7 @@ Palette PALINVALID = {0xFF00FFFF};
  *********************************
 */
 
-int fsign(float comp) 
+int sign(float comp) 
 {
 	return ((0) < comp) - (comp < (0));
 }
@@ -286,8 +505,8 @@ int initRaquet()
 	}
 
 	// Init Audio
-	gMusicPlayer = new_Music_Player();
-	Music_Player_init(gMusicPlayer, 44800);
+	gAudioPlayer = newRaquetSound();
+	InitRaquetSound(44800);
 
 	// PUT YOUR SETUP CODE HERE
 	
@@ -305,9 +524,9 @@ void quitit()
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 
-	sound_stop();
-	sound_cleanup();
-	gme_free_info( gMusicPlayer->track_info_ );
+	soundStop();
+	soundCleanup();
+	gme_free_info( gAudioPlayer->track_info_ );
 
 	SDL_Quit();
 }
@@ -455,8 +674,8 @@ SDL_Texture* LoadCHR(int id, Palette palette[3])
 			int index = y + 8 + (8 * (id * 2));
 			int index2 = y + 16 + (16 * (id * 2));
 
-			int check1 = fsign(CHARDATASET[index] & ppfbitmask[x]);
-			int check2 = fsign(CHARDATASET[index2] & ppfbitmask[x]);
+			int check1 = sign(CHARDATASET[index] & ppfbitmask[x]);
+			int check2 = sign(CHARDATASET[index2] & ppfbitmask[x]);
 			int place =  check1 +  check2;
 
 			switch (place)

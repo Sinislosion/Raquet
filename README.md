@@ -17,4 +17,5 @@ That's it.
 # License
 - Palette created by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) with no license specified (will be removed at the request of FirebrandX if asked)<br>
 - "2A03_Kevvviiinnn-Superfusion.nsf" from Famitracker's demo included songs is licensed under the GPL v2.0<br>
+- `include/Music_Player.h` and `include/Music_Player.c` licensed under LGPL-2.1 due to technicality (If someone wants to rewrite this code under the WTFPL submit a pull request plz)
 - Everything else is licensed under the [WTFPL](http://www.wtfpl.net/about/)

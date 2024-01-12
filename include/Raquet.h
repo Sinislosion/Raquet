@@ -1,7 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
 #include <gme/gme.h>
-#include <stdio.h>
 
 // WINDOW CONSTANTS
 const int SCREEN_WIDTH = 256;
@@ -118,7 +117,7 @@ void RaquetSound_FillBuffer(void* data, short* out, int count)
 	}
 }
 
-gme_err_t InitRaquetSound(long rate) 
+gme_err_t Raquet_InitSound(long rate) 
 {
 	gAudioPlayer->sample_rate = rate;
  	int min_size = gAudioPlayer->sample_rate * 2;
@@ -185,7 +184,8 @@ gme_err_t RaquetSound_StartTrack(int track, int fadeout) {
 
 		if ( gAudioPlayer->track_info_->length <= 0 )
 		{
-			gAudioPlayer->track_info_->length = gAudioPlayer->track_info_->intro_length + gAudioPlayer->track_info_->loop_length * 2;
+			gAudioPlayer->track_info_->length = gAudioPlayer->track_info_->intro_length + 
+				gAudioPlayer->track_info_->loop_length * 2;
 		}
 		              
 		if ( gAudioPlayer->track_info_->length <= 0 )
@@ -265,80 +265,77 @@ void RaquetSound_SetFadeout(int fade)
  ************************
 */
 
-typedef struct Palette
-{
-	Uint32 color;
-} Palette;
+typedef Uint32 Palette;
 
-Palette PAL00 = {0x6A6A6AFF};
-Palette PAL01 = {0x001380FF};
-Palette PAL02 = {0x1E008AFF};
-Palette PAL03 = {0x39007AFF};
-Palette PAL04 = {0x550056FF};
-Palette PAL05 = {0x5A0018FF};
-Palette PAL06 = {0x4F1000FF};
-Palette PAL07 = {0x3D1C00FF};
-Palette PAL08 = {0x253200FF};
-Palette PAL09 = {0x003D00FF};
-Palette PAL0A = {0x004000FF};
-Palette PAL0B = {0x003924FF};
-Palette PAL0C = {0x002E55FF};
-Palette PAL0D = {0x000000FF};
-Palette PAL0E = {0x000000FF};
-Palette PAL0F = {0x00000000};	// TRANSPARENCY
+const Palette PAL00 = {0x6A6A6AFF};
+const Palette PAL01 = {0x001380FF};
+const Palette PAL02 = {0x1E008AFF};
+const Palette PAL03 = {0x39007AFF};
+const Palette PAL04 = {0x550056FF};
+const Palette PAL05 = {0x5A0018FF};
+const Palette PAL06 = {0x4F1000FF};
+const Palette PAL07 = {0x3D1C00FF};
+const Palette PAL08 = {0x253200FF};
+const Palette PAL09 = {0x003D00FF};
+const Palette PAL0A = {0x004000FF};
+const Palette PAL0B = {0x003924FF};
+const Palette PAL0C = {0x002E55FF};
+const Palette PAL0D = {0x000000FF};
+const Palette PAL0E = {0x000000FF};
+const Palette PAL0F = {0x00000000};	// TRANSPARENCY
 
-Palette PAL10 = {0xB9BCB9FF};
-Palette PAL11 = {0x1850C7FF};
-Palette PAL12 = {0x4B30E3FF};
-Palette PAL13 = {0x9B22D6FF};
-Palette PAL14 = {0x951FA9FF};
-Palette PAL15 = {0x9D285CFF};
-Palette PAL16 = {0x983700FF};
-Palette PAL17 = {0x7F4C00FF};
-Palette PAL18 = {0x5E6400FF};
-Palette PAL19 = {0x227700FF};
-Palette PAL1A = {0x027E02FF};
-Palette PAL1B = {0x007645FF};
-Palette PAL1C = {0x006E8AFF};
-Palette PAL1D = {0x000000FF};
-Palette PAL1E = {0x000000FF};
-Palette PAL1F = {0x00000000};	// TRANSPARENCY
+const Palette PAL10 = {0xB9BCB9FF};
+const Palette PAL11 = {0x1850C7FF};
+const Palette PAL12 = {0x4B30E3FF};
+const Palette PAL13 = {0x9B22D6FF};
+const Palette PAL14 = {0x951FA9FF};
+const Palette PAL15 = {0x9D285CFF};
+const Palette PAL16 = {0x983700FF};
+const Palette PAL17 = {0x7F4C00FF};
+const Palette PAL18 = {0x5E6400FF};
+const Palette PAL19 = {0x227700FF};
+const Palette PAL1A = {0x027E02FF};
+const Palette PAL1B = {0x007645FF};
+const Palette PAL1C = {0x006E8AFF};
+const Palette PAL1D = {0x000000FF};
+const Palette PAL1E = {0x000000FF};
+const Palette PAL1F = {0x00000000};	// TRANSPARENCY
 
-Palette PAL20 = {0xFFFFFFFF};
-Palette PAL21 = {0x68A6FFFF};
-Palette PAL22 = {0x8C9CFFFF};
-Palette PAL23 = {0xB586F4FF};
-Palette PAL24 = {0xD975FDFF};
-Palette PAL25 = {0xE377B9FF};
-Palette PAL26 = {0xE58D68FF};
-Palette PAL27 = {0xD49D29FF};
-Palette PAL28 = {0xB3AF0CFF};
-Palette PAL29 = {0x7BC211FF};
-Palette PAL2A = {0x55CA47FF};
-Palette PAL2B = {0x46CB81FF};
-Palette PAL2C = {0x47C1C5FF};
-Palette PAL2D = {0x4A4D4AFF};
-Palette PAL2E = {0x000000FF};
-Palette PAL2F = {0x00000000};	// TRANSPARENCY
+const Palette PAL20 = {0xFFFFFFFF};
+const Palette PAL21 = {0x68A6FFFF};
+const Palette PAL22 = {0x8C9CFFFF};
+const Palette PAL23 = {0xB586F4FF};
+const Palette PAL24 = {0xD975FDFF};
+const Palette PAL25 = {0xE377B9FF};
+const Palette PAL26 = {0xE58D68FF};
+const Palette PAL27 = {0xD49D29FF};
+const Palette PAL28 = {0xB3AF0CFF};
+const Palette PAL29 = {0x7BC211FF};
+const Palette PAL2A = {0x55CA47FF};
+const Palette PAL2B = {0x46CB81FF};
+const Palette PAL2C = {0x47C1C5FF};
+const Palette PAL2D = {0x4A4D4AFF};
+const Palette PAL2E = {0x000000FF};
+const Palette PAL2F = {0x00000000};	// TRANSPARENCY
 
-Palette PAL30 = {0xFFFFFFFF};
-Palette PAL31 = {0xCCEAFFFF};
-Palette PAL32 = {0xDDDEFFFF};
-Palette PAL33 = {0xECDAFFFF};
-Palette PAL34 = {0xF8D7FEFF};
-Palette PAL35 = {0xFCD6D5FF};
-Palette PAL36 = {0xFDDBCFFF};
-Palette PAL37 = {0xF9E7B5FF};
-Palette PAL38 = {0xF1F0AAFF};
-Palette PAL39 = {0xDAFAA9FF};
-Palette PAL3A = {0xC9FFBCFF};
-Palette PAL3B = {0xC3FBD7FF};
-Palette PAL3C = {0xC4F6F6FF};
-Palette PAL3D = {0xBEC1BEFF};
-Palette PAL3E = {0x000000FF};
-Palette PAL3F = {0x00000000};	// TRANSPARENCY
+const Palette PAL30 = {0xFFFFFFFF};
+const Palette PAL31 = {0xCCEAFFFF};
+const Palette PAL32 = {0xDDDEFFFF};
+const Palette PAL33 = {0xECDAFFFF};
+const Palette PAL34 = {0xF8D7FEFF};
+const Palette PAL35 = {0xFCD6D5FF};
+const Palette PAL36 = {0xFDDBCFFF};
+const Palette PAL37 = {0xF9E7B5FF};
+const Palette PAL38 = {0xF1F0AAFF};
+const Palette PAL39 = {0xDAFAA9FF};
+const Palette PAL3A = {0xC9FFBCFF};
+const Palette PAL3B = {0xC3FBD7FF};
+const Palette PAL3C = {0xC4F6F6FF};
+const Palette PAL3D = {0xBEC1BEFF};
+const Palette PAL3E = {0x000000FF};
+const Palette PAL3F = {0x00000000};	// TRANSPARENCY
 
-Palette PALINVALID = {0xFF00FFFF};
+const Palette PALINVALID = {0xFF00FFFF};
 
 /*
  *********************************
@@ -464,7 +461,7 @@ int initsdl()
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		printf("FAILED TO INITIALIZE. YOU SUCK.\n");
+		printf("FAILED TO INITIALIZE SDL VIDEO.\n");
 		succ = 0;
 	}
 	else
@@ -495,7 +492,7 @@ int initsdl()
 	
 }
 
-int initRaquet()
+int Raquet_Init()
 {	
 	int ready = 1;
 	if (!initsdl())
@@ -506,12 +503,18 @@ int initRaquet()
 
 	// Init Audio
 	gAudioPlayer = newRaquetSound();
-	InitRaquetSound(44800);
+	Raquet_InitSound(44800);
 
 	// PUT YOUR SETUP CODE HERE
 	
-
 	return ready;
+}
+
+void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3)
+{
+	dest[0] = pal1;
+	dest[1] = pal2;
+	dest[2] = pal3;
 }
 
 void quitit()
@@ -531,21 +534,21 @@ void quitit()
 	SDL_Quit();
 }
 
-void RaquetClear(Palette pal)
+void Raquet_Clear(Palette pal)
 {
-	Uint32 palr  = (pal.color >> 24) & 0x000000FF;
-	Uint32 palg  = (pal.color >> 16) & 0x000000FF;
-	Uint32 palb  = (pal.color >> 8) & 0x000000FF;
+	Uint32 palr  = (pal >> 24) & 0x000000FF;
+	Uint32 palg  = (pal >> 16) & 0x000000FF;
+	Uint32 palb  = (pal >> 8) & 0x000000FF;
 	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, 255);
 	SDL_RenderFillRect(gRenderer, NULL); 
 }
 
-void RaquetDrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill)
+void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill)
 {
 	SDL_Rect rect = {x1, y1, width,height};
-	Uint32 palr  = (pal.color >> 24) & 0x000000FF;
-	Uint32 palg  = (pal.color >> 16) & 0x000000FF;
-	Uint32 palb  = (pal.color >> 8) & 0x000000FF;
+	Uint32 palr  = (pal >> 24) & 0x000000FF;
+	Uint32 palg  = (pal >> 16) & 0x000000FF;
+	Uint32 palb  = (pal >> 8) & 0x000000FF;
 
 	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
 	
@@ -562,7 +565,7 @@ void RaquetDrawRectangle(int x1, int y1, int width, int height, Palette pal, int
 
 }
 
-void RaquetUpdate()
+void Raquet_Update()
 {
 	SDL_UpdateWindowSurface(gWindow);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
@@ -570,8 +573,8 @@ void RaquetUpdate()
 	SDL_RenderClear(gRenderer);
 }
 
-void RaquetMain() {
-	if (!initRaquet())
+void Raquet_Main() {
+	if (!Raquet_Init())
 	{
 		printf("Failed to Initialize\n");
 	}
@@ -658,21 +661,33 @@ int LoadPPFData(const char* dir)
 
 }
 
-SDL_Texture* LoadCHR(int id, Palette palette[3])
+// @function Load a CHR To an SDL Texture
+// @param PPF index starting at 0
+// @param Palette of 3 colors
+typedef SDL_Texture* Raquet_CHR;
+Raquet_CHR LoadCHR(int id, Palette palette[3])
 {
 	
 	SDL_Texture* tex = SDL_CreateTexture(
 		gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 8, 8);
 
 	Uint32 pixels[64];
+
+	/*
+	 * For every y row, write a pixel that corresponds to the palette
+	 * If our first palette index is 0, and our second palette index is 0, write transparency
+	 * If our first palette index is 1, and our second palette index is 0, write color 1
+	 * If our first palette index is 0, and our second palette index is 1, write color 2
+	 * If our first palette index is 1, and our second palette index is 1, write color 3
+	*/
 	
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
 		{
 			int dest = x + (y * 8);
-			int index = y + 8 + (8 * (id * 2));
-			int index2 = y + 16 + (16 * (id * 2));
+			int index = y + 8 + (id * 16);
+			int index2 = y + 16 + (id * 16);
 
 			int check1 = sign(CHARDATASET[index] & ppfbitmask[x]);
 			int check2 = sign(CHARDATASET[index2] & ppfbitmask[x]);
@@ -681,21 +696,24 @@ SDL_Texture* LoadCHR(int id, Palette palette[3])
 			switch (place)
 			{
 				case 0:
-					pixels[dest] = PAL0F.color;
+					pixels[dest] = PAL0F;
 				break;
 
 				case 1:
-					if (check1)
+					switch (check1) 
 					{
-						pixels[dest] = palette[0].color;
-					} 
-					else {
-						pixels[dest] = palette[1].color;
+						case 1:
+							pixels[dest] = palette[0];
+						break;
+						
+						default:
+							pixels[dest] = palette[1];
+						break;
 					}
 				break;
 
 				case 2:
-					pixels[dest] = palette[2].color;
+					pixels[dest] = palette[2];
 				break;
 			}
 
@@ -704,7 +722,7 @@ SDL_Texture* LoadCHR(int id, Palette palette[3])
 	}
 
 	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
-	SDL_UpdateTexture(tex, NULL, pixels, 8 * sizeof(Uint32));
+	SDL_UpdateTexture(tex, NULL, pixels, 8 * sizeof(Palette));
 	
 	return tex;
 }
@@ -718,8 +736,6 @@ void PlaceCHR(SDL_Texture* tex, int x, int y) {
 
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
-
-
 
 void DestroyCHR(SDL_Texture* tex)
 {

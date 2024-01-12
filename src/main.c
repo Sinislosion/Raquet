@@ -1,37 +1,36 @@
 // put your libs here.
 #include "Raquet.h"
+
 // TODO: WRITE FPS FUNCTIONS
 // TODO: COMMENT MORE STUFF IN THE Raquet.h FILE
-// TODO: MAKE CREATING VARIABLES MORE SIMPLE
 
+// Demo Global Variables
 uint8_t demoy;
 uint8_t demox;
+
+// Palettes
 Palette palface[3];
 Palette pallogo[3];
 
-SDL_Texture* placeface;
-SDL_Texture* RaquetLogo[12];
+// Characters
+Raquet_CHR chr_placeface;
+Raquet_CHR chr_raquetlogo[12];
 
 void createthedog()
 {
 	LoadPPFData("./assets/main.ppf");
 
-	 palface[0] = PAL0D;
-	 palface[1] = PAL00;
-	 palface[2] = PAL20;
-
-	 pallogo[0] = PAL20;
-	 pallogo[1] = PAL0D;
-	 pallogo[2] = PAL11;
+	Raquet_SetPalette(palface, PAL0D, PAL00, PAL20);
+	Raquet_SetPalette(pallogo, PAL20, PAL20, PAL20);
 	
-	placeface = LoadCHR(0, palface);
+	chr_placeface = LoadCHR(0, palface);
 
 	for (int y = 0; y < 2; y++)
 	{
 		for (int x = 0; x < 6; x++)
 		{
 			int offset = x + (6 * y);
-			RaquetLogo[offset] = LoadCHR(offset + 1, pallogo);
+			chr_raquetlogo[offset] = LoadCHR(offset + 1, pallogo);
 		}
 	}
 	const char* nsfpath = "./assets/2A03_Kevvviiinnn-Superfusion.nsf";
@@ -51,38 +50,38 @@ void runthedog()
 	demoy++;
 
 	// Draw our stuffs
-	RaquetClear(PAL12);
+	Raquet_Clear(PAL12);
 
 	for (int y = 0; y < SCREEN_WIDTH/8; y++) 
 	{
 		for (int x = 0; x < SCREEN_WIDTH/8; x++)
 		{
-			PlaceCHR(placeface, demox + (x * 8), demoy + (y * 8));
-			PlaceCHR(placeface, demox - (x * 8) - 8, demoy + (y * 8));
+			PlaceCHR(chr_placeface, demox + (x * 8), demoy + (y * 8));
+			PlaceCHR(chr_placeface, demox - (x * 8) - 8, demoy + (y * 8));
 
-			PlaceCHR(placeface, demox + (x * 8), demoy - (y * 8) - 8);
-			PlaceCHR(placeface, demox - (x * 8) - 8, demoy - (y * 8) - 8);
+			PlaceCHR(chr_placeface, demox + (x * 8), demoy - (y * 8) - 8);
+			PlaceCHR(chr_placeface, demox - (x * 8) - 8, demoy - (y * 8) - 8);
 		}
 	}
 
-	RaquetDrawRectangle(96, 104, 56, 24, PAL12, 255, 1);
+	Raquet_DrawRectangle(96, 104, 56, 24, PAL12, 255, 1);
 	
 	for (int y = 0; y < 2; y++) 
 	{
 		for (int x = 0; x < 6; x++)
 		{
-			PlaceCHR(RaquetLogo[x + (6 * y)], 0 + x * 8 + 101, 0 + y * 8 + 109);
+			PlaceCHR(chr_raquetlogo[x + (6 * y)], 0 + x * 8 + 101, 0 + y * 8 + 109);
 		}
 	}
 
 	// Reset the Window
-	RaquetUpdate();
+	Raquet_Update();
 
 }
 
 int main() {
 
-	RaquetMain();
+	Raquet_Main();
 	return 0;
 	
 }

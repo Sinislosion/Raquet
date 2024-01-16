@@ -21,7 +21,7 @@ Raquet_CHR chr_raquetlogo[12];
 
 void createthedog()
 {
-	LoadPPFData(&ppf_main, "./assets/main.ppf");
+	LoadPPFBank(&ppf_main, "./assets/main.ppf");
 
 	Raquet_SetPalette(palface, PAL0D, PAL00, PAL20);
 	Raquet_SetPalette(pallogo, PAL20, PAL20, PAL20);

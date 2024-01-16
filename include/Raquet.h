@@ -631,7 +631,8 @@ const unsigned int ppfbitmask[8] =
 	0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 
 };
 
-int LoadPPFData(PPF_Bank* targetarray, const char* dir)
+// TODO: Make the code only allocate the bytes required for the array to reduce memory uusage
+int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 {
 	
 	SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");

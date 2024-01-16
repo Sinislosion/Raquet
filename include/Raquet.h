@@ -631,7 +631,6 @@ const unsigned int ppfbitmask[8] =
 	0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 
 };
 
-// TODO: Make the code only allocate the bytes required for the array to reduce memory uusage
 int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 {
 	
@@ -640,7 +639,9 @@ int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 	// check if ppf data is a valid directory
 	if (ppfdata != NULL) 
 	{
-		*targetarray = (char*)malloc(8192 * sizeof(char));
+		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
+		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
+		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
 		
 		SDL_RWread(ppfdata, *targetarray, 8, 1024);
 

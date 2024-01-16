@@ -8,6 +8,9 @@
 uint8_t demoy;
 uint8_t demox;
 
+// PPF Banks
+PPF_Bank ppf_main;
+
 // Palettes
 Palette palface[3];
 Palette pallogo[3];
@@ -18,19 +21,19 @@ Raquet_CHR chr_raquetlogo[12];
 
 void createthedog()
 {
-	LoadPPFData("./assets/main.ppf");
+	LoadPPFBank(&ppf_main, "./assets/main.ppf");
 
 	Raquet_SetPalette(palface, PAL0D, PAL00, PAL20);
 	Raquet_SetPalette(pallogo, PAL20, PAL20, PAL20);
 	
-	chr_placeface = LoadCHR(0, palface);
+	chr_placeface = LoadCHR(ppf_main, 0, palface);
 
 	for (int y = 0; y < 2; y++)
 	{
 		for (int x = 0; x < 6; x++)
 		{
 			int offset = x + (6 * y);
-			chr_raquetlogo[offset] = LoadCHR(offset + 1, pallogo);
+			chr_raquetlogo[offset] = LoadCHR(ppf_main, offset + 1, pallogo);
 		}
 	}
 	const char* nsfpath = "./assets/2A03_Kevvviiinnn-Superfusion.nsf";
@@ -79,7 +82,7 @@ void runthedog()
 
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 
 	Raquet_Main();
 	return 0;

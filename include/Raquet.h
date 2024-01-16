@@ -3,8 +3,9 @@
 #include <gme/gme.h>
 
 // WINDOW CONSTANTS
-const int SCREEN_WIDTH = 256;
-const int SCREEN_HEIGHT = 240;
+#define SCREEN_WIDTH	256
+#define SCREEN_HEIGHT	240
+#define SCREEN_SCALE	3
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
@@ -467,7 +468,7 @@ int initsdl()
 	else
 	{
 		// Create window
-		gWindow = SDL_CreateWindow("Raquet Game Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		gWindow = SDL_CreateWindow("Raquet Game Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (gWindow == NULL)
 		{
 			printf("rip :p\n");
@@ -616,7 +617,8 @@ void Raquet_Main() {
 */
 
 // the array we store our data in, with a max file size of 8KB
-char CHARDATASET[8192];
+//char CHARDATASET[8192];
+typedef char* PPF_Bank;
 
 // PPF HEADER V1.0
 const unsigned char PPFHEADER[8] =
@@ -629,27 +631,33 @@ const unsigned int ppfbitmask[8] =
 	0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 
 };
 
-int LoadPPFData(const char* dir)
+int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 {
 	
 	SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
-
+	
 	// check if ppf data is a valid directory
 	if (ppfdata != NULL) 
 	{
+		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
+		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
+		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
 		
-		SDL_RWread(ppfdata, CHARDATASET, 8, 1024);
+		SDL_RWread(ppfdata, *targetarray, 8, 1024);
 
 		for (int i = 0; i < 8; i++)
 		{
-			if (CHARDATASET[i] != PPFHEADER[i])
+			if ((*targetarray)[i] != PPFHEADER[i])
 			{
 				printf("WARNING HEADER DATA DOES NOT MATCH\n");
+				fflush(stdout);
 			}
 			
 		} 
-
+		
 		SDL_RWclose(ppfdata);
+		printf("Loaded PPF Data at: %s successfully\n", dir);
+		fflush(stdout);
 		return 1;
 		
 	} 
@@ -664,8 +672,9 @@ int LoadPPFData(const char* dir)
 // @function Load a CHR To an SDL Texture
 // @param PPF index starting at 0
 // @param Palette of 3 colors
+// @param the chr bank we've opened
 typedef SDL_Texture* Raquet_CHR;
-Raquet_CHR LoadCHR(int id, Palette palette[3])
+Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 {
 	
 	SDL_Texture* tex = SDL_CreateTexture(
@@ -689,10 +698,10 @@ Raquet_CHR LoadCHR(int id, Palette palette[3])
 			int index = y + 8 + (id * 16);
 			int index2 = y + 16 + (id * 16);
 
-			int check1 = sign(CHARDATASET[index] & ppfbitmask[x]);
-			int check2 = sign(CHARDATASET[index2] & ppfbitmask[x]);
+			int check1 = sign(ppfbank[index] & ppfbitmask[x]);
+			int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
 			int place =  check1 +  check2;
-
+			
 			switch (place)
 			{
 				case 0:

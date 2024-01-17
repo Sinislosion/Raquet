@@ -267,24 +267,25 @@ void RaquetSound_SetFadeout(int fade)
 */
 
 typedef Uint32 Palette;
-
-const Palette PAL00 = {0x6A6A6AFF};
-const Palette PAL01 = {0x001380FF};
-const Palette PAL02 = {0x1E008AFF};
-const Palette PAL03 = {0x39007AFF};
-const Palette PAL04 = {0x550056FF};
-const Palette PAL05 = {0x5A0018FF};
-const Palette PAL06 = {0x4F1000FF};
-const Palette PAL07 = {0x3D1C00FF};
-const Palette PAL08 = {0x253200FF};
-const Palette PAL09 = {0x003D00FF};
-const Palette PAL0A = {0x004000FF};
-const Palette PAL0B = {0x003924FF};
-const Palette PAL0C = {0x002E55FF};
+// Digital Prime Palette
+const Palette PAL00 = {0x696969FF};
+const Palette PAL01 = {0x00148FFF};
+const Palette PAL02 = {0x1E029BFF};
+const Palette PAL03 = {0x3F008AFF};
+const Palette PAL04 = {0x600060FF};
+const Palette PAL05 = {0x660017FF};
+const Palette PAL06 = {0x570D00FF};
+const Palette PAL07 = {0x451B00FF};
+const Palette PAL08 = {0x243400FF};
+const Palette PAL09 = {0x004200FF};
+const Palette PAL0A = {0x004500FF};
+const Palette PAL0B = {0x003C1FFF};
+const Palette PAL0C = {0x00315CFF};
 const Palette PAL0D = {0x000000FF};
 const Palette PAL0E = {0x000000FF};
 const Palette PAL0F = {0x00000000};	// TRANSPARENCY
 
+// TODO:
 const Palette PAL10 = {0xB9BCB9FF};
 const Palette PAL11 = {0x1850C7FF};
 const Palette PAL12 = {0x4B30E3FF};

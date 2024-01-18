@@ -1,17 +1,18 @@
-if [ ! -d "./build" ]; then
+if [ ! -d "./build/linux" ]; then
 	echo "Creating Build Directory"
 	mkdir build
+	mkdir build/linux
 fi
 echo "Clearing past compilation"
 echo "Building..."
-if [ -e "build/prog" ]; then
-	rm build/prog
+if [ -e "build/linux/prog" ]; then
+	rm build/linux/prog
 fi
-clang -std=c99 src/main.c -Wall -O2 -o build/prog -lgme `sdl2-config --cflags --libs` -I include/
-if [ -e "build/prog" ]; then
+clang -std=c99 src/main.c -Wall -O2 -o build/linux/prog -lgme -lSDL2 -I include/
+if [ -e "build/linux/prog" ]; then
 	echo "Copying Assets"
-	cp -r assets build/
-	cd build
+	cp -r assets build/linux/
+	cd build/linux
 	echo "Launching"
 	chmod u+x prog
 	./prog

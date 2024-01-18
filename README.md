@@ -20,8 +20,6 @@ You'll need to use either Linux (Debian has been tested so far, Arch and others 
 4. Put your SDL2 and your libgme into the git directory's root and run `windowscompile.sh`
 It's important to note that you may need to modify the directories in the sh file based on your directories.
 
-That's it.
-
 # License/Credits
 - "2A03_Kevvviiinnn-Superfusion.nsf" from Famitracker's demo included songs is licensed under the GPL v2.0<br>
 - Everything else is licensed under the [WTFPL](http://www.wtfpl.net/about/)

@@ -17,7 +17,7 @@ You'll need to use either Linux (Debian has been tested so far, Arch and others 
 1. Start with compiling [wclang](https://github.com/tpoechtrager/wclang/tree/master)
 2. Download SDL2's latest MingW release from their [github](https://github.com/libsdl-org/SDL/releases/) (SDL3 currently not supported)
 3. Download libgme from [MingW](https://packages.msys2.org/package/mingw-w64-x86_64-libgme)
-4. Put your SDL2 and your libgme into the git directory's root and run `windowscompile.sh`<br>
+4. Put your SDL2 and your libgme into the git directory's root and run `windowscompile.sh`<br><br>
 It's important to note that you may need to modify the directories in the sh file based on your directories.
 
 # License/Credits

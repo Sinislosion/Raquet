@@ -8,6 +8,7 @@
 #define SCREEN_WIDTH	256
 #define SCREEN_HEIGHT	240
 #define SCREEN_SCALE	3
+#define FRAMERATE_CAP	60
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
@@ -457,6 +458,11 @@ void handleInput(SDL_Event e)
 void runthedog(); // put this somewhere in your program, the default code to run
 void createthedog(); // put all your creation code for the program here
 
+// FRAMERATE
+int tick1;
+int tick2;
+float delta_time;
+
 int initsdl()
 {
 	
@@ -485,7 +491,7 @@ int initsdl()
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
-			SDL_GL_SetSwapInterval(-1);	// Uncomment this for VSYNC
+			SDL_GL_SetSwapInterval(0);	// Uncomment this for VSYNC
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
 		}
@@ -592,18 +598,24 @@ void Raquet_Main() {
 		int quit = 0; 
 		while(quit == 0)
 		{ 
-			while(SDL_PollEvent(&e))
+			tick1 = SDL_GetTicks64();
+			delta_time = tick1 - tick2;
+			if (delta_time > 1000/FRAMERATE_CAP)
 			{
-				handleInput(e);
-				if(e.type == SDL_QUIT)
+				tick2 = tick1;
+				while(SDL_PollEvent(&e))
 				{
-					quit = 1;
+					handleInput(e);
+					if(e.type == SDL_QUIT)
+					{
+						quit = 1;
+					}
 				}
+				runthedog();
 				
 			}
 
 			// do our game stuff
-			runthedog();
 			
 		}
 			

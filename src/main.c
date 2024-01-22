@@ -51,7 +51,7 @@ void runthedog()
 	int move = key_right - key_left;
 	demox += move;
 	demoy++;
-
+	
 	// Draw our stuffs
 	Raquet_Clear(PAL12);
 

@@ -8,7 +8,7 @@
 #define SCREEN_WIDTH	256
 #define SCREEN_HEIGHT	240
 #define SCREEN_SCALE	3
-#define FRAMERATE_CAP	60
+#define FRAMERATE_CAP	120
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
@@ -491,7 +491,7 @@ int initsdl()
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
-			SDL_GL_SetSwapInterval(0);	// Uncomment this for VSYNC
+			SDL_GL_SetSwapInterval(1);	// VSYNC
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
 		}
@@ -594,7 +594,7 @@ void Raquet_Main() {
 		fflush(stdout);
 		createthedog();
 		
-		// hack 
+		// hacky
 		int quit = 0; 
 		while(quit == 0)
 		{ 
@@ -752,12 +752,12 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 }
 
 void PlaceCHR(SDL_Texture* tex, int x, int y) {
-	SDL_Rect dstrect;
-		dstrect.x = x;
-		dstrect.y = y;
-		dstrect.w = 8;
-		dstrect.h = 8;
+	SDL_Rect dstrect = {x, y, 8, 8};
+	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
+}
 
+void PlaceCHR_8Bit(SDL_Texture* tex, uint8_t x, uint8_t y) {
+	SDL_Rect dstrect = {x, y, 8, 8};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 

@@ -447,7 +447,6 @@ void handleInput(SDL_Event e)
 	}
 }
 
-
 /*
  ****************************
  *     RAQUET FUNCTIONS     *
@@ -764,4 +763,69 @@ void PlaceCHR_8Bit(SDL_Texture* tex, uint8_t x, uint8_t y) {
 void DestroyCHR(SDL_Texture* tex)
 {
 	SDL_DestroyTexture(tex);
+}
+
+/*
+ ************************
+ *     ACTOR SYSTEM     *
+ ************************
+*/
+
+SDL_Point getsizeoftex(SDL_Texture *tex)
+{
+	SDL_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size;
+}
+
+// TODO: Make a new example program to showcase and test the WIP Actor system
+
+typedef struct Actor
+{
+	// where we are in virtual space
+	int x;
+	int y;
+
+	// where we are on the screen
+	int screen_x;
+	int screen_y;
+
+	// how we're displayed
+	Raquet_CHR cur_image;	// Current CHR
+	int origin_x;		// Our Orgigin Point (x) (default is 0, left)
+	int origin_y;		// Our Orgigin Point (y) (default is 0, top)
+
+	float width;		// How wide we are (default is 1, is multiplied)
+	float height;		// How tall we are (default is 1, is multiplied)
+
+	// collision info
+	int bbox_x1;		// default is 0 (left)
+	int bbox_x2;		// default is 0 (top)
+	int bbox_y1;		// default is the virt width
+	int bbox_y2;		// default is the virt width
+	
+} Actor;
+
+void Raquet_CreateActor(Actor act)
+{
+	SDL_Point size = getsizeoftex(act.cur_image);
+	act.x = 0;
+	act.y = 0;
+	act.screen_x = 0;
+	act.screen_y = 0;
+	act.origin_x = 0;
+	act.origin_y = 0;
+	act.width = 1.0;
+	act.height = 1.0;
+	act.bbox_x1 = 0;
+	act.bbox_y1 = 0;
+	act.bbox_x2 = size.x;
+	act.bbox_y2 = size.y;
+}
+
+void Raquet_DrawActor(Actor act)
+{
+	SDL_Point size = getsizeoftex(act.cur_image);
+	SDL_Rect dstrect = {act.screen_x, act.screen_y, size.x, size.y};
+	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
 }

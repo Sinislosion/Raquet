@@ -1,4 +1,5 @@
 #define SDL_MAIN_HANDLED
+#define RAQUET_GAME_ENGINE
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
@@ -708,9 +709,9 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			int dest = x + (y * 8);
-			int index = y + 8 + (id * 16);
-			int index2 = y + 16 + (id * 16);
+			int dest = x + (y * 8);				// dest is where in our array of pixels we will place the color
+			int index = y + 8 + (id * 16);		// index is the byte in the file we're reading for palette data
+			int index2 = y + 16 + (id * 16);	// index2 is the second byte in the file we read for palette data
 
 			int check1 = sign(ppfbank[index] & ppfbitmask[x]);
 			int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
@@ -750,8 +751,74 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 	return tex;
 }
 
+Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette palette[3])
+{
+	int xsize = xwrap * 8;
+	int ysize = ywrap * 8;
+
+	SDL_Texture* tex = SDL_CreateTexture(
+			gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, xsize, ysize);
+	
+	Uint32 pixels[xsize * ysize];
+
+	for (int chrcounty = 0; chrcounty < ywrap; chrcounty++)
+	{
+		for (int y = 0; y < 8; y++)
+		{
+			for (int chrcountx = 0; chrcountx < xwrap; chrcountx++)
+			{
+				for (int x = 0; x < 8; x++)
+				{
+					int dest = x + (y * xsize) + (chrcountx * 8) + (chrcounty * (xsize * 8));
+					int index = y + 8 + (id[chrcountx + (chrcounty * xwrap)] * 16);
+					int index2 = y + 16 + (id[chrcountx + (chrcounty * xwrap)] * 16);
+		
+					int check1 = sign(ppfbank[index] & ppfbitmask[x]);
+					int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
+					int place =  check1 +  check2;
+					
+					switch (place)
+					{
+						case 0:
+							pixels[dest] = PAL0F;
+						break;
+		
+						case 1:
+							switch (check1) 
+							{
+								case 1:
+									pixels[dest] = palette[0];
+								break;
+								
+								default:
+									pixels[dest] = palette[1];
+								break;
+							}
+						break;
+		
+						case 2:
+							pixels[dest] = palette[2];
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+	SDL_UpdateTexture(tex, NULL, pixels, xsize * sizeof(Palette));
+
+	return tex;
+	
+}
+
 void PlaceCHR(SDL_Texture* tex, int x, int y) {
 	SDL_Rect dstrect = {x, y, 8, 8};
+	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
+}
+
+void PlaceCHR_ext(SDL_Texture* tex, int x, int y, float xsize, float ysize) {
+	SDL_Rect dstrect = {x, y, xsize, ysize};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
@@ -767,7 +834,7 @@ void DestroyCHR(SDL_Texture* tex)
 
 /*
  ************************
- *     ACTOR SYSTEM     *
+ *     ppf_main SYSTEM     *
  ************************
 */
 

@@ -370,82 +370,30 @@ int sign(float comp)
  * If it is not being pressed, it is 0
  * TODO: make this rely on a configuration file for key remapping
  */
+const Uint8* sdlkeys;
 
-int key_up = 0, key_down = 0, key_left = 0, key_right = 0, 
-key_a = 0, key_b = 0, key_select = 0, key_start = 0,
-key_zoomin = 0, key_zoomout = 0;
+int Raquet_KeyCheck(SDL_Scancode nkey)
+{ 
+	SDL_PumpEvents();
+	if (sdlkeys[nkey])
+	{
+		return 1;
+	}
+	return 0;
+}
 
-void handleInput(SDL_Event e)
+int Raquet_KeyCheck_Released(SDL_Keycode key)
 { 
 	switch (e.type)
 	{
-		case SDL_KEYDOWN:
-			switch(e.key.keysym.sym) 
-			{
-				case SDLK_UP:
-					key_up = 1;
-				break;
-
-				case SDLK_DOWN:
-					key_down = 1;
-				break;
-					
-				case SDLK_LEFT:
-					key_left = 1;
-				break;
-				
-				case SDLK_RIGHT:
-					key_right = 1;
-				break;
-
-				case SDLK_x:
-					key_a = 1;
-				break;
-
-				case SDLK_w:
-					key_zoomin = 1;
-				break;
-
-				case SDLK_s:
-					key_zoomout = 1;
-				break;
-			}
-		break;
-
 		case SDL_KEYUP:
-			switch(e.key.keysym.sym) 
+			if (key == e.key.keysym.sym)
 			{
-				case SDLK_UP:
-					key_up = 0;
-				break;
-
-				case SDLK_DOWN:
-					key_down = 0;
-				break;
-					
-				case SDLK_LEFT:
-					key_left = 0;
-				break;
-				
-				case SDLK_RIGHT:
-					key_right = 0;
-				break;
-
-				case SDLK_x:
-					key_a = 0;
-				break;
-
-				case SDLK_w:
-					key_zoomin = 0;
-				break;
-
-				case SDLK_s:
-					key_zoomout = 0;
-				break;
+				return 1;
 			}
 		break;
-		
 	}
+	return 0;
 }
 
 /*
@@ -505,6 +453,7 @@ int initsdl()
 int Raquet_Init()
 {	
 	int ready = 1;
+	sdlkeys = SDL_GetKeyboardState(NULL);
 	if (!initsdl())
 	{
 		printf("Failed to Initialize SDL\n");
@@ -605,7 +554,6 @@ void Raquet_Main() {
 				tick2 = tick1;
 				while(SDL_PollEvent(&e))
 				{
-					handleInput(e);
 					if(e.type == SDL_QUIT)
 					{
 						quit = 1;

@@ -42,6 +42,11 @@ void createthedog()
 
 void runthedog()
 {
+	// input
+	int key_left = Raquet_KeyCheck(SDL_SCANCODE_LEFT);
+	int key_right = Raquet_KeyCheck(SDL_SCANCODE_RIGHT);
+
+	// BG movement
 	int move = key_right - key_left;
 	demox += move;
 	demoy++;

@@ -630,7 +630,7 @@ void Raquet_Main() {
  *     PPF FUNCTIONS     *
  *************************
 */
-
+typedef SDL_Point Raquet_Point;
 // the array we store our data in, with a max file size of 8KB
 //char CHARDATASET[8192];
 typedef char* PPF_Bank;
@@ -812,8 +812,30 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 	
 }
 
+Raquet_Point Raquet_SizeofCHR(SDL_Texture *tex)
+{
+	Raquet_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size;
+}
+
+int Raquet_WidthofCHR(SDL_Texture *tex)
+{
+	Raquet_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size.x;
+}
+
+int Raquet_HeightofCHR(SDL_Texture *tex)
+{
+	Raquet_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size.y;
+}
+
 void PlaceCHR(SDL_Texture* tex, int x, int y) {
-	SDL_Rect dstrect = {x, y, 8, 8};
+	SDL_Point size = Raquet_SizeofCHR(tex);
+	SDL_Rect dstrect = {x, y, size.x, size.y};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
@@ -837,13 +859,6 @@ void DestroyCHR(SDL_Texture* tex)
  *     ppf_main SYSTEM     *
  ************************
 */
-
-SDL_Point getsizeoftex(SDL_Texture *tex)
-{
-	SDL_Point size;
-	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
-	return size;
-}
 
 // TODO: Make a new example program to showcase and test the WIP Actor system
 
@@ -875,7 +890,7 @@ typedef struct Actor
 
 void Raquet_CreateActor(Actor act)
 {
-	SDL_Point size = getsizeoftex(act.cur_image);
+	SDL_Point size = Raquet_SizeofCHR(act.cur_image);
 	act.x = 0;
 	act.y = 0;
 	act.screen_x = 0;
@@ -892,7 +907,7 @@ void Raquet_CreateActor(Actor act)
 
 void Raquet_DrawActor(Actor act)
 {
-	SDL_Point size = getsizeoftex(act.cur_image);
+	SDL_Point size = Raquet_SizeofCHR(act.cur_image);
 	SDL_Rect dstrect = {act.screen_x, act.screen_y, size.x, size.y};
 	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
 }

@@ -62,7 +62,7 @@ void runthedog()
 	}
 
 	Raquet_DrawRectangle(96, 104, 56, 24, PAL12, 255, 1);
-	PlaceCHR_ext(chr_raquetlogo, 101, 109, 48, 16);
+	PlaceCHR(chr_raquetlogo, 101, 109);
 
 	// Reset the Window
 	Raquet_Update();

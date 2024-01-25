@@ -1,11 +1,15 @@
 #define SDL_MAIN_HANDLED
-#include "SDL.h"
+#define RAQUET_GAME_ENGINE
+#include <stdio.h>
+#include <string.h>
+#include <SDL2/SDL.h>
 #include <gme/gme.h>
 
 // WINDOW CONSTANTS
 #define SCREEN_WIDTH	256
 #define SCREEN_HEIGHT	240
 #define SCREEN_SCALE	3
+#define FRAMERATE_CAP	120
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
@@ -444,7 +448,6 @@ void handleInput(SDL_Event e)
 	}
 }
 
-
 /*
  ****************************
  *     RAQUET FUNCTIONS     *
@@ -454,6 +457,11 @@ void handleInput(SDL_Event e)
 // DOG FUNCTIONS
 void runthedog(); // put this somewhere in your program, the default code to run
 void createthedog(); // put all your creation code for the program here
+
+// FRAMERATE
+int tick1;
+int tick2;
+float delta_time;
 
 int initsdl()
 {
@@ -483,7 +491,7 @@ int initsdl()
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
-			SDL_GL_SetSwapInterval(-1);	// Uncomment this for VSYNC
+			SDL_GL_SetSwapInterval(1);	// VSYNC
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
 		}
@@ -586,22 +594,28 @@ void Raquet_Main() {
 		fflush(stdout);
 		createthedog();
 		
-		// hack 
+		// hacky
 		int quit = 0; 
 		while(quit == 0)
 		{ 
-			while(SDL_PollEvent(&e))
+			tick1 = SDL_GetTicks64();
+			delta_time = tick1 - tick2;
+			if (delta_time > 1000/FRAMERATE_CAP)
 			{
-				handleInput(e);
-				if(e.type == SDL_QUIT)
+				tick2 = tick1;
+				while(SDL_PollEvent(&e))
 				{
-					quit = 1;
+					handleInput(e);
+					if(e.type == SDL_QUIT)
+					{
+						quit = 1;
+					}
 				}
+				runthedog();
 				
 			}
 
 			// do our game stuff
-			runthedog();
 			
 		}
 			
@@ -616,7 +630,7 @@ void Raquet_Main() {
  *     PPF FUNCTIONS     *
  *************************
 */
-
+typedef SDL_Point Raquet_Point;
 // the array we store our data in, with a max file size of 8KB
 //char CHARDATASET[8192];
 typedef char* PPF_Bank;
@@ -695,9 +709,9 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			int dest = x + (y * 8);
-			int index = y + 8 + (id * 16);
-			int index2 = y + 16 + (id * 16);
+			int dest = x + (y * 8);				// dest is where in our array of pixels we will place the color
+			int index = y + 8 + (id * 16);		// index is the byte in the file we're reading for palette data
+			int index2 = y + 16 + (id * 16);	// index2 is the second byte in the file we read for palette data
 
 			int check1 = sign(ppfbank[index] & ppfbitmask[x]);
 			int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
@@ -737,17 +751,163 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 	return tex;
 }
 
-void PlaceCHR(SDL_Texture* tex, int x, int y) {
-	SDL_Rect dstrect;
-		dstrect.x = x;
-		dstrect.y = y;
-		dstrect.w = 8;
-		dstrect.h = 8;
+Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette palette[3])
+{
+	int xsize = xwrap * 8;
+	int ysize = ywrap * 8;
 
+	SDL_Texture* tex = SDL_CreateTexture(
+			gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, xsize, ysize);
+	
+	Uint32 pixels[xsize * ysize];
+
+	for (int chrcounty = 0; chrcounty < ywrap; chrcounty++)
+	{
+		for (int y = 0; y < 8; y++)
+		{
+			for (int chrcountx = 0; chrcountx < xwrap; chrcountx++)
+			{
+				for (int x = 0; x < 8; x++)
+				{
+					int dest = x + (y * xsize) + (chrcountx * 8) + (chrcounty * (xsize * 8));
+					int index = y + 8 + (id[chrcountx + (chrcounty * xwrap)] * 16);
+					int index2 = y + 16 + (id[chrcountx + (chrcounty * xwrap)] * 16);
+		
+					int check1 = sign(ppfbank[index] & ppfbitmask[x]);
+					int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
+					int place =  check1 +  check2;
+					
+					switch (place)
+					{
+						case 0:
+							pixels[dest] = PAL0F;
+						break;
+		
+						case 1:
+							switch (check1) 
+							{
+								case 1:
+									pixels[dest] = palette[0];
+								break;
+								
+								default:
+									pixels[dest] = palette[1];
+								break;
+							}
+						break;
+		
+						case 2:
+							pixels[dest] = palette[2];
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+	SDL_UpdateTexture(tex, NULL, pixels, xsize * sizeof(Palette));
+
+	return tex;
+	
+}
+
+Raquet_Point Raquet_SizeofCHR(SDL_Texture *tex)
+{
+	Raquet_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size;
+}
+
+int Raquet_WidthofCHR(SDL_Texture *tex)
+{
+	Raquet_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size.x;
+}
+
+int Raquet_HeightofCHR(SDL_Texture *tex)
+{
+	Raquet_Point size;
+	SDL_QueryTexture(tex, NULL, NULL, &size.x, &size.y);
+	return size.y;
+}
+
+void PlaceCHR(SDL_Texture* tex, int x, int y) {
+	SDL_Point size = Raquet_SizeofCHR(tex);
+	SDL_Rect dstrect = {x, y, size.x, size.y};
+	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
+}
+
+void PlaceCHR_ext(SDL_Texture* tex, int x, int y, float xsize, float ysize) {
+	SDL_Rect dstrect = {x, y, xsize, ysize};
+	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
+}
+
+void PlaceCHR_8Bit(SDL_Texture* tex, uint8_t x, uint8_t y) {
+	SDL_Rect dstrect = {x, y, 8, 8};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
 void DestroyCHR(SDL_Texture* tex)
 {
 	SDL_DestroyTexture(tex);
+}
+
+/*
+ ************************
+ *     ppf_main SYSTEM     *
+ ************************
+*/
+
+// TODO: Make a new example program to showcase and test the WIP Actor system
+
+typedef struct Actor
+{
+	// where we are in virtual space
+	int x;
+	int y;
+
+	// where we are on the screen
+	int screen_x;
+	int screen_y;
+
+	// how we're displayed
+	Raquet_CHR cur_image;	// Current CHR
+	int origin_x;		// Our Orgigin Point (x) (default is 0, left)
+	int origin_y;		// Our Orgigin Point (y) (default is 0, top)
+
+	float width;		// How wide we are (default is 1, is multiplied)
+	float height;		// How tall we are (default is 1, is multiplied)
+
+	// collision info
+	int bbox_x1;		// default is 0 (left)
+	int bbox_x2;		// default is 0 (top)
+	int bbox_y1;		// default is the virt width
+	int bbox_y2;		// default is the virt width
+	
+} Actor;
+
+void Raquet_CreateActor(Actor act)
+{
+	SDL_Point size = Raquet_SizeofCHR(act.cur_image);
+	act.x = 0;
+	act.y = 0;
+	act.screen_x = 0;
+	act.screen_y = 0;
+	act.origin_x = 0;
+	act.origin_y = 0;
+	act.width = 1.0;
+	act.height = 1.0;
+	act.bbox_x1 = 0;
+	act.bbox_y1 = 0;
+	act.bbox_x2 = size.x;
+	act.bbox_y2 = size.y;
+}
+
+void Raquet_DrawActor(Actor act)
+{
+	SDL_Point size = Raquet_SizeofCHR(act.cur_image);
+	SDL_Rect dstrect = {act.screen_x, act.screen_y, size.x, size.y};
+	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
 }

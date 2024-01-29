@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #define RAQUET_GAME_ENGINE
+#define ALLOW_FULLSCREN
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -561,6 +562,12 @@ void Raquet_Main() {
 						quit = 1;
 					}
 				}
+				#ifdef ALLOW_FULLSCREN
+					if (Raquet_KeyCheck(SDL_SCANCODE_F11))
+					{
+						SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					}
+				#endif
 				runthedog();
 				
 			}

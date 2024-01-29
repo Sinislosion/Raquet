@@ -6,8 +6,8 @@
 #include <gme/gme.h>
 
 // WINDOW CONSTANTS
-#define SCREEN_WIDTH	256
-#define SCREEN_HEIGHT	240
+#define SCREEN_WIDTH	480
+#define SCREEN_HEIGHT	270
 #define SCREEN_SCALE	3
 #define FRAMERATE_CAP	120
 
@@ -438,7 +438,7 @@ int initsdl()
 			// Init Window Renderer
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 			SDL_RenderSetViewport(gRenderer, NULL);
-			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
+			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 			SDL_GL_SetSwapInterval(1);	// VSYNC
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
@@ -493,23 +493,24 @@ void quitit()
 	SDL_Quit();
 }
 
-void Raquet_Clear(Palette pal)
+void Raquet_SetDrawColor(Palette pal, int alpha)
 {
 	Uint32 palr  = (pal >> 24) & 0x000000FF;
 	Uint32 palg  = (pal >> 16) & 0x000000FF;
 	Uint32 palb  = (pal >> 8) & 0x000000FF;
-	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, 255);
+	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+}
+
+void Raquet_Clear(Palette pal)
+{
+	Raquet_SetDrawColor(pal, 255);
 	SDL_RenderFillRect(gRenderer, NULL); 
 }
 
 void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill)
 {
 	SDL_Rect rect = {x1, y1, width,height};
-	Uint32 palr  = (pal >> 24) & 0x000000FF;
-	Uint32 palg  = (pal >> 16) & 0x000000FF;
-	Uint32 palb  = (pal >> 8) & 0x000000FF;
-
-	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+	Raquet_SetDrawColor(pal, alpha);
 	
 	switch (fill)
 	{
@@ -800,6 +801,12 @@ void PlaceCHR_8Bit(SDL_Texture* tex, uint8_t x, uint8_t y) {
 void DestroyCHR(SDL_Texture* tex)
 {
 	SDL_DestroyTexture(tex);
+}
+
+void Raquet_DrawPoint(Palette pal, int x, int y, int alpha)
+{
+	Raquet_SetDrawColor(pal, alpha);
+	SDL_RenderDrawPoint(gRenderer, x, y);
 }
 
 /*

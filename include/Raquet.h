@@ -2,6 +2,7 @@
 #define RAQUET_GAME_ENGINE
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <SDL2/SDL.h>
 #include <gme/gme.h>
 
@@ -9,7 +10,7 @@
 #define SCREEN_WIDTH	480
 #define SCREEN_HEIGHT	270
 #define SCREEN_SCALE	3
-#define FRAMERATE_CAP	120
+#define FRAMERATE_CAP	60
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;

@@ -1,5 +1,5 @@
 // put your libs here.
-#include "Raquet.h"
+#include "../include/Raquet.h"
 
 // TODO: COMMENT MORE STUFF IN THE Raquet.h FILE
 
@@ -116,6 +116,7 @@ void createthedog()
 void runthedog()
 {
 	demotime++;
+  
 	// Draw our stuffs
 	Raquet_Clear(PAL12);
 

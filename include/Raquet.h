@@ -1,17 +1,21 @@
 #define SDL_MAIN_HANDLED
 #define RAQUET_GAME_ENGINE
+#define ALLOW_FULLSCREN
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <SDL2/SDL.h>
 #include <gme/gme.h>
 
 // WINDOW CONSTANTS
-#define SCREEN_WIDTH	256
-#define SCREEN_HEIGHT	240
+#define SCREEN_WIDTH	480
+#define SCREEN_HEIGHT	270
 #define SCREEN_SCALE	3
-#define FRAMERATE_CAP	120
+#define FRAMERATE_CAP	60
+#define WINDOW_TITLE  "Raquet Game Engine"
 
 SDL_Window* gWindow = NULL;
+int gFullscreen = -1;
 SDL_Renderer* gRenderer = NULL;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
@@ -370,82 +374,42 @@ int sign(float comp)
  * If it is not being pressed, it is 0
  * TODO: make this rely on a configuration file for key remapping
  */
+const Uint8* sdlkeys;
+Uint8 prevkeys[322];
 
-int key_up = 0, key_down = 0, key_left = 0, key_right = 0, 
-key_a = 0, key_b = 0, key_select = 0, key_start = 0,
-key_zoomin = 0, key_zoomout = 0;
-
-void handleInput(SDL_Event e)
+int Raquet_KeyCheck(SDL_Scancode nkey)
 { 
-	switch (e.type)
+	if (sdlkeys[nkey])
 	{
-		case SDL_KEYDOWN:
-			switch(e.key.keysym.sym) 
-			{
-				case SDLK_UP:
-					key_up = 1;
-				break;
-
-				case SDLK_DOWN:
-					key_down = 1;
-				break;
-					
-				case SDLK_LEFT:
-					key_left = 1;
-				break;
-				
-				case SDLK_RIGHT:
-					key_right = 1;
-				break;
-
-				case SDLK_x:
-					key_a = 1;
-				break;
-
-				case SDLK_w:
-					key_zoomin = 1;
-				break;
-
-				case SDLK_s:
-					key_zoomout = 1;
-				break;
-			}
-		break;
-
-		case SDL_KEYUP:
-			switch(e.key.keysym.sym) 
-			{
-				case SDLK_UP:
-					key_up = 0;
-				break;
-
-				case SDLK_DOWN:
-					key_down = 0;
-				break;
-					
-				case SDLK_LEFT:
-					key_left = 0;
-				break;
-				
-				case SDLK_RIGHT:
-					key_right = 0;
-				break;
-
-				case SDLK_x:
-					key_a = 0;
-				break;
-
-				case SDLK_w:
-					key_zoomin = 0;
-				break;
-
-				case SDLK_s:
-					key_zoomout = 0;
-				break;
-			}
-		break;
-		
+		return 1;
 	}
+	return 0;
+}
+
+int Raquet_KeyCheck_Pressed(SDL_Scancode nkey)
+{ 
+	if (sdlkeys[nkey] != prevkeys[nkey] && sdlkeys[nkey] != 0)
+	{
+	  prevkeys[nkey] = 1;
+    return 1;
+  }
+  if (sdlkeys[nkey] != prevkeys[nkey] && prevkeys[nkey] == 1) {
+    prevkeys[nkey] = 0;
+  }
+  return 0;
+}
+
+int Raquet_KeyCheck_Released(SDL_Scancode nkey)
+{ 
+	if (sdlkeys[nkey] != prevkeys[nkey] && sdlkeys[nkey] != 1)
+	{
+	  prevkeys[nkey] = 0;
+    return 1;
+  }
+  if (sdlkeys[nkey] != prevkeys[nkey] && prevkeys[nkey] == 0) {
+    prevkeys[nkey] = 1;
+  }
+  return 0;
 }
 
 /*
@@ -477,7 +441,7 @@ int initsdl()
 	else
 	{
 		// Create window
-		gWindow = SDL_CreateWindow("Raquet Game Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		gWindow = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (gWindow == NULL)
 		{
 			printf("rip :p\n");
@@ -490,7 +454,7 @@ int initsdl()
 			// Init Window Renderer
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 			SDL_RenderSetViewport(gRenderer, NULL);
-			SDL_RenderSetLogicalSize(gRenderer, 256, 240);
+			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 			SDL_GL_SetSwapInterval(1);	// VSYNC
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
@@ -505,6 +469,7 @@ int initsdl()
 int Raquet_Init()
 {	
 	int ready = 1;
+	sdlkeys = SDL_GetKeyboardState(NULL);
 	if (!initsdl())
 	{
 		printf("Failed to Initialize SDL\n");
@@ -544,23 +509,24 @@ void quitit()
 	SDL_Quit();
 }
 
-void Raquet_Clear(Palette pal)
+void Raquet_SetDrawColor(Palette pal, int alpha)
 {
 	Uint32 palr  = (pal >> 24) & 0x000000FF;
 	Uint32 palg  = (pal >> 16) & 0x000000FF;
 	Uint32 palb  = (pal >> 8) & 0x000000FF;
-	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, 255);
+	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+}
+
+void Raquet_Clear(Palette pal)
+{
+	Raquet_SetDrawColor(pal, 255);
 	SDL_RenderFillRect(gRenderer, NULL); 
 }
 
 void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill)
 {
 	SDL_Rect rect = {x1, y1, width,height};
-	Uint32 palr  = (pal >> 24) & 0x000000FF;
-	Uint32 palg  = (pal >> 16) & 0x000000FF;
-	Uint32 palb  = (pal >> 8) & 0x000000FF;
-
-	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+	Raquet_SetDrawColor(pal, alpha);
 	
 	switch (fill)
 	{
@@ -598,19 +564,35 @@ void Raquet_Main() {
 		int quit = 0; 
 		while(quit == 0)
 		{ 
-			tick1 = SDL_GetTicks64();
+      tick1 = SDL_GetTicks64();
 			delta_time = tick1 - tick2;
 			if (delta_time > 1000/FRAMERATE_CAP)
 			{
 				tick2 = tick1;
 				while(SDL_PollEvent(&e))
 				{
-					handleInput(e);
 					if(e.type == SDL_QUIT)
 					{
 						quit = 1;
 					}
 				}
+        // If we allow fullscreen, then let us use fullscreen with F11
+				#ifdef ALLOW_FULLSCREN 
+					if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
+					{
+            gFullscreen = -gFullscreen;
+          }
+
+          if (gFullscreen == 1) 
+          {
+						SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+          }
+          else 
+          {
+            SDL_SetWindowFullscreen(gWindow, 0);
+          }
+
+				#endif
 				runthedog();
 				
 			}
@@ -839,7 +821,7 @@ void PlaceCHR(SDL_Texture* tex, int x, int y) {
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
-void PlaceCHR_ext(SDL_Texture* tex, int x, int y, float xsize, float ysize) {
+void PlaceCHR_ext(SDL_Texture* tex, int x, int y, int xsize, int ysize) {
 	SDL_Rect dstrect = {x, y, xsize, ysize};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
@@ -852,6 +834,12 @@ void PlaceCHR_8Bit(SDL_Texture* tex, uint8_t x, uint8_t y) {
 void DestroyCHR(SDL_Texture* tex)
 {
 	SDL_DestroyTexture(tex);
+}
+
+void Raquet_DrawPoint(Palette pal, int x, int y, int alpha)
+{
+	Raquet_SetDrawColor(pal, alpha);
+	SDL_RenderDrawPoint(gRenderer, x, y);
 }
 
 /*

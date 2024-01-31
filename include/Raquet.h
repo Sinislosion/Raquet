@@ -1,22 +1,27 @@
+/* If you for some reason include Raquet.h several times, don't worry, I've got your back. */
+#ifndef RAQUET_GAME_ENGINE
 #define SDL_MAIN_HANDLED
-#define RAQUET_GAME_ENGINE
+
+/* Comment this out if you dont want fullscreen */
 #define ALLOW_FULLSCREN
+
+/* other headers we need */
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
 #include <SDL2/SDL.h>
-#include <gme/gme.h>
+#include <gme/gme.h>  // LGPL v2.0! Thank you!
 
-// WINDOW CONSTANTS
-#define SCREEN_WIDTH	480
-#define SCREEN_HEIGHT	270
-#define SCREEN_SCALE	3
-#define FRAMERATE_CAP	60
-#define WINDOW_TITLE  "Raquet Game Engine"
+/* WINDOW CONSTANTS */
+#define SCREEN_WIDTH	      480
+#define SCREEN_HEIGHT	      270
+#define SCREEN_SCALE	      3
+#define FRAMERATE_CAP	      60
+#define WINDOW_TITLE        "Raquet Game Engine"
+#define AUDIO_SAMPLE_RATE   44100
 
-SDL_Window* gWindow = NULL;
-int gFullscreen = -1;
-SDL_Renderer* gRenderer = NULL;
+SDL_Window* gWindow;
+int8_t gFullscreen = -1;
+SDL_Renderer* gRenderer;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 SDL_Event e;
@@ -83,11 +88,11 @@ static const char* soundInit(long sample_rate, int buf_size, sound_callback_t cb
 
 static void soundStart()
 {
-	SDL_PauseAudio( 0 );
+	SDL_PauseAudio(0);
 }
 static void soundStop()
 {
-	SDL_PauseAudio( 1 );
+  SDL_PauseAudio(1);
 
 	SDL_LockAudio();
 	SDL_UnlockAudio();
@@ -429,30 +434,26 @@ float delta_time;
 
 int initsdl()
 {
-	
-	// Init flag
-	int succ = 1;
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("FAILED TO INITIALIZE SDL VIDEO.\n");
-		succ = 0;
-	}
+	  return 0;	
+  }
 	else
 	{
 		// Create window
 		gWindow = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (gWindow == NULL)
 		{
-			printf("rip :p\n");
-			succ = 0;
+			printf("FAILED TO CREATE SDL WINDOW.\n");
+			return 0;
 		}
 		else
 		{
 			printf("SDL Initialized\n");
 			fflush(stdout);
 			// Init Window Renderer
-			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 			SDL_GL_SetSwapInterval(1);	// VSYNC
@@ -462,29 +463,28 @@ int initsdl()
 
 	}
 
-	return succ;
+	return 1;
 	
 }
 
+/* Initialize the Raquet Engine */
 int Raquet_Init()
 {	
-	int ready = 1;
 	sdlkeys = SDL_GetKeyboardState(NULL);
 	if (!initsdl())
 	{
 		printf("Failed to Initialize SDL\n");
-		ready = 0;
+		return 0;
 	}
 
 	// Init Audio
 	gAudioPlayer = newRaquetSound();
-	Raquet_InitSound(44800);
+	Raquet_InitSound(AUDIO_SAMPLE_RATE);
 
-	// PUT YOUR SETUP CODE HERE
-	
-	return ready;
+	return 1;
 }
 
+/* Set a palette variable within runtime */
 void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3)
 {
 	dest[0] = pal1;
@@ -492,23 +492,7 @@ void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3)
 	dest[2] = pal3;
 }
 
-void quitit()
-{
-	printf("Done.\n");
-	// Deallocate surface
-	SDL_DestroyRenderer(gRenderer);
-	gRenderer = NULL;
-	
-	SDL_DestroyWindow(gWindow);
-	gWindow = NULL;
-
-	soundStop();
-	soundCleanup();
-	gme_free_info( gAudioPlayer->track_info_ );
-
-	SDL_Quit();
-}
-
+/* I'm actually not sure what you can use this for yet, but you can use it */
 void Raquet_SetDrawColor(Palette pal, int alpha)
 {
 	Uint32 palr  = (pal >> 24) & 0x000000FF;
@@ -517,12 +501,14 @@ void Raquet_SetDrawColor(Palette pal, int alpha)
 	SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
 }
 
+/* Clear the screen with a solid color */
 void Raquet_Clear(Palette pal)
 {
 	Raquet_SetDrawColor(pal, 255);
 	SDL_RenderFillRect(gRenderer, NULL); 
 }
 
+/* Draw a rectangle (x position, y position, width, height, color, alpha, fill) */
 void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill)
 {
 	SDL_Rect rect = {x1, y1, width,height};
@@ -541,6 +527,7 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
 }
 
+/* This is used to update the Window within the Raquet_Main function */
 void Raquet_Update()
 {
 	SDL_UpdateWindowSurface(gWindow);
@@ -549,20 +536,21 @@ void Raquet_Update()
 	SDL_RenderClear(gRenderer);
 }
 
+/* The main Raquet function. Everything runs from here. */
 void Raquet_Main() {
 	if (!Raquet_Init())
 	{
-		printf("Failed to Initialize\n");
+		printf("Failed to Initialize Raquet\n");
+    return;
 	}
 	else
 	{
 		printf("Raquet Initialized\n");
 		fflush(stdout);
-		createthedog();
+		createthedog(); // run our creation code
 		
-		// hacky
-		int quit = 0; 
-		while(quit == 0)
+		/* SDL While loop, and frame counter */ 
+		while(1)
 		{ 
       tick1 = SDL_GetTicks64();
 			delta_time = tick1 - tick2;
@@ -571,10 +559,12 @@ void Raquet_Main() {
 				tick2 = tick1;
 				while(SDL_PollEvent(&e))
 				{
-					if(e.type == SDL_QUIT)
-					{
-						quit = 1;
-					}
+          switch (e.type)
+          {
+            case SDL_QUIT:
+              return;
+            break;
+          }
 				}
         // If we allow fullscreen, then let us use fullscreen with F11
 				#ifdef ALLOW_FULLSCREN 
@@ -582,28 +572,29 @@ void Raquet_Main() {
 					{
             gFullscreen = -gFullscreen;
           }
-
-          if (gFullscreen == 1) 
+          
+          switch (gFullscreen)
           {
-						SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-          }
-          else 
-          {
-            SDL_SetWindowFullscreen(gWindow, 0);
-          }
+            default:
+              SDL_SetWindowFullscreen(gWindow, 0);
+            break;
 
+            case 1:
+              SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            break;
+          }
+          
 				#endif
-				runthedog();
+
+				runthedog();  // Main loop event 
 				
 			}
 
-			// do our game stuff
+      SDL_Delay(1); // Give back some CPU time
 			
 		}
 			
-	}
-		
-	quitit();
+	}	
 
 }
 
@@ -612,9 +603,8 @@ void Raquet_Main() {
  *     PPF FUNCTIONS     *
  *************************
 */
+
 typedef SDL_Point Raquet_Point;
-// the array we store our data in, with a max file size of 8KB
-//char CHARDATASET[8192];
 typedef char* PPF_Bank;
 
 // PPF HEADER V1.0
@@ -623,11 +613,16 @@ const unsigned char PPFHEADER[8] =
     0x50, 0x50, 0x46, 0x76, 0x01, 0x00, 0x00, 0x00
 };
 
+/* 
+ * fixed bitmask we use to read CHR data 
+ * (this is probably sloppy, but im not smart enough to know another way)
+*/
 const unsigned int ppfbitmask[8] =
 {
 	0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 
 };
 
+/* Load a PPF bank into memory. More info is in the wiki */
 int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 {
 	
@@ -666,10 +661,7 @@ int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 
 }
 
-// @function Load a CHR To an SDL Texture
-// @param PPF index starting at 0
-// @param Palette of 3 colors
-// @param the chr bank we've opened
+/* Load a single-tile sprite. More info is in the wiki */
 typedef SDL_Texture* Raquet_CHR;
 Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 {
@@ -733,6 +725,7 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 	return tex;
 }
 
+/* Load a multi-tile sprite. More info is in the wiki */
 Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette palette[3])
 {
 	int xsize = xwrap * 8;
@@ -794,6 +787,7 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 	
 }
 
+/* Returns a struct of the width and height of the CHR, accessable with x and y */
 Raquet_Point Raquet_SizeofCHR(SDL_Texture *tex)
 {
 	Raquet_Point size;
@@ -801,6 +795,7 @@ Raquet_Point Raquet_SizeofCHR(SDL_Texture *tex)
 	return size;
 }
 
+/* Returns the width of a CHR */
 int Raquet_WidthofCHR(SDL_Texture *tex)
 {
 	Raquet_Point size;
@@ -808,6 +803,7 @@ int Raquet_WidthofCHR(SDL_Texture *tex)
 	return size.x;
 }
 
+/* returns the height of a CHR */
 int Raquet_HeightofCHR(SDL_Texture *tex)
 {
 	Raquet_Point size;
@@ -815,22 +811,20 @@ int Raquet_HeightofCHR(SDL_Texture *tex)
 	return size.y;
 }
 
+/* Place a CHR sprite (chr data, x, y) */
 void PlaceCHR(SDL_Texture* tex, int x, int y) {
 	SDL_Point size = Raquet_SizeofCHR(tex);
 	SDL_Rect dstrect = {x, y, size.x, size.y};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
+/* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels) */
 void PlaceCHR_ext(SDL_Texture* tex, int x, int y, int xsize, int ysize) {
 	SDL_Rect dstrect = {x, y, xsize, ysize};
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
-void PlaceCHR_8Bit(SDL_Texture* tex, uint8_t x, uint8_t y) {
-	SDL_Rect dstrect = {x, y, 8, 8};
-	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
-}
-
+/* Destroy a CHR after we're done using it */
 void DestroyCHR(SDL_Texture* tex)
 {
 	SDL_DestroyTexture(tex);
@@ -843,9 +837,9 @@ void Raquet_DrawPoint(Palette pal, int x, int y, int alpha)
 }
 
 /*
- ************************
- *     ppf_main SYSTEM     *
- ************************
+ *************************
+ *     ACTORS SYSTEM     *
+ *************************
 */
 
 // TODO: Make a new example program to showcase and test the WIP Actor system
@@ -899,3 +893,6 @@ void Raquet_DrawActor(Actor act)
 	SDL_Rect dstrect = {act.screen_x, act.screen_y, size.x, size.y};
 	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
 }
+
+#define RAQUET_GAME_ENGINE
+#endif

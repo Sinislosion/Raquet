@@ -1,6 +1,6 @@
 // put your libs here.
-#include "../include/Raquet.h"
-
+#include "include/Raquet.h"
+#include <math.h>
 // TODO: COMMENT MORE STUFF IN THE Raquet.h FILE
 
 // PPF Banks
@@ -124,10 +124,11 @@ void runthedog()
 	
 	for (int i = 0; i < 6; i++)
 	{
-		Raquet_CHR arr[6] = {chr_raquetlogo_R, chr_raquetlogo_A, 
-			chr_raquetlogo_Q, chr_raquetlogo_U, 
-			chr_raquetlogo_E, chr_raquetlogo_T};
-		PlaceCHR(arr[i], ((SCREEN_WIDTH/2) - 24) + (8 * i), ((SCREEN_HEIGHT/2) - 8) + (sin((demotime + (i * 8)) * .1) * 3));
+		Raquet_CHR arr[6] = {
+      chr_raquetlogo_R, chr_raquetlogo_A, chr_raquetlogo_Q, 
+      chr_raquetlogo_U, chr_raquetlogo_E, chr_raquetlogo_T
+    };
+		PlaceCHR(arr[i], ((SCREEN_WIDTH/2) - 24) + (8 * i), ((SCREEN_HEIGHT/2) - 8) + (sin((demotime + (i * 8)) * .1) * 4));
 	}
 
 	// Reset the Window

@@ -8,7 +8,7 @@ echo "Building..."
 if [ -e "build/win/prog.exe" ]; then
 	rm build/win/prog.exe
 fi
-x86_64-w64-mingw32-clang -std=c99 src/main.c -Wall -O2 -o build/win/prog -Imingwlibgme/include/ -Lmingwlibgme/lib/ -lgme -ISDL2-2.28.5/x86_64-w64-mingw32/include/ -LSDL2-2.28.5/x86_64-w64-mingw32/lib/ -lSDL2 -lSDL2main -static-libgcc -static-libstdc++ -I include/
+x86_64-w64-mingw32-clang -std=c99 src/main.c -Wall -O2 -o build/win/prog -Imingwlibgme/include/ -Lmingwlibgme/lib/ -lgme -ISDL2-2.28.5/x86_64-w64-mingw32/include/ -LSDL2-2.28.5/x86_64-w64-mingw32/lib/ -lSDL2 -lSDL2main -static-libgcc -static-libstdc++ -I ./
 if [ -e "build/win/prog.exe" ]; then
 	echo "Copying Assets"
 	cp -r assets build/win

@@ -15,12 +15,12 @@
 #define SCREEN_WIDTH	      480
 #define SCREEN_HEIGHT	      270
 #define SCREEN_SCALE	      3
-#define FRAMERATE_CAP	      60
+const double FRAMERATE_CAP = 144;
 #define WINDOW_TITLE        "Raquet Game Engine"
 #define AUDIO_SAMPLE_RATE   44100
 
 SDL_Window* gWindow;
-int8_t gFullscreen = -1;
+uint8_t gFullscreen = -1;
 SDL_Renderer* gRenderer;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
@@ -332,7 +332,6 @@ const Palette PAL2D = {0x4B4B4BFF};
 const Palette PAL2E = {0x000000FF};
 const Palette PAL2F = {0x00000000};	// TRANSPARENCY
 
-// TODO:
 const Palette PAL30 = {0xFFFFFFFF};
 const Palette PAL31 = {0xBDE2FFFF};
 const Palette PAL32 = {0xCECFFFFF};
@@ -382,39 +381,26 @@ int sign(float comp)
 const Uint8* sdlkeys;
 Uint8 prevkeys[322];
 
+/* Check if this key is being held down */
 int Raquet_KeyCheck(SDL_Scancode nkey)
-{ 
-	if (sdlkeys[nkey])
-	{
-		return 1;
-	}
-	return 0;
+{
+  return sdlkeys[nkey];
 }
 
+/* Will only return 1 if the key has been pressed down for 1 frame */
 int Raquet_KeyCheck_Pressed(SDL_Scancode nkey)
 { 
-	if (sdlkeys[nkey] != prevkeys[nkey] && sdlkeys[nkey] != 0)
-	{
-	  prevkeys[nkey] = 1;
-    return 1;
-  }
-  if (sdlkeys[nkey] != prevkeys[nkey] && prevkeys[nkey] == 1) {
-    prevkeys[nkey] = 0;
-  }
-  return 0;
+  int check = (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 0);
+  prevkeys[nkey] = sdlkeys[nkey];
+  return check;
 }
 
+/* Will only return 1 if the key has been released for 1 frame */
 int Raquet_KeyCheck_Released(SDL_Scancode nkey)
 { 
-	if (sdlkeys[nkey] != prevkeys[nkey] && sdlkeys[nkey] != 1)
-	{
-	  prevkeys[nkey] = 0;
-    return 1;
-  }
-  if (sdlkeys[nkey] != prevkeys[nkey] && prevkeys[nkey] == 0) {
-    prevkeys[nkey] = 1;
-  }
-  return 0;
+	int check = (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 1);
+  prevkeys[nkey] = sdlkeys[nkey];
+  return check;
 }
 
 /*
@@ -443,11 +429,11 @@ int initsdl()
 	{
 		// Create window
 		gWindow = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-		if (gWindow == NULL)
+    if (gWindow == NULL)
 		{
 			printf("FAILED TO CREATE SDL WINDOW.\n");
 			return 0;
-		}
+    }
 		else
 		{
 			printf("SDL Initialized\n");
@@ -554,28 +540,27 @@ void Raquet_Main() {
 		{ 
       tick1 = SDL_GetTicks64();
 			delta_time = tick1 - tick2;
-			if (delta_time > 1000/FRAMERATE_CAP)
+      double sleep_time = ((1000/FRAMERATE_CAP));
+			tick2 = tick1;
+			while(SDL_PollEvent(&e))
 			{
-				tick2 = tick1;
-				while(SDL_PollEvent(&e))
-				{
-          switch (e.type)
-          {
-            case SDL_QUIT:
-              return;
-            break;
-          }
-				}
+        switch (e.type)
+        {
+          case SDL_QUIT:
+            return;
+          break;
+        }
+			}
         // If we allow fullscreen, then let us use fullscreen with F11
 				#ifdef ALLOW_FULLSCREN 
-					if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
-					{
+				  if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
+				  {
             gFullscreen = -gFullscreen;
           }
-          
+
           switch (gFullscreen)
           {
-            default:
+           default:
               SDL_SetWindowFullscreen(gWindow, 0);
             break;
 
@@ -583,14 +568,10 @@ void Raquet_Main() {
               SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
             break;
           }
-          
-				#endif
+			#endif
 
-				runthedog();  // Main loop event 
-				
-			}
-
-      SDL_Delay(1); // Give back some CPU time
+			runthedog();  // Main loop event 
+      SDL_Delay(sleep_time); // Give back some CPU time, wait for next frame
 			
 		}
 			
@@ -687,9 +668,9 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 			int index = y + 8 + (id * 16);		// index is the byte in the file we're reading for palette data
 			int index2 = y + 16 + (id * 16);	// index2 is the second byte in the file we read for palette data
 
-			int check1 = sign(ppfbank[index] & ppfbitmask[x]);
-			int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
-			int place =  check1 +  check2;
+			int check1 = ((ppfbank[index] & ppfbitmask[x]) > 0);
+			int check2 = ((ppfbank[index2] & ppfbitmask[x]) > 0);
+			int place =  check1 + check2;
 			
 			switch (place)
 			{
@@ -748,8 +729,8 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 					int index = y + 8 + (id[chrcountx + (chrcounty * xwrap)] * 16);
 					int index2 = y + 16 + (id[chrcountx + (chrcounty * xwrap)] * 16);
 		
-					int check1 = sign(ppfbank[index] & ppfbitmask[x]);
-					int check2 = sign(ppfbank[index2] & ppfbitmask[x]);
+					int check1 = ((ppfbank[index] & ppfbitmask[x]) > 0);
+					int check2 = ((ppfbank[index2] & ppfbitmask[x]) > 0);
 					int place =  check1 +  check2;
 					
 					switch (place)

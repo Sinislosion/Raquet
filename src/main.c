@@ -1,5 +1,5 @@
 // put your libs here.
-#include "include/Raquet.h"
+#include "../include/Raquet.h"
 #include <math.h>
 // TODO: COMMENT MORE STUFF IN THE Raquet.h FILE
 
@@ -7,13 +7,13 @@
 PPF_Bank ppf_main;
 
 // Global Demo Vars
-int demotime = 0;
+float demotime = 0;
 
 // BG Stars
 #define PARTICLE_AMOUNT		SCREEN_WIDTH/4
 typedef struct Star
 {
-	int x;
+  double x;
 	int y;
 } Star;
 
@@ -54,7 +54,7 @@ void initStars()
 {
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
 		stararray[i] = createStars();
-		stararray[i].x += 4 * i;
+		stararray[i].x += 4.0 * i;
 	}
 }
 
@@ -63,18 +63,40 @@ void drawStars()
 {	
 	// for every star we know exists, and for every 4 points we need to draw.
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
-		stararray[i].x--;
+		stararray[i].x -= (60 / FRAMERATE_CAP);
 		for (int o = 0; o < 4; o++)
 		{
+      int tempx = stararray[i].x;
 			Raquet_SetDrawColor(PAL30, 255 - (64 * o));
-			SDL_RenderDrawPoint(gRenderer, stararray[i].x + o, stararray[i].y);
+			SDL_RenderDrawPoint(gRenderer, tempx + o, stararray[i].y);
 		}
 		// if a point exceeds 0, plus its length, loop it back to the screen width
-		if (stararray[i].x <= -4) {
+		if (stararray[i].x <= -4.0) {
 			stararray[i] = createStars();
-			stararray[i].x = SCREEN_WIDTH;
+      stararray[i].x = SCREEN_WIDTH;
 		}
-	}
+	} 
+}
+
+/*
+ *********************
+ *     PLACEFACE     *
+ *********************
+*/
+Actor act_placeface;
+void bePlaceface()
+{
+  int key_up = Raquet_KeyCheck(SDL_SCANCODE_UP);
+  int key_down = Raquet_KeyCheck(SDL_SCANCODE_DOWN);
+  int key_left = Raquet_KeyCheck(SDL_SCANCODE_LEFT);
+  int key_right = Raquet_KeyCheck(SDL_SCANCODE_RIGHT);
+
+  int move_x = key_right - key_left;
+  int move_y = key_down - key_up;
+  act_placeface.x += move_x;
+  act_placeface.y += move_y;
+
+  Raquet_DrawActor(act_placeface);
 }
 
 /*
@@ -85,8 +107,9 @@ void drawStars()
 
 void createthedog()
 {
+  /* Graphical */
 	LoadPPFBank(&ppf_main, "./assets/main.ppf");
-
+  
 	Raquet_SetPalette(pal_face, PAL0D, PAL00, PAL20);
 	Raquet_SetPalette(pal_logo, PAL20, PAL20, PAL20);
 	
@@ -105,12 +128,15 @@ void createthedog()
 	chr_raquetlogo_T = LoadCHRMult(ppf_main, arr_raquetlogo_T, 1, 2, pal_logo);
 
 	initStars();
-	
+  
+  /* Audio */
 	const char* nsfpath = "./assets/2A03_Kevvviiinnn-Superfusion.nsf";
-	RaquetSound_LoadAudio(nsfpath);
-	RaquetSound_EnableAccuracy(1);
+	RaquetSound_LoadAudio(nsfpath);	
 	RaquetSound_StartTrack(0, 0);
 	
+  /* Actors */
+  act_placeface = Raquet_CreateActor(chr_placeface);
+
 }
 
 void runthedog()
@@ -118,7 +144,7 @@ void runthedog()
 	demotime++;
   
 	// Draw our stuffs
-	Raquet_Clear(PAL12);
+	Raquet_Clear(PAL12); 
 
 	drawStars();
 	
@@ -130,6 +156,8 @@ void runthedog()
     };
 		PlaceCHR(arr[i], ((SCREEN_WIDTH/2) - 24) + (8 * i), ((SCREEN_HEIGHT/2) - 8) + (sin((demotime + (i * 8)) * .1) * 4));
 	}
+  
+  bePlaceface(); 
 
 	// Reset the Window
 	Raquet_Update();

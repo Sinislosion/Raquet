@@ -15,7 +15,7 @@
 #define SCREEN_WIDTH	      480
 #define SCREEN_HEIGHT	      270
 #define SCREEN_SCALE	      3
-const double FRAMERATE_CAP = 144;
+const double FRAMERATE_CAP = 60.0;
 #define WINDOW_TITLE        "Raquet Game Engine"
 #define AUDIO_SAMPLE_RATE   44100
 
@@ -840,8 +840,8 @@ typedef struct Actor
 	int origin_x;		// Our Orgigin Point (x) (default is 0, left)
 	int origin_y;		// Our Orgigin Point (y) (default is 0, top)
 
-	float width;		// How wide we are (default is 1, is multiplied)
-	float height;		// How tall we are (default is 1, is multiplied)
+	int width;		// How wide we are (default is the width of the sprite)
+	int height;		// How tall we are (default is the height of the sprite)
 
 	// collision info
 	int bbox_x1;		// default is 0 (left)
@@ -851,27 +851,32 @@ typedef struct Actor
 	
 } Actor;
 
-void Raquet_CreateActor(Actor act)
+Actor Raquet_CreateActor(Raquet_CHR tex)
 {
-	SDL_Point size = Raquet_SizeofCHR(act.cur_image);
+  Actor act;
 	act.x = 0;
 	act.y = 0;
-	act.screen_x = 0;
-	act.screen_y = 0;
 	act.origin_x = 0;
 	act.origin_y = 0;
-	act.width = 1.0;
-	act.height = 1.0;
-	act.bbox_x1 = 0;
-	act.bbox_y1 = 0;
-	act.bbox_x2 = size.x;
-	act.bbox_y2 = size.y;
+  if (tex != NULL)
+  {
+    Raquet_Point size = Raquet_SizeofCHR(tex);
+    act.cur_image = tex;
+    act.width = size.x;
+	  act.height = size.y;
+    act.bbox_x1 = 0;
+	  act.bbox_y1 = 0;
+	  act.bbox_x2 = size.x;
+	  act.bbox_y2 = size.y;
+  }
+
+  return act;
+
 }
 
 void Raquet_DrawActor(Actor act)
-{
-	SDL_Point size = Raquet_SizeofCHR(act.cur_image);
-	SDL_Rect dstrect = {act.screen_x, act.screen_y, size.x, size.y};
+{	 
+	SDL_Rect dstrect = {act.x - act.origin_x, act.y - act.origin_y, act.width,act.height};
 	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
 }
 

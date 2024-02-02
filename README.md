@@ -5,7 +5,7 @@ Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free 
 
 ## Compilation
 ### Linux
-1. First instead the necessary dependencies<br>
+1. First install the necessary dependencies<br>
 	Debian Linux:<br>
 	`sudo apt-get install clang sdl2-devel libgme-dev`<br>
     Arch Linux:<br>

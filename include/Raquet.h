@@ -880,5 +880,10 @@ void Raquet_DrawActor(Actor act)
 	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
 }
 
+int Raquet_ActorColliding(int x, int y, Actor act1, Actor act2)
+{
+  return (x + act1.bbox_x2 > act2.x + act2.bbox_x1) && (x + act1.bbox_x1 < act2.x + act2.bbox_x2);
+}
+
 #define RAQUET_GAME_ENGINE
 #endif

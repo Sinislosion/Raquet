@@ -93,15 +93,27 @@ void bePlaceface()
   int key_right = Raquet_KeyCheck(SDL_SCANCODE_RIGHT);
 
   int move_x = key_right - key_left;
-  int move_y = key_down - key_up;
-  act_placeface.x += move_x;
-  act_placeface.y += move_y;
+  int move_y = key_down - key_up; 
 
-  if (Raquet_ActorColliding(act_placeface.x, act_placeface.y, act_placeface, act_placeface2)) 
+  if (Raquet_ActorColliding(act_placeface.x + move_x, act_placeface.y, act_placeface, act_placeface2)) 
   {
-    printf("collided\n");
-    fflush(stdout);
+    while (!Raquet_ActorColliding(act_placeface.x + sign(move_x), act_placeface.y, act_placeface, act_placeface2))
+    {
+      act_placeface.x += sign(move_x);
+    }
+    move_x = 0;
   }
+  act_placeface.x += move_x;
+
+  if (Raquet_ActorColliding(act_placeface.x, act_placeface.y + move_y, act_placeface, act_placeface2)) 
+  {
+    while (!Raquet_ActorColliding(act_placeface.x, act_placeface.y + sign(move_y), act_placeface, act_placeface2))
+    {
+      act_placeface.y += sign(move_x);
+    }
+    move_y = 0;
+  }
+  act_placeface.y += move_y;
 
   Raquet_DrawActor(act_placeface);
   Raquet_DrawActor(act_placeface2);
@@ -145,8 +157,10 @@ void createthedog()
   /* Actors */
   act_placeface = Raquet_CreateActor(chr_placeface);
   act_placeface2 = Raquet_CreateActor(chr_placeface);
-  act_placeface2.x = 50;
-  act_placeface2.y = 50;
+  act_placeface2.width = 16;
+  act_placeface2.bbox_x2 = 16;
+  act_placeface2.x = 100;
+  act_placeface2.y = 100;
 
 }
 

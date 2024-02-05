@@ -3,22 +3,21 @@
 #define SDL_MAIN_HANDLED
 
 /* Comment this out if you dont want fullscreen */
-#include <SDL2/SDL_render.h>
 #define ALLOW_FULLSCREN
 
 /* other headers we need */
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
-#include <gme/gme.h>  // LGPL v2.0! Thank you!
+#include <SDL2/SDL_mixer.h>
 
 /* WINDOW CONSTANTS */
-#define SCREEN_WIDTH	      480
-#define SCREEN_HEIGHT	      270
-#define SCREEN_SCALE	      3   // How much we scale the window by default
-const double FRAMERATE_CAP = 60.0;  // Constant framerate
+#define SCREEN_WIDTH	      480   // Internal screen width
+#define SCREEN_HEIGHT	      270   // Internal screen height
+#define SCREEN_SCALE	      3     // How much we scale the window by default
+#define FRAMERATE_CAP       60.0  // Constant framerate
 #define WINDOW_TITLE        "Raquet Game Engine"  // Window Title
-#define AUDIO_SAMPLE_RATE   44100   // How high quality our sound is, decrease if you want moldy mp3 sound :)
+#define AUDIO_SAMPLE_RATE   44100 // How high quality our sound is, decrease if you want moldy mp3 sound :)
 
 SDL_Window* gWindow;
 uint8_t gFullscreen = -1;
@@ -26,253 +25,6 @@ SDL_Renderer* gRenderer;
 
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 SDL_Event e;
-
-/*
-************************
-*     AUDIO STUFFS     *
-************************
-* big thanks to gme btw, the audio library this part of the code relies on
-* https://github.com/libgme/game-music-emu for more info
-*/
-
-typedef struct sample_t
-{
-    short* buf;
-    int size;
-} sample_t;
-
-typedef struct Raquet_Sound
-{
-	Music_Emu* emu_;
-	short* scope_buf;
-	int paused;
-	gme_info_t* track_info_;
-	int scope_buf_size;
-	long sample_rate;
-} Raquet_Sound;
-
-Raquet_Sound* gAudioPlayer;
-
-typedef void (*sound_callback_t)(void* data, short* out, int count);
-static sound_callback_t sound_callback;
-static void* sound_callback_data;
-
-static void sdl_callback( void* data, Uint8* out, int count )
-{
-	if (sound_callback)
-	{
-		sound_callback(sound_callback_data, (short*) out, count / 2);
-	}
-}
-
-static const char* soundInit(long sample_rate, int buf_size, sound_callback_t cb, void* data)
-{
-	sound_callback = cb;
-	sound_callback_data = data;
-	static SDL_AudioSpec as; 
-	as.freq     = sample_rate;
-	as.format   = AUDIO_S16SYS;
-	as.channels = 2;
-	as.callback = sdl_callback;
-	as.samples  = buf_size;
-	if (SDL_OpenAudio( &as, 0 ) < 0)
-	{
-		const char* err = SDL_GetError();
-		if ( !err )
-		{
-			err = "Couldn't open SDL audio";
-		}
-		return err;
-	}
-	return 0;
-}
-
-static void soundStart()
-{
-	SDL_PauseAudio(0);
-}
-static void soundStop()
-{
-  SDL_PauseAudio(1);
-
-	SDL_LockAudio();
-	SDL_UnlockAudio();
-}
-static void soundCleanup()
-{
-	soundStop();
-	SDL_CloseAudio();
-}
-
-Raquet_Sound* newRaquetSound() 
-{
-	Raquet_Sound* player = (Raquet_Sound*)malloc(sizeof(Raquet_Sound));
-	player->emu_ = NULL;
-	player->scope_buf = NULL;
-	player->paused = 0;
-	player->track_info_ = NULL;
-	if (player != NULL)
-	{
-    	printf("GME Initialized\n");
-    	fflush(stdout);
-	}
-	return player;
-}
-
-void RaquetSound_FillBuffer(void* data, short* out, int count) 
-{
-	Raquet_Sound* self = (Raquet_Sound*) data;
-	if (self->emu_)
-	{
-		gme_play(self->emu_, count, out);
-		if (self->scope_buf)
-		{
-			memcpy( self->scope_buf, out, self->scope_buf_size * sizeof *self->scope_buf );
-		}
-	}
-}
-
-gme_err_t Raquet_InitSound(long rate) 
-{
-	gAudioPlayer->sample_rate = rate;
- 	int min_size = gAudioPlayer->sample_rate * 2;
-	int buf_size = 512;
-	while (buf_size < min_size) { buf_size *= 2; }
-	return soundInit(gAudioPlayer->sample_rate, buf_size, RaquetSound_FillBuffer, gAudioPlayer);
-}
-
-void RaquetSound_StopSound() 
-{
-	soundStop();
-	gme_delete(gAudioPlayer->emu_);
-	gAudioPlayer->emu_ = NULL;
-}
-
-void RaquetSound_DestroySound() 
-{
-	RaquetSound_StopSound();
-	soundCleanup();
-	gme_free_info(gAudioPlayer->track_info_);
-	free(gAudioPlayer);
-}
-
-gme_err_t RaquetSound_LoadAudio(const char* path) 
-{
-	RaquetSound_StopSound();
-	gme_open_file(path, &(gAudioPlayer->emu_), gAudioPlayer->sample_rate);
-	char m3u_path [256 + 5];
-	strncpy(m3u_path, path, 256);
-	m3u_path [256] = 0;
-	char* p = strrchr(m3u_path, '.');
-	if (!p)
-	{
-		p = m3u_path + strlen(m3u_path);
-	}
-	strcpy(p, ".m3u");
-	gme_load_m3u(gAudioPlayer->emu_, m3u_path);
-	return 0;
-}
-
-/*
- *	Return the amount of tracks in the currently playing file
- *	@return int				returns the integer count of the tracks in the file
-*/
-int RaquetSound_TrackCount() {
-	return gAudioPlayer->emu_ ? gme_track_count(gAudioPlayer->emu_) : 0;
-}
-
-/*
- *	Start the track in a given gme-compatible file
- *	@param int track 		The track ID in the file
- *	@param int fadeout 		0 to not fadeout at the end, anything else to fadeout
- *	@return gme_err_t		returns nothing because this is basically a void
-*/
-gme_err_t RaquetSound_StartTrack(int track, int fadeout) {
-	if (gAudioPlayer->emu_)
-	{
-		gme_free_info(gAudioPlayer->track_info_);
-		gAudioPlayer->track_info_ = NULL;
-		gme_track_info(gAudioPlayer->emu_, &(gAudioPlayer->track_info_), track);
-
-		soundStop();
-		gme_start_track(gAudioPlayer->emu_, track);
-
-		if ( gAudioPlayer->track_info_->length <= 0 )
-		{
-			gAudioPlayer->track_info_->length = gAudioPlayer->track_info_->intro_length + 
-				gAudioPlayer->track_info_->loop_length * 2;
-		}
-		              
-		if ( gAudioPlayer->track_info_->length <= 0 )
-		{
-			gAudioPlayer->track_info_->length = (long) (2.5 * 60 * 1000);
-		}
-		
-		if (fadeout)
-		{
-			gme_set_fade( gAudioPlayer->emu_, gAudioPlayer->track_info_->length );
-		}
-		gAudioPlayer->paused = 0;
-		soundStart();
-	}
-	return 0;
-}
-
-void RaquetSound_PauseSound(int b) 
-{
-	gAudioPlayer->paused = b;
-	if (b) { soundStop(); } else { soundStart(); }
-}
-
-void RaquetSound_SuspendSound() 
-{
-	if (!gAudioPlayer->paused) {soundStop();}
-}
-
-void RaquetSound_ResumeSound() 
-{
-	if (!gAudioPlayer->paused) {soundStart();}
-}
-
-int RaquetSound_TrackEnded() 
-{
-	return gAudioPlayer->emu_ ? gme_track_ended( gAudioPlayer->emu_ ) : 0;
-}
-
-void RaquetSound_SetStereoDepth(double tempo) 
-{
-	RaquetSound_SuspendSound();
-	gme_set_stereo_depth( gAudioPlayer->emu_, tempo );
-	RaquetSound_ResumeSound();
-}
-
-void RaquetSound_EnableAccuracy(int b) 
-{
-	RaquetSound_SuspendSound();
-	gme_enable_accuracy( gAudioPlayer->emu_, b );
-	printf("Audio accuracy set to: %d\n", b);
-	fflush(stdout);
-	RaquetSound_ResumeSound();
-}
-
-void RaquetSound_SetTempo(double tempo) 
-{
-	RaquetSound_SuspendSound();
-	gme_set_tempo( gAudioPlayer->emu_, tempo );
-	RaquetSound_ResumeSound();
-}
-
-void RaquetSound_MuteVoices(int mask) {
-	RaquetSound_SuspendSound();
-	gme_mute_voices( gAudioPlayer->emu_, mask );
-	gme_ignore_silence( gAudioPlayer->emu_, mask != 0 );
-	RaquetSound_ResumeSound();
-}
-
-void RaquetSound_SetFadeout(int fade) 
-{
-	gme_set_fade( gAudioPlayer->emu_, fade ? gAudioPlayer->track_info_->length : -1 );
-}
 
 /*
  ************************
@@ -462,11 +214,7 @@ int Raquet_Init()
 	{
 		printf("Failed to Initialize SDL\n");
 		return 0;
-	}
-
-	// Init Audio
-	gAudioPlayer = newRaquetSound();
-	Raquet_InitSound(AUDIO_SAMPLE_RATE);
+	}	
 
 	return 1;
 }

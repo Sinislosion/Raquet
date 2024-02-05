@@ -105,6 +105,24 @@ const Palette PAL3F = {0x00000000};	// TRANSPARENCY
 const Palette PALINVALID = {0xFF00FFFF};
 
 /*
+ ***************************
+ *     AUDIO FUNCTIONS     *
+ ***************************
+*/
+typedef Mix_Chunk* Raquet_WAV;
+typedef Mix_Music* Raquet_BGM;
+
+Raquet_WAV Raquet_LoadWAV(const char *file)
+{
+  return Mix_LoadWAV(file);
+}
+
+void Raquet_PlayWAV(Raquet_WAV wav, int loops)
+{
+  Mix_PlayChannel(-1, wav, loops);
+}
+
+/*
  *********************************
  *     CUSTOM MATH FUNCTIONS     *
  *********************************
@@ -173,13 +191,19 @@ float delta_time;
 
 int initsdl()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		printf("FAILED TO INITIALIZE SDL VIDEO.\n");
 	  return 0;	
   }
 	else
 	{
+    // Init SDL_mixer
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+      printf("FAILED TO INITIALIZE SDL MIXER.\n");
+      return 0;
+    }
 		// Create window
 		gWindow = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     if (gWindow == NULL)

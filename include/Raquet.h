@@ -3,6 +3,7 @@
 #define SDL_MAIN_HANDLED
 
 /* Comment this out if you dont want fullscreen */
+#include <SDL2/SDL_render.h>
 #define ALLOW_FULLSCREN
 
 /* other headers we need */
@@ -14,10 +15,10 @@
 /* WINDOW CONSTANTS */
 #define SCREEN_WIDTH	      480
 #define SCREEN_HEIGHT	      270
-#define SCREEN_SCALE	      3
-const double FRAMERATE_CAP = 60.0;
-#define WINDOW_TITLE        "Raquet Game Engine"
-#define AUDIO_SAMPLE_RATE   44100
+#define SCREEN_SCALE	      3   // How much we scale the window by default
+const double FRAMERATE_CAP = 60.0;  // Constant framerate
+#define WINDOW_TITLE        "Raquet Game Engine"  // Window Title
+#define AUDIO_SAMPLE_RATE   44100   // How high quality our sound is, decrease if you want moldy mp3 sound :)
 
 SDL_Window* gWindow;
 uint8_t gFullscreen = -1;
@@ -799,10 +800,10 @@ void PlaceCHR(SDL_Texture* tex, int x, int y) {
 	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
 }
 
-/* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels) */
-void PlaceCHR_ext(SDL_Texture* tex, int x, int y, int xsize, int ysize) {
-	SDL_Rect dstrect = {x, y, xsize, ysize};
-	SDL_RenderCopy(gRenderer, tex, NULL, &dstrect);
+/* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels, horizontal flip, vertical flip) */
+void PlaceCHR_ext(SDL_Texture* tex, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_RendererFlip flip) {
+	SDL_Rect dstrect = {x - center.x, y - center.y, xsize, ysize};
+	SDL_RenderCopyEx(gRenderer, tex, NULL, &dstrect, angle, &center, flip);
 }
 
 /* Destroy a CHR after we're done using it */
@@ -831,17 +832,12 @@ typedef struct Actor
 	int x;
 	int y;
 
-	// where we are on the screen
-	int screen_x;
-	int screen_y;
-
 	// how we're displayed
 	Raquet_CHR cur_image;	// Current CHR
-	int origin_x;		// Our Orgigin Point (x) (default is 0, left)
-	int origin_y;		// Our Orgigin Point (y) (default is 0, top)
-
+	Raquet_Point origin;		// Our Orgigin Point (x, y) default is (0, 0)
 	int width;		// How wide we are (default is the width of the sprite)
 	int height;		// How tall we are (default is the height of the sprite)
+  int angle;    // angle of the object, rotated around its origin
 
 	// collision info
 	int bbox_x1;		// default is 0 (left)
@@ -856,8 +852,9 @@ Actor Raquet_CreateActor(Raquet_CHR tex)
   Actor act;
 	act.x = 0;
 	act.y = 0;
-	act.origin_x = 0;
-	act.origin_y = 0;
+	act.origin.x = 0;
+	act.origin.y = 0;
+  act.angle = 0;
   if (tex != NULL)
   {
     Raquet_Point size = Raquet_SizeofCHR(tex);
@@ -875,14 +872,13 @@ Actor Raquet_CreateActor(Raquet_CHR tex)
 }
 
 void Raquet_DrawActor(Actor act)
-{	 
-	SDL_Rect dstrect = {act.x - act.origin_x, act.y - act.origin_y, act.width,act.height};
-	SDL_RenderCopy(gRenderer, act.cur_image, NULL, &dstrect);
+{	
+	PlaceCHR_ext(act.cur_image, act.x, act.y, act.width, act.height, act.angle, act.origin, SDL_FLIP_NONE);
 }
 
 int Raquet_ActorColliding(int x, int y, Actor act1, Actor act2)
 {
-  return (x + act1.bbox_x2 > act2.x + act2.bbox_x1) && (x + act1.bbox_x1 < act2.x + act2.bbox_x2) && (y + act1.bbox_y2 > act2.y + act2.bbox_y1) && (y + act1.bbox_y1 < act2.y + act2.bbox_y2);
+  return (x - act1.origin.x + act1.bbox_x2 > act2.x - act2.origin.x + act2.bbox_x1) && (x - act1.origin.x + act1.bbox_x1 < act2.x - act2.origin.x + act2.bbox_x2) && (y - act1.origin.y + act1.bbox_y2 > act2.y - act2.origin.y + act2.bbox_y1) && (y - act1.origin.y + act1.bbox_y1 < act2.y - act2.origin.y + act2.bbox_y2);
 }
 
 #define RAQUET_GAME_ENGINE

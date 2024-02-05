@@ -114,6 +114,7 @@ void bePlaceface()
     move_y = 0;
   }
   act_placeface.y += move_y * 2;
+  act_placeface.angle++;
 
   Raquet_DrawActor(act_placeface);
   Raquet_DrawActor(act_placeface2);
@@ -156,6 +157,9 @@ void createthedog()
 	
   /* Actors */
   act_placeface = Raquet_CreateActor(chr_placeface);
+  act_placeface.origin.x = 4;
+  act_placeface.origin.y = 4;
+
   act_placeface2 = Raquet_CreateActor(chr_placeface);
   act_placeface2.width = 16;
   act_placeface2.bbox_x2 = 16;

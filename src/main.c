@@ -149,12 +149,7 @@ void createthedog()
 	chr_raquetlogo_T = LoadCHRMult(ppf_main, arr_raquetlogo_T, 1, 2, pal_logo);
 
 	initStars();
-  
-  /* Audio */
-	const char* nsfpath = "./assets/2A03_Kevvviiinnn-Superfusion.nsf";
-	RaquetSound_LoadAudio(nsfpath);	
-	RaquetSound_StartTrack(0, 0);
-	
+  	
   /* Actors */
   act_placeface = Raquet_CreateActor(chr_placeface);
   act_placeface.origin.x = 4;
@@ -165,6 +160,10 @@ void createthedog()
   act_placeface2.bbox_x2 = 16;
   act_placeface2.x = 100;
   act_placeface2.y = 100;
+
+  /* Audio */
+  Raquet_WAV wav_placeface = Raquet_LoadWAV("./assets/2A03_Kevvviiinnn-Superfusion.wav");
+  Raquet_PlayWAV(wav_placeface, 0);
 
 }
 

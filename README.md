@@ -9,7 +9,7 @@ Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free 
 	Debian Linux:<br>
 	`sudo apt-get install clang sdl2-devel libsdl2-mixer-dev`<br>
     Arch Linux:<br>
-	`sudo pacman -S clang sdl2 sdl2_mixer
+	`sudo pacman -S clang sdl2 sdl2_mixer`
 2. Run the compile.sh file
 
 ### Windows From Linux (Not very friendly)

@@ -23,4 +23,5 @@ It's important to note that you may need to modify the directories in the sh fil
 # License/Credits
 - "2A03_Kevvviiinnn-Superfusion.wav" exported from Famitracker's demo included songs is licensed under the GPL v2.0 and was created by [symfonikev](https://www.youtube.com/watch?v=gvhjNV9uKl8)<br>
 - Everything else is licensed under the [WTFPL](http://www.wtfpl.net/about/)
-- Palette is "Digital Prime" by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) and used with permission<br>
+- Palette is "Digital Prime" by FirebrandX at [firebrandx.com](http://www.firebrandx.com/nespalette.html) and used with permission<br><br>
+![sinislosion_userbar](https://github.com/Sinislosion/Raquet/assets/144758323/def817b8-65ae-451c-ab79-ace6702e44ae)

@@ -122,6 +122,11 @@ void Raquet_PlayWAV(Raquet_WAV wav, int loops)
   Mix_PlayChannel(-1, wav, loops);
 }
 
+void Raquet_FreeWAV(Raquet_WAV wav)
+{
+  Mix_FreeChunk(wav);
+}
+
 /*
  *********************************
  *     CUSTOM MATH FUNCTIONS     *
@@ -432,6 +437,15 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 	 * If our first palette index is 0, and our second palette index is 1, write color 2
 	 * If our first palette index is 1, and our second palette index is 1, write color 3
 	*/
+  
+  if (id == -1) // if our tile is transparency, make it transparent
+  {
+    Uint32 swag = 0x00000000;
+    memset(pixels, swag, 64);
+    SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+	  SDL_UpdateTexture(tex, NULL, pixels, 8 * sizeof(Palette));
+    return tex;
+  }
 	
 	for (int y = 0; y < 8; y++)
 	{
@@ -499,36 +513,42 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 				for (int x = 0; x < 8; x++)
 				{
 					int dest = x + (y * xsize) + (chrcountx * 8) + (chrcounty * (xsize * 8));
-					int index = y + 8 + (id[chrcountx + (chrcounty * xwrap)] * 16);
-					int index2 = y + 16 + (id[chrcountx + (chrcounty * xwrap)] * 16);
+          int curid = chrcountx + (chrcounty * xwrap);
+					int index = y + 8 + (id[curid] * 16);
+					int index2 = y + 16 + (id[curid] * 16);
 		
 					int check1 = ((ppfbank[index] & ppfbitmask[x]) > 0);
 					int check2 = ((ppfbank[index2] & ppfbitmask[x]) > 0);
 					int place =  check1 +  check2;
-					
-					switch (place)
-					{
-						case 0:
-							pixels[dest] = PAL0F;
-						break;
-		
-						case 1:
-							switch (check1) 
-							{
-								case 1:
-									pixels[dest] = palette[0];
-								break;
+				  if (id[curid] < 0)
+          {
+            pixels[dest] = PAL0F; // if our tile is transparency, make it transparent.
+          } 
+          else 
+          {
+					  switch (place)
+					  {
+						  case 0:
+							  pixels[dest] = PAL0F;
+              break;
+						  case 1:
+							  switch (check1) 
+							  {
+								  case 1:
+									  pixels[dest] = palette[0];
+								  break;
 								
-								default:
-									pixels[dest] = palette[1];
-								break;
-							}
-						break;
+								  default:
+									  pixels[dest] = palette[1];
+								  break;
+							  }
+						  break;
 		
-						case 2:
-							pixels[dest] = palette[2];
-						break;
-					}
+						  case 2:
+							  pixels[dest] = palette[2];
+						  break;
+					  }
+          }
 				}
 			}
 		}

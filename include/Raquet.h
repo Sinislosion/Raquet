@@ -14,9 +14,9 @@
 /* WINDOW CONSTANTS */
 #define SCREEN_WIDTH	      480   // Internal screen width
 #define SCREEN_HEIGHT	      270   // Internal screen height
-#define SCREEN_SCALE	      2     // How much we scale the window by default
+#define SCREEN_SCALE	      3     // How much we scale the window by default
 #define FRAMERATE_CAP       60.0  // Constant framerate
-#define WINDOW_TITLE        "B-TRON"  // Window Title
+#define WINDOW_TITLE        "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE   44100 // How high quality our sound is, decrease if you want moldy mp3 sound :)
 
 SDL_Window* gWindow;

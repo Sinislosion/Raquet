@@ -18,6 +18,7 @@
 #define FRAMERATE_CAP       60.0  // Constant framerate
 #define WINDOW_TITLE        "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE   44100 // How high quality our sound is, decrease if you want moldy mp3 sound :)
+#define VSYNC
 
 SDL_Window* gWindow;
 uint8_t gFullscreen = -1;
@@ -138,6 +139,9 @@ int sign(float comp)
 	return ((0) < comp) - (comp < (0));
 }
 
+// pi
+#define pi      3.14159265358979323846
+
 /*
  ***************************
  *     INPUT FUNCTIONS     *
@@ -179,6 +183,17 @@ int Raquet_KeyCheck_Released(SDL_Scancode nkey)
   return check;
 }
 
+/* 
+ **************************
+ *     MISC FUNCTIONS     *
+ **************************
+*/
+
+void Raquet_ShowCursor(int toggle)
+{
+  SDL_ShowCursor(toggle);
+}
+
 /*
  ****************************
  *     RAQUET FUNCTIONS     *
@@ -190,9 +205,9 @@ void runthedog(); // put this somewhere in your program, the default code to run
 void createthedog(); // put all your creation code for the program here
 
 // FRAMERATE
-int tick1;
-int tick2;
-float delta_time;
+Uint64 tick1 = 0;
+Uint64 tick2 = 0;
+float delta_time = 0;
 
 int initsdl()
 {
@@ -221,10 +236,17 @@ int initsdl()
 			printf("SDL Initialized\n");
 			fflush(stdout);
 			// Init Window Renderer
-			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/);
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-			SDL_GL_SetSwapInterval(1);	// VSYNC
+
+      #ifdef VSYNC
+			  if (SDL_GL_SetSwapInterval(-1) < 0)
+        {
+          SDL_GL_SetSwapInterval(1);
+        } 
+      #endif
+
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
 		}
@@ -315,11 +337,9 @@ void Raquet_Main() {
 		
 		/* SDL While loop, and frame counter */ 
 		while(1)
-		{ 
+		{  
       tick1 = SDL_GetTicks64();
-			delta_time = tick1 - tick2;
-      double sleep_time = ((1000/FRAMERATE_CAP));
-			tick2 = tick1;
+      delta_time = tick1 - tick2;
 			while(SDL_PollEvent(&e))
 			{
         switch (e.type)
@@ -347,10 +367,19 @@ void Raquet_Main() {
             break;
           }
 			#endif
+     
+      #ifndef VSYNC
+        if (delta_time > 1000/FRAMERATE_CAP)
+        {
+          tick2 = tick1;
+          runthedog();  // Main loop event 
+        }
+      #endif
 
-			runthedog();  // Main loop event 
-      SDL_Delay(sleep_time); // Give back some CPU time, wait for next frame
-			
+      #ifdef VSYNC
+        runthedog();
+      #endif
+      SDL_Delay(1);
 		}
 			
 	}	
@@ -616,6 +645,15 @@ void Raquet_DrawPoint(Palette pal, int x, int y, int alpha)
  *************************
 */
 
+typedef struct Raquet_BoundingBox
+{
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+
+} Raquet_BoundingBox;
+
 typedef struct Actor
 {
 	// where we are in virtual space
@@ -630,48 +668,52 @@ typedef struct Actor
   int angle;    // angle of the object, rotated around its origin
 
 	// collision info
-	int bbox_x1;		// default is 0 (left)
-	int bbox_x2;		// default is 0 (top)
-	int bbox_y1;		// default is the virt width
-	int bbox_y2;		// default is the virt width
-                  
+	Raquet_BoundingBox bbox;		// Bounding box                  
+  
   SDL_RendererFlip flip;
 	
 } Actor;
 
-Actor Raquet_CreateActor(Raquet_CHR tex)
+Actor* Raquet_AllocateActor()
 {
-  Actor act;
-	act.x = 0;
-	act.y = 0;
-	act.origin.x = 0;
-	act.origin.y = 0;
-  act.angle = 0;
-  act.flip = SDL_FLIP_NONE;
+  return (Actor*)malloc(sizeof(Actor));
+}
+
+void Raquet_CreateActor(Actor* act, Raquet_CHR tex)
+{
+  act->x = 0;
+	act->y = 0;
+	act->origin.x = 0;
+	act->origin.y = 0;
+  act->angle = 0;
+  act->flip = SDL_FLIP_NONE;
   if (tex != NULL)
   {
     Raquet_Point size = Raquet_SizeofCHR(tex);
-    act.cur_image = tex;
-    act.width = size.x;
-	  act.height = size.y;
-    act.bbox_x1 = 0;
-	  act.bbox_y1 = 0;
-	  act.bbox_x2 = size.x;
-	  act.bbox_y2 = size.y;
-  }
-
-  return act;
+    act->cur_image = tex;
+    act->width = size.x;
+	  act->height = size.y;
+    act->bbox.x1 = 0;
+	  act->bbox.y1 = 0;
+	  act->bbox.x2 = size.x;
+	  act->bbox.y2 = size.y;
+  } 
 
 }
 
-void Raquet_DrawActor(Actor act)
-{	
-	PlaceCHR_ext(act.cur_image, act.x, act.y, act.width, act.height, act.angle, act.origin, act.flip);
-}
-
-int Raquet_ActorColliding(int x, int y, Actor act1, Actor act2)
+void Raquet_DestroyActor(Actor* act)
 {
-  return (x - act1.origin.x + act1.bbox_x2 > act2.x - act2.origin.x + act2.bbox_x1) && (x - act1.origin.x + act1.bbox_x1 < act2.x - act2.origin.x + act2.bbox_x2) && (y - act1.origin.y + act1.bbox_y2 > act2.y - act2.origin.y + act2.bbox_y1) && (y - act1.origin.y + act1.bbox_y1 < act2.y - act2.origin.y + act2.bbox_y2);
+  free(act);
+}
+
+void Raquet_DrawActor(Actor* act)
+{	
+	PlaceCHR_ext(act->cur_image, act->x, act->y, act->width, act->height, act->angle, act->origin, act->flip);
+}
+
+int Raquet_ActorColliding(int x, int y, Actor* act1, Actor* act2)
+{
+  return (x - act1->origin.x + act1->bbox.x2 > act2->x - act2->origin.x + act2->bbox.x1) && (x - act1->origin.x + act1->bbox.x1 < act2->x - act2->origin.x + act2->bbox.x2) && (y - act1->origin.y + act1->bbox.y2 > act2->y - act2->origin.y + act2->bbox.y1) && (y - act1->origin.y + act1->bbox.y1 < act2->y - act2->origin.y + act2->bbox.y2);
 }
 
 #define RAQUET_GAME_ENGINE

@@ -83,8 +83,8 @@ void drawStars()
  *     PLACEFACE     *
  *********************
 */
-Actor act_placeface;
-Actor act_placeface2;
+Actor* act_placeface;
+Actor* act_placeface2;
 void bePlaceface()
 {
   int key_up = Raquet_KeyCheck(SDL_SCANCODE_UP);
@@ -95,26 +95,26 @@ void bePlaceface()
   int move_x = key_right - key_left;
   int move_y = key_down - key_up; 
 
-  if (Raquet_ActorColliding(act_placeface.x + (move_x * 2), act_placeface.y, act_placeface, act_placeface2)) 
+  if (Raquet_ActorColliding(act_placeface->x + (move_x * 2), act_placeface->y, act_placeface, act_placeface2)) 
   {
-    while (!Raquet_ActorColliding(act_placeface.x + sign(move_x), act_placeface.y, act_placeface, act_placeface2))
+    while (!Raquet_ActorColliding(act_placeface->x + sign(move_x), act_placeface->y, act_placeface, act_placeface2))
     {
-      act_placeface.x += sign(move_x);
+      act_placeface->x += sign(move_x);
     }
     move_x = 0;
   }
-  act_placeface.x += move_x * 2;
+  act_placeface->x += move_x * 2;
 
-  if (Raquet_ActorColliding(act_placeface.x, act_placeface.y + (move_y * 2), act_placeface, act_placeface2)) 
+  if (Raquet_ActorColliding(act_placeface->x, act_placeface->y + (move_y * 2), act_placeface, act_placeface2)) 
   {
-    while (!Raquet_ActorColliding(act_placeface.x, act_placeface.y + sign(move_y), act_placeface, act_placeface2))
+    while (!Raquet_ActorColliding(act_placeface->x, act_placeface->y + sign(move_y), act_placeface, act_placeface2))
     {
-      act_placeface.y += sign(move_y);
+      act_placeface->y += sign(move_y);
     }
     move_y = 0;
   }
-  act_placeface.y += move_y * 2;
-  act_placeface.angle++;
+  act_placeface->y += move_y * 2;
+  act_placeface->angle++;
 
   Raquet_DrawActor(act_placeface);
   Raquet_DrawActor(act_placeface2);
@@ -151,15 +151,17 @@ void createthedog()
 	initStars();
   	
   /* Actors */
-  act_placeface = Raquet_CreateActor(chr_placeface);
-  act_placeface.origin.x = 4;
-  act_placeface.origin.y = 4;
+  act_placeface = Raquet_AllocateActor();
+  Raquet_CreateActor(act_placeface, chr_placeface);
+  act_placeface->origin.x = 4;
+  act_placeface->origin.y = 4;
 
-  act_placeface2 = Raquet_CreateActor(chr_placeface);
-  act_placeface2.width = 16;
-  act_placeface2.bbox_x2 = 16;
-  act_placeface2.x = 100;
-  act_placeface2.y = 100;
+  act_placeface2 = Raquet_AllocateActor();
+  Raquet_CreateActor(act_placeface2, chr_placeface);
+  act_placeface2->width = 16;
+  act_placeface2->bbox.x2 = 16;
+  act_placeface2->x = 100;
+  act_placeface2->y = 100;
 
   /* Audio */
   Raquet_WAV wav_placeface = Raquet_LoadWAV("./assets/2A03_Kevvviiinnn-Superfusion.wav");

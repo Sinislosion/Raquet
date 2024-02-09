@@ -616,8 +616,6 @@ void Raquet_DrawPoint(Palette pal, int x, int y, int alpha)
  *************************
 */
 
-// TODO: Make a new example program to showcase and test the WIP Actor system
-
 typedef struct Actor
 {
 	// where we are in virtual space
@@ -636,6 +634,8 @@ typedef struct Actor
 	int bbox_x2;		// default is 0 (top)
 	int bbox_y1;		// default is the virt width
 	int bbox_y2;		// default is the virt width
+                  
+  SDL_RendererFlip flip;
 	
 } Actor;
 
@@ -647,6 +647,7 @@ Actor Raquet_CreateActor(Raquet_CHR tex)
 	act.origin.x = 0;
 	act.origin.y = 0;
   act.angle = 0;
+  act.flip = SDL_FLIP_NONE;
   if (tex != NULL)
   {
     Raquet_Point size = Raquet_SizeofCHR(tex);
@@ -665,7 +666,7 @@ Actor Raquet_CreateActor(Raquet_CHR tex)
 
 void Raquet_DrawActor(Actor act)
 {	
-	PlaceCHR_ext(act.cur_image, act.x, act.y, act.width, act.height, act.angle, act.origin, SDL_FLIP_NONE);
+	PlaceCHR_ext(act.cur_image, act.x, act.y, act.width, act.height, act.angle, act.origin, act.flip);
 }
 
 int Raquet_ActorColliding(int x, int y, Actor act1, Actor act2)

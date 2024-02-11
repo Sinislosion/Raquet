@@ -15,7 +15,7 @@
 #define SCREEN_WIDTH	      480   // Internal screen width
 #define SCREEN_HEIGHT	      270   // Internal screen height
 #define SCREEN_SCALE	      3     // How much we scale the window by default
-#define FRAMERATE_CAP       60.0  // Constant framerate
+#define FRAMERATE_CAP       60    // Constant framerate
 #define WINDOW_TITLE        "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE   44100 // How high quality our sound is, decrease if you want moldy mp3 sound :)
 #define VSYNC
@@ -367,12 +367,18 @@ void Raquet_Main() {
             break;
           }
 			#endif
-        
-        if (delta_time > 1000/FRAMERATE_CAP)
+
+      #ifndef VSYNC
+        if (delta_time >= 1000/FRAMERATE_CAP)
         {
           tick2 = tick1;
           runthedog();  // Main loop event 
         }
+      #endif
+
+      #ifdef VSYNC
+        runthedog();
+      #endif
 
       SDL_Delay(1);
 		}

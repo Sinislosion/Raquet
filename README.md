@@ -10,15 +10,14 @@ Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free 
 	`sudo apt-get install clang sdl2-devel libsdl2-mixer-dev`<br>
     Arch Linux:<br>
 	`sudo pacman -S clang sdl2 sdl2_mixer`
-2. Run the compile.sh file
+2. Run the `compile.sh` shell file
 
-### Windows From Linux (Not very friendly)
-You'll need to use either Linux (Debian has been tested so far, Arch and others are unknown), or WSL (Untested, but should work)
-1. Start with compiling [wclang](https://github.com/tpoechtrager/wclang/tree/master)
-2. Download SDL2's latest MingW release from their [github](https://github.com/libsdl-org/SDL/releases/) (SDL3 currently not supported)
-3. Download SDL2_mixer's latest MingW release from their [github](https://github.com/libsdl-org/SDL_mixer/releases/) (SDL3 currently not supported)
-4. Put your SDL2 and your SDL2_mixer into the git directory's root and run `windowscompile.sh`<br><br>
-It's important to note that you may need to modify the directories in the sh file based on your directories.
+### Windows
+You'll need to use either Windows, Debain Linux, or WSL (Untested, but should work)
+1. If you're on Linux, start with compiling [wclang](https://github.com/tpoechtrager/wclang/tree/master), and edit the `windowscompile.sh` file to use wclang instead of MSYS2
+3. On Windows, download [MSYS2](https://www.msys2.org/)
+4. Run `MSYS2 MINGW64`
+5. Run the `windowscompile.sh` shell file<br>
 
 # License/Credits
 - "2A03_Kevvviiinnn-Superfusion.wav" exported from Famitracker's demo included songs is licensed under the GPL v2.0 and was created by [symfonikev](https://www.youtube.com/watch?v=gvhjNV9uKl8)<br>

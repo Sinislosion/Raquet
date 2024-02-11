@@ -219,7 +219,7 @@ int initsdl()
 	else
 	{
     // Init SDL_mixer
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    if (Mix_OpenAudio(AUDIO_SAMPLE_RATE, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
     {
       printf("FAILED TO INITIALIZE SDL MIXER.\n");
       return 0;
@@ -367,18 +367,13 @@ void Raquet_Main() {
             break;
           }
 			#endif
-     
-      #ifndef VSYNC
+        
         if (delta_time > 1000/FRAMERATE_CAP)
         {
           tick2 = tick1;
           runthedog();  // Main loop event 
         }
-      #endif
 
-      #ifdef VSYNC
-        runthedog();
-      #endif
       SDL_Delay(1);
 		}
 			

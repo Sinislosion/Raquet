@@ -12,6 +12,8 @@ clang -std=c99 src/main.c -Wall -O2 -o build/win/prog -Iwinclude/x86_64-w64-ming
 if [ -e "build/win/prog.exe" ]; then
 	echo "Copying Assets"
 	cp -r assets build/win
+	cp winclude/x86_64-w64-mingw32/bin/SDL2_mixer.dll build/win
+	cp winclude/x86_64-w64-mingw32/bin/SDL2.dll build/win
 	cd build/win
 	./prog.exe
 else

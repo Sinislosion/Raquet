@@ -110,20 +110,20 @@ const Palette PALINVALID = {0xFF00FFFF};
  *     AUDIO FUNCTIONS     *
  ***************************
 */
-typedef Mix_Chunk* Raquet_WAV;
+typedef Mix_Chunk* Raquet_Sound;
 typedef Mix_Music* Raquet_BGM;
 
-Raquet_WAV Raquet_LoadWAV(const char *file)
+Raquet_Sound Raquet_LoadSound(const char *file)
 {
   return Mix_LoadWAV(file);
 }
 
-void Raquet_PlayWAV(Raquet_WAV wav, int loops)
+void Raquet_PlaySound(Raquet_Sound wav, int loops)
 {
   Mix_PlayChannel(-1, wav, loops);
 }
 
-void Raquet_FreeWAV(Raquet_WAV wav)
+void Raquet_DestroySound(Raquet_Sound wav)
 {
   Mix_FreeChunk(wav);
 }
@@ -159,6 +159,8 @@ int sign(float comp)
  * TODO: make this rely on a configuration file for key remapping
  */
 const Uint8* sdlkeys;
+Uint32 sdlmouse;
+Uint32 prevmouse;
 Uint8 prevkeys[322];
 
 /* Check if this key is being held down */
@@ -180,6 +182,25 @@ int Raquet_KeyCheck_Released(SDL_Scancode nkey)
 { 
 	int check = (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 1);
   prevkeys[nkey] = sdlkeys[nkey];
+  return check;
+}
+
+int Raquet_MouseCheck(int sdlbutton)
+{
+  return sdlbutton & sdlmouse;
+}
+
+int Raquet_MouseCheck_Pressed(int sdlbutton)
+{
+  int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 0;
+  prevmouse = sdlmouse;
+  return check;
+}
+
+int Raquet_MouseCheck_Released(int sdlbutton)
+{
+  int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1;
+  prevmouse = sdlmouse;
   return check;
 }
 
@@ -367,6 +388,8 @@ void Raquet_Main() {
             break;
           }
 			#endif
+
+      sdlmouse = SDL_GetMouseState(NULL, NULL);
 
       #ifndef VSYNC
         if (delta_time >= 1000/FRAMERATE_CAP)

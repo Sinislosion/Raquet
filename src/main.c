@@ -164,8 +164,8 @@ void createthedog()
   act_placeface2->y = 100;
 
   /* Audio */
-  Raquet_WAV wav_placeface = Raquet_LoadWAV("./assets/2A03_Kevvviiinnn-Superfusion.wav");
-  Raquet_PlayWAV(wav_placeface, 0);
+  Raquet_Sound snd_placeface = Raquet_LoadSound("./assets/2A03_Kevvviiinnn-Superfusion.wav");
+  Raquet_PlaySound(snd_placeface, 0);
 
 }
 

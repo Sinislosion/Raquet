@@ -193,14 +193,12 @@ int Raquet_MouseCheck(int sdlbutton)
 int Raquet_MouseCheck_Pressed(int sdlbutton)
 {
   int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 0;
-  prevmouse = sdlmouse;
   return check;
 }
 
 int Raquet_MouseCheck_Released(int sdlbutton)
 {
   int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1;
-  prevmouse = sdlmouse;
   return check;
 }
 
@@ -390,6 +388,8 @@ void Raquet_Main() {
 			#endif
 
       sdlmouse = SDL_GetMouseState(NULL, NULL);
+      prevmouse = sdlmouse;
+      for (int i = 0; i < 322; i++) ( prevkeys[i] = sdlkeys[i] );
 
       #ifndef VSYNC
         if (delta_time >= 1000/FRAMERATE_CAP)

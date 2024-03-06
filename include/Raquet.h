@@ -159,8 +159,13 @@ int sign(float comp)
  * TODO: make this rely on a configuration file for key remapping
  */
 const Uint8* sdlkeys;
-Uint32 sdlmouse;
-Uint32 prevmouse;
+uint8_t sdlmouse;
+uint8_t prevmouse;
+
+const uint8_t RAQUET_MOUSE_RIGHT = 4;
+const uint8_t RAQUET_MOUSE_LEFT = 1;
+const uint8_t RAQUET_MOUSE_MIDDLE = 2;
+
 Uint8 prevkeys[322];
 
 /* Check if this key is being held down */
@@ -342,6 +347,7 @@ void Raquet_Update()
 }
 
 /* The main Raquet function. Everything runs from here. */
+
 void Raquet_Main() {
 	if (!Raquet_Init())
 	{
@@ -356,7 +362,7 @@ void Raquet_Main() {
 		
 		/* SDL While loop, and frame counter */ 
 		while(1)
-		{  
+		{ 
       tick1 = SDL_GetTicks64();
       delta_time = tick1 - tick2;
 			while(SDL_PollEvent(&e))
@@ -388,8 +394,6 @@ void Raquet_Main() {
 			#endif
 
       sdlmouse = SDL_GetMouseState(NULL, NULL);
-      prevmouse = sdlmouse;
-      for (int i = 0; i < 322; i++) ( prevkeys[i] = sdlkeys[i] );
 
       #ifndef VSYNC
         if (delta_time >= 1000/FRAMERATE_CAP)
@@ -402,6 +406,9 @@ void Raquet_Main() {
       #ifdef VSYNC
         runthedog();
       #endif
+
+      for (int i = 0; i < 322; i++) ( prevkeys[i] = sdlkeys[i] );
+      prevmouse = sdlmouse;
 
       SDL_Delay(1);
 		}

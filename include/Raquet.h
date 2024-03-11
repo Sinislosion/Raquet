@@ -54,7 +54,7 @@ const Palette PAL0F = {0x00000000};	// TRANSPARENCY
 
 const Palette PAL10 = {0xAFAFAFFF};
 const Palette PAL11 = {0x0F51DDFF};
-const Palette PAL12 = {0x442ff3FF};
+const Palette PAL12 = {0x442FF3FF};
 const Palette PAL13 = {0x7220E2FF};
 const Palette PAL14 = {0xA319B3FF};
 const Palette PAL15 = {0xAE1C51FF};

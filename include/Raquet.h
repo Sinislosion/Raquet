@@ -229,9 +229,7 @@ void runthedog(); // put this somewhere in your program, the default code to run
 void createthedog(); // put all your creation code for the program here
 
 // FRAMERATE
-Uint64 tick1 = 0;
-Uint64 tick2 = 0;
-float delta_time = 0;
+Uint64 start_tick = 0;
 
 int initsdl()
 {
@@ -347,7 +345,6 @@ void Raquet_Update()
 }
 
 /* The main Raquet function. Everything runs from here. */
-
 void Raquet_Main() {
 	if (!Raquet_Init())
 	{
@@ -363,8 +360,7 @@ void Raquet_Main() {
 		/* SDL While loop, and frame counter */ 
 		while(1)
 		{ 
-      tick1 = SDL_GetTicks64();
-      delta_time = tick1 - tick2;
+      start_tick = SDL_GetTicks64();
 			while(SDL_PollEvent(&e))
 			{
         switch (e.type)
@@ -374,6 +370,7 @@ void Raquet_Main() {
           break;
         }
 			}
+
         // If we allow fullscreen, then let us use fullscreen with F11
 				#ifdef ALLOW_FULLSCREN 
 				  if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
@@ -395,28 +392,21 @@ void Raquet_Main() {
 
       sdlmouse = SDL_GetMouseState(NULL, NULL);
 
-      #ifndef VSYNC
-        if (delta_time >= 1000/FRAMERATE_CAP)
-        {
-          tick2 = tick1;
-          runthedog();  // Main loop event 
-        }
-      #endif
-
-      #ifdef VSYNC
-        runthedog();
-      #endif
+      runthedog();
 
       for (int i = 0; i < 322; i++) ( prevkeys[i] = sdlkeys[i] );
       prevmouse = sdlmouse;
 
-      SDL_Delay(1);
-		}
+      if ((1000/FRAMERATE_CAP) > SDL_GetTicks64() - start_tick)
+      {
+        SDL_Delay(1000 / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));
+      }	
+
+    }
 			
 	}	
 
 }
-
 /*
  *************************
  *     PPF FUNCTIONS     *

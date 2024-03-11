@@ -260,9 +260,12 @@ int initsdl()
 			// Init Window Renderer
       #ifdef VSYNC
 			  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-      #elif 
+      #endif
+
+      #ifndef VSYNC 
         gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
       #endif
+
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 

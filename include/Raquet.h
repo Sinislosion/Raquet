@@ -441,12 +441,11 @@ const unsigned int ppfbitmask[8] =
 /* Load a PPF bank into memory. More info is in the wiki */
 int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 {
-	
-	SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
-	
+
 	// check if ppf data is a valid directory
-	if (ppfdata != NULL) 
+	if (SDL_RWFromFile(dir, "rb") != NULL) 
 	{
+    SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
 		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
 		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
 		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
@@ -471,7 +470,9 @@ int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 	} 
 	else 
 	{
-		printf("Failed to load PPF");
+		printf("Failed to load PPF at: %s\n", dir);
+    fflush(stdout);
+    exit(1);
 		return 0;
 	}
 

@@ -520,7 +520,7 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 			switch (place)
 			{
 				case 0:
-					pixels[dest] = PAL0F;
+					pixels[dest] = (Uint32)0;
 				break;
 
 				case 1:
@@ -580,14 +580,14 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 					int place =  check1 +  check2;
 				  if (id[curid] < 0)
           {
-            pixels[dest] = PAL0F; // if our tile is transparency, make it transparent.
+            pixels[dest] = (Uint32)0; // if our tile is transparency, make it transparent.
           } 
           else 
           {
 					  switch (place)
 					  {
 						  case 0:
-							  pixels[dest] = PAL0F;
+							  pixels[dest] = (Uint32)0;
               break;
 						  case 1:
 							  switch (check1) 

@@ -54,7 +54,7 @@ const Palette PAL0F = {0x00000000};	// TRANSPARENCY
 
 const Palette PAL10 = {0xAFAFAFFF};
 const Palette PAL11 = {0x0F51DDFF};
-const Palette PAL12 = {0x442ff3FF};
+const Palette PAL12 = {0x442FF3FF};
 const Palette PAL13 = {0x7220E2FF};
 const Palette PAL14 = {0xA319B3FF};
 const Palette PAL15 = {0xAE1C51FF};
@@ -229,9 +229,7 @@ void runthedog(); // put this somewhere in your program, the default code to run
 void createthedog(); // put all your creation code for the program here
 
 // FRAMERATE
-Uint64 tick1 = 0;
-Uint64 tick2 = 0;
-float delta_time = 0;
+Uint64 start_tick = 0;
 
 int initsdl()
 {
@@ -260,7 +258,14 @@ int initsdl()
 			printf("SDL Initialized\n");
 			fflush(stdout);
 			// Init Window Renderer
-			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+      #ifdef VSYNC
+			  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+      #endif
+
+      #ifndef VSYNC 
+        gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+      #endif
+
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -347,7 +352,6 @@ void Raquet_Update()
 }
 
 /* The main Raquet function. Everything runs from here. */
-
 void Raquet_Main() {
 	if (!Raquet_Init())
 	{
@@ -363,8 +367,7 @@ void Raquet_Main() {
 		/* SDL While loop, and frame counter */ 
 		while(1)
 		{ 
-      tick1 = SDL_GetTicks64();
-      delta_time = tick1 - tick2;
+      start_tick = SDL_GetTicks64();
 			while(SDL_PollEvent(&e))
 			{
         switch (e.type)
@@ -374,6 +377,7 @@ void Raquet_Main() {
           break;
         }
 			}
+
         // If we allow fullscreen, then let us use fullscreen with F11
 				#ifdef ALLOW_FULLSCREN 
 				  if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
@@ -395,28 +399,21 @@ void Raquet_Main() {
 
       sdlmouse = SDL_GetMouseState(NULL, NULL);
 
-      #ifndef VSYNC
-        if (delta_time >= 1000/FRAMERATE_CAP)
-        {
-          tick2 = tick1;
-          runthedog();  // Main loop event 
-        }
-      #endif
-
-      #ifdef VSYNC
-        runthedog();
-      #endif
+      runthedog();
 
       for (int i = 0; i < 322; i++) ( prevkeys[i] = sdlkeys[i] );
       prevmouse = sdlmouse;
 
-      SDL_Delay(1);
-		}
+      if ((1000/FRAMERATE_CAP) > SDL_GetTicks64() - start_tick)
+      {
+        SDL_Delay(1000 / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));
+      }	
+
+    }
 			
 	}	
 
 }
-
 /*
  *************************
  *     PPF FUNCTIONS     *
@@ -444,12 +441,11 @@ const unsigned int ppfbitmask[8] =
 /* Load a PPF bank into memory. More info is in the wiki */
 int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 {
-	
-	SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
-	
+
 	// check if ppf data is a valid directory
-	if (ppfdata != NULL) 
+	if (SDL_RWFromFile(dir, "rb") != NULL) 
 	{
+    SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
 		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
 		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
 		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
@@ -474,7 +470,9 @@ int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 	} 
 	else 
 	{
-		printf("Failed to load PPF");
+		printf("Failed to load PPF at: %s\n", dir);
+    fflush(stdout);
+    exit(1);
 		return 0;
 	}
 
@@ -522,7 +520,7 @@ Raquet_CHR LoadCHR(PPF_Bank ppfbank, int id, Palette palette[3])
 			switch (place)
 			{
 				case 0:
-					pixels[dest] = PAL0F;
+					pixels[dest] = (Uint32)0;
 				break;
 
 				case 1:
@@ -582,14 +580,14 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 					int place =  check1 +  check2;
 				  if (id[curid] < 0)
           {
-            pixels[dest] = PAL0F; // if our tile is transparency, make it transparent.
+            pixels[dest] = (Uint32)0; // if our tile is transparency, make it transparent.
           } 
           else 
           {
 					  switch (place)
 					  {
 						  case 0:
-							  pixels[dest] = PAL0F;
+							  pixels[dest] = (Uint32)0;
               break;
 						  case 1:
 							  switch (check1) 

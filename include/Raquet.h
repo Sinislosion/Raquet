@@ -414,7 +414,7 @@ void Raquet_Main() {
 			runthedog();
 
 			/* Update keymap and mousemap */
-			for (int i = 0; i < 322; i++) { prevkeys[i] = sdlkeys[i] };
+			for (int i = 0; i < 322; i++) { prevkeys[i] = sdlkeys[i]; };
 			prevmouse = sdlmouse;
 
 			/* Framerate calculations, I hated this */

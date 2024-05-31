@@ -20,11 +20,19 @@
 #define AUDIO_SAMPLE_RATE   44100 // How high quality our sound is, decrease if you want moldy mp3 sound :)
 #define VSYNC
 
+/*
+	gWindow is the dedicated window used internally
+	by the Raquet Game Engine. We recommend not writing 
+	to it directly.
+*/
 SDL_Window* gWindow;
-uint8_t gFullscreen = -1;
-SDL_Renderer* gRenderer;
+uint8_t gFullscreen = -1;	// our fullscreen variable
+SDL_Renderer* gRenderer;	// the dedicated renderer instance
 
+/* gRectScrn is set to the resolution defined above */
 SDL_Rect gRectScrn = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+/* all SDL events are contained in this one variable, scary */
 SDL_Event e;
 
 /*
@@ -103,6 +111,7 @@ const Palette PAL3D = {0xB9B9B9FF};
 const Palette PAL3E = {0x000000FF};
 const Palette PAL3F = {0x00000000};	// TRANSPARENCY
 
+/* this last one is just for fun because i like this color */
 const Palette PALINVALID = {0xFF00FFFF};
 
 /*
@@ -111,18 +120,20 @@ const Palette PALINVALID = {0xFF00FFFF};
  ***************************
 */
 typedef Mix_Chunk* Raquet_Sound;
-typedef Mix_Music* Raquet_BGM;
 
+/* Loads a sound into a Raquet_Sound variable */
 Raquet_Sound Raquet_LoadSound(const char *file)
 {
   return Mix_LoadWAV(file);
 }
 
+/* Plays the Raquet_Sound specified */
 void Raquet_PlaySound(Raquet_Sound wav, int loops)
 {
   Mix_PlayChannel(-1, wav, loops);
 }
 
+/* Unloads a Raquet_Sound from memory */
 void Raquet_DestroySound(Raquet_Sound wav)
 {
   Mix_FreeChunk(wav);
@@ -139,7 +150,7 @@ int sign(float comp)
 	return ((0) < comp) - (comp < (0));
 }
 
-// pi
+// pi, we like it around here. idk why i have it defined
 #define pi      3.14159265358979323846
 
 /*
@@ -148,25 +159,15 @@ int sign(float comp)
  ***************************
 */
 
+const Uint8* sdlkeys;	// stores the entire sdl keymap
+Uint8 prevkeys[322];	// stores the previous sdl keymap
+uint8_t sdlmouse;		// stores the sdl mousemap
+uint8_t prevmouse;		// stores the previous sdl mousemap
 
-/*
- * NES KEYMAP
- * UP, DOWN, LEFT, RIGHT
- * B, A, SELECT, START
- * 
- * If a key is being pressed, it is 1
- * If it is not being pressed, it is 0
- * TODO: make this rely on a configuration file for key remapping
- */
-const Uint8* sdlkeys;
-uint8_t sdlmouse;
-uint8_t prevmouse;
-
+/* These integers are used as bitmasks */
 const uint8_t RAQUET_MOUSE_RIGHT = 4;
 const uint8_t RAQUET_MOUSE_LEFT = 1;
 const uint8_t RAQUET_MOUSE_MIDDLE = 2;
-
-Uint8 prevkeys[322];
 
 /* Check if this key is being held down */
 int Raquet_KeyCheck(SDL_Scancode nkey)
@@ -190,17 +191,20 @@ int Raquet_KeyCheck_Released(SDL_Scancode nkey)
   return check;
 }
 
+/* Mouse equivilant of Raquet_KeyCheck */
 int Raquet_MouseCheck(int sdlbutton)
 {
   return sdlbutton & sdlmouse;
 }
 
+/* Mouse equivilant of Raquet_KeyCheck_Pressed */
 int Raquet_MouseCheck_Pressed(int sdlbutton)
 {
   int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 0;
   return check;
 }
 
+/* Mouse equivilant of Raquet_KeyCheck_Released */
 int Raquet_MouseCheck_Released(int sdlbutton)
 {
   int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1;
@@ -213,6 +217,7 @@ int Raquet_MouseCheck_Released(int sdlbutton)
  **************************
 */
 
+/* 1 shows the cursor, 0 hides the cursor */
 void Raquet_ShowCursor(int toggle)
 {
   SDL_ShowCursor(toggle);
@@ -225,12 +230,13 @@ void Raquet_ShowCursor(int toggle)
 */
 
 // DOG FUNCTIONS
-void runthedog(); // put this somewhere in your program, the default code to run
-void createthedog(); // put all your creation code for the program here
+void runthedog(); 		// put this somewhere in your program, the default code to run
+void createthedog(); 	// put all your creation code for the program here
 
 // FRAMERATE
 Uint64 start_tick = 0;
 
+/* Initializes SDL */
 int initsdl()
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
@@ -257,25 +263,28 @@ int initsdl()
 		{
 			printf("SDL Initialized\n");
 			fflush(stdout);
+
 			// Init Window Renderer
-      #ifdef VSYNC
+      		#ifdef VSYNC
 			  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-      #endif
+      		#endif
 
-      #ifndef VSYNC 
-        gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-      #endif
+			#ifndef VSYNC 
+				gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+			#endif
 
+			/* Set Viewport and Stuff */
 			SDL_RenderSetViewport(gRenderer, NULL);
 			SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-      #ifdef VSYNC
-			  if (SDL_GL_SetSwapInterval(-1) < 0)
-        {
-          SDL_GL_SetSwapInterval(1);
-        } 
-      #endif
-
+			#ifdef VSYNC
+				if (SDL_GL_SetSwapInterval(-1) < 0)
+				{
+				SDL_GL_SetSwapInterval(1);
+				} 
+			#endif
+			
+			/* Enable Transparency */
 			SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 			
 		}
@@ -294,7 +303,7 @@ int Raquet_Init()
 	{
 		printf("Failed to Initialize SDL\n");
 		return 0;
-	}	
+	}
 
 	return 1;
 }
@@ -356,7 +365,7 @@ void Raquet_Main() {
 	if (!Raquet_Init())
 	{
 		printf("Failed to Initialize Raquet\n");
-    return;
+    	return;
 	}
 	else
 	{
@@ -367,53 +376,59 @@ void Raquet_Main() {
 		/* SDL While loop, and frame counter */ 
 		while(1)
 		{ 
-      start_tick = SDL_GetTicks64();
+      		start_tick = SDL_GetTicks64();
 			while(SDL_PollEvent(&e))
 			{
-        switch (e.type)
-        {
-          case SDL_QUIT:
-            return;
-          break;
-        }
+				switch (e.type)
+				{
+					case SDL_QUIT:
+						return;
+					break;
+				}
 			}
 
-        // If we allow fullscreen, then let us use fullscreen with F11
-				#ifdef ALLOW_FULLSCREN 
-				  if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
-				  {
-            gFullscreen = -gFullscreen;
-          }
+        	// If we allow fullscreen, then let us use fullscreen with F11
+			#ifdef ALLOW_FULLSCREN 
+			
+				if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11))
+				{
+					gFullscreen = -gFullscreen;
+				}
 
-          switch (gFullscreen)
-          {
-           default:
-              SDL_SetWindowFullscreen(gWindow, 0);
-            break;
+				switch (gFullscreen)
+				{
+					default:
+						SDL_SetWindowFullscreen(gWindow, 0);
+					break;
 
-            case 1:
-              SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-            break;
-          }
+					case 1:
+						SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					break;
+				}
+
 			#endif
 
-      sdlmouse = SDL_GetMouseState(NULL, NULL);
+			sdlmouse = SDL_GetMouseState(NULL, NULL);
 
-      runthedog();
+			/* Run our game code */
+			runthedog();
 
-      for (int i = 0; i < 322; i++) ( prevkeys[i] = sdlkeys[i] );
-      prevmouse = sdlmouse;
+			/* Update keymap and mousemap */
+			for (int i = 0; i < 322; i++) { prevkeys[i] = sdlkeys[i]; };
+			prevmouse = sdlmouse;
 
-      if ((1000/FRAMERATE_CAP) > SDL_GetTicks64() - start_tick)
-      {
-        SDL_Delay(1000 / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));
-      }	
+			/* Framerate calculations, I hated this */
+			if ((1000/FRAMERATE_CAP) > SDL_GetTicks64() - start_tick)
+			{
+				SDL_Delay(1000 / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));
+			}	
 
-    }
+		}
 			
 	}	
 
 }
+
 /*
  *************************
  *     PPF FUNCTIONS     *
@@ -423,7 +438,7 @@ void Raquet_Main() {
 typedef SDL_Point Raquet_Point;
 typedef char* PPF_Bank;
 
-// PPF HEADER V1.0
+/* PPF HEADER V1.0 */
 const unsigned char PPFHEADER[8] =
 {
     0x50, 0x50, 0x46, 0x76, 0x01, 0x00, 0x00, 0x00
@@ -471,9 +486,8 @@ int LoadPPFBank(PPF_Bank* targetarray, const char* dir)
 	else 
 	{
 		printf("Failed to load PPF at: %s\n", dir);
-    fflush(stdout);
-    exit(1);
-		return 0;
+		fflush(stdout);
+		exit(1);
 	}
 
 }
@@ -619,7 +633,7 @@ Raquet_CHR LoadCHRMult(PPF_Bank ppfbank, int *id, int xwrap, int ywrap, Palette 
 	
 }
 
-/* Returns a struct of the width and height of the CHR, accessable with x and y */
+/* Returns a struct of the width and height of the CHR, accessible with x and y */
 Raquet_Point Raquet_SizeofCHR(SDL_Texture *tex)
 {
 	Raquet_Point size;
@@ -674,6 +688,10 @@ void Raquet_DrawPoint(Palette pal, int x, int y, int alpha)
  *************************
 */
 
+/* 
+	Note: Bounding boxes do not take the origin into account,
+	they are calculated from the top left of the sprite
+*/
 typedef struct Raquet_BoundingBox
 {
   int x1;
@@ -691,10 +709,10 @@ typedef struct Actor
 
 	// how we're displayed
 	Raquet_CHR cur_image;	// Current CHR
-	Raquet_Point origin;		// Our Orgigin Point (x, y) default is (0, 0)
-	int width;		// How wide we are (default is the width of the sprite)
-	int height;		// How tall we are (default is the height of the sprite)
-  int angle;    // angle of the object, rotated around its origin
+	Raquet_Point origin;	// Our Orgigin Point (x, y) default is (0, 0)
+	int width;				// How wide we are (default is the width of the sprite)
+	int height;				// How tall we are (default is the height of the sprite)
+  	int angle;    			// angle of the object, rotated around its origin
 
 	// collision info
 	Raquet_BoundingBox bbox;		// Bounding box                  
@@ -710,29 +728,30 @@ Actor* Raquet_AllocateActor()
 
 void Raquet_CreateActor(Actor* act, Raquet_CHR tex)
 {
-  act->x = 0;
+  	act->x = 0;
 	act->y = 0;
 	act->origin.x = 0;
 	act->origin.y = 0;
-  act->angle = 0;
-  act->flip = SDL_FLIP_NONE;
-  if (tex != NULL)
-  {
-    Raquet_Point size = Raquet_SizeofCHR(tex);
-    act->cur_image = tex;
-    act->width = size.x;
-	  act->height = size.y;
-    act->bbox.x1 = 0;
-	  act->bbox.y1 = 0;
-	  act->bbox.x2 = size.x;
-	  act->bbox.y2 = size.y;
-  } 
+  	act->angle = 0;
+  	act->flip = SDL_FLIP_NONE;
+	
+  	if (tex != NULL)
+  	{
+		Raquet_Point size = Raquet_SizeofCHR(tex);
+		act->cur_image = tex;
+		act->width = size.x;
+		act->height = size.y;
+		act->bbox.x1 = 0;
+		act->bbox.y1 = 0;
+		act->bbox.x2 = size.x;
+		act->bbox.y2 = size.y;
+  	} 
 
 }
 
 void Raquet_DestroyActor(Actor* act)
 {
-  free(act);
+	free(act);
 }
 
 void Raquet_DrawActor(Actor* act)
@@ -742,7 +761,7 @@ void Raquet_DrawActor(Actor* act)
 
 int Raquet_ActorColliding(int x, int y, Actor* act1, Actor* act2)
 {
-  return (x - act1->origin.x + act1->bbox.x2 > act2->x - act2->origin.x + act2->bbox.x1) && (x - act1->origin.x + act1->bbox.x1 < act2->x - act2->origin.x + act2->bbox.x2) && (y - act1->origin.y + act1->bbox.y2 > act2->y - act2->origin.y + act2->bbox.y1) && (y - act1->origin.y + act1->bbox.y1 < act2->y - act2->origin.y + act2->bbox.y2);
+	return (x - act1->origin.x + act1->bbox.x2 > act2->x - act2->origin.x + act2->bbox.x1) && (x - act1->origin.x + act1->bbox.x1 < act2->x - act2->origin.x + act2->bbox.x2) && (y - act1->origin.y + act1->bbox.y2 > act2->y - act2->origin.y + act2->bbox.y1) && (y - act1->origin.y + act1->bbox.y1 < act2->y - act2->origin.y + act2->bbox.y2);
 }
 
 #define RAQUET_GAME_ENGINE

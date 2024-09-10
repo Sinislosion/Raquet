@@ -4,6 +4,15 @@
 Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.
 <br><br>
 
+# Features
+- 2D 4 Color Tile-Based Rendering
+- Audio Playback using SDL Mixer
+- Keyboard and Mouse Input Handling
+- Collision Detection
+- Video-Game-Specific Math Functions
+- Palette Swapping
+- Basic Game Object Management (Actors)
+
 ## Compilation
 ### Linux
 1. First install the necessary dependencies<br>
@@ -11,14 +20,18 @@ Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free 
 	`sudo apt-get install clang sdl2-devel libsdl2-mixer-dev`<br>
     Arch Linux:<br>
 	`sudo pacman -S clang sdl2 sdl2_mixer`
-2. Run the `compile.sh` shell file
+2. cd into the repo's directory
+3. run `make`
 
 ### Windows
 You'll need to use either Windows, Debain Linux, or WSL (Untested, but should work)
 1. If you're on Linux, start with compiling [wclang](https://github.com/tpoechtrager/wclang/tree/master), and edit the `windowscompile.sh` file to use wclang instead of MSYS2
 3. On Windows, download [MSYS2](https://www.msys2.org/)
 4. Run `MSYS2 MINGW64`
-5. Run the `windowscompile.sh` shell file<br>
+5. Update MSYS2 with `pacman -Syyu`
+6. Install the necessary dependencies with `pacman -S mingw-w64-x86_64-gcc`
+7. cd into the repo's director
+8. Run `make`
 
 # License/Credits
 - "2A03_Kevvviiinnn-Superfusion.wav" exported from Famitracker's demo included songs is licensed under the GPL v2.0 and was created by [symfonikev](https://www.youtube.com/watch?v=gvhjNV9uKl8)<br>

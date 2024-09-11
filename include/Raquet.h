@@ -243,16 +243,16 @@ int initsdl() {
             fflush(stdout);
             // Init Window Renderer
             #ifdef VSYNC
-            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-            #elif
-            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            #else
+            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
             #endif
             SDL_RenderSetViewport(gRenderer, NULL);
             SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             #ifdef VSYNC
             if (SDL_GL_SetSwapInterval(-1) < 0) {
-                SDL_GL_SetSwapInterval(1);
+        	SDL_GL_SetSwapInterval(1);
             }
             #endif
 

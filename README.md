@@ -1,7 +1,8 @@
 ![Version Badge](https://img.shields.io/badge/Pre_Release-1.1.0-%2365aaff) ![SDL Badge](https://img.shields.io/badge/Backend-SDL2-%23dd6fff)<br>
 # Raquet Game Engine
 ![Raquet Game Engine -- Logo by Chris S.](/raquetlogo.png)<br>
-Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.
+Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.<br>
+Documentation can be found at [https://raquet.sinislosion.net/](https://raquet.sinislosion.net/)
 <br><br>
 
 # Features
@@ -28,7 +29,7 @@ You'll need to use MSYS2, or use a cross compiler for this
 1. On Windows, download [MSYS2](https://www.msys2.org/)
 2. Run `MSYS2 MINGW64`
 3. Update MSYS2 with `pacman -Syyu`
-4. Install the necessary dependencies with `pacman -S mingw-w64-x86_64-gcc`
+4. Install the necessary dependencies with `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer`
 5. cd into the repo's director
 6. Run `make`
 

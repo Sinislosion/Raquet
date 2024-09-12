@@ -30,7 +30,7 @@ You'll need to use MSYS2, or use a cross compiler for this
 2. Run `MSYS2 MINGW64`
 3. Update MSYS2 with `pacman -Syyu`
 4. Install the necessary dependencies with `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer`
-5. cd into the repo's director
+5. cd into the repo's directory
 6. Run `make`
 
 # License/Credits

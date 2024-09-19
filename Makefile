@@ -9,10 +9,10 @@ CARGS := -std=c99 -O2 src/main.c
 
 W_EXTENSION = .exe
 W_CFLAGS := -O2 -DWINDOWS
-W_LFLAGS := -Lwinclude/lib/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
+W_LFLAGS := -Lwinclude/lib/ -Iinclude/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
 W_PLATFORM := win
 
-COMPILER := gcc
+COMPILER := clang
 
 start: src/main.c
 		

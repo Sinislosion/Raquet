@@ -188,9 +188,6 @@ void runthedog()
   
 	bePlaceface(); 
 
-	// Reset the Window
-	Raquet_Update();
-
 }
 
 int main(int argc, char *argv[]) {

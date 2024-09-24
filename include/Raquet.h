@@ -26,6 +26,7 @@ const float FRAMERATE_CAP = 60.0f; // Constant framerate
 SDL_Window * gWindow;
 uint8_t gFullscreen = -1;
 SDL_Renderer * gRenderer;
+SDL_Texture * gFinalTexture;
 
 SDL_Rect gRectScrn = {
     0,
@@ -44,73 +45,73 @@ SDL_Event e;
 typedef Uint32 Palette;
 
 // Digital Prime Palette
-const Palette PAL00 = {0x696969FF};
-const Palette PAL01 = {0x00148FFF};
-const Palette PAL02 = {0x1E029BFF};
-const Palette PAL03 = {0x3F008AFF};
-const Palette PAL04 = {0x600060FF};
-const Palette PAL05 = {0x660017FF};
-const Palette PAL06 = {0x570D00FF};
-const Palette PAL07 = {0x451B00FF};
-const Palette PAL08 = {0x243400FF};
-const Palette PAL09 = {0x004200FF};
-const Palette PAL0A = {0x004500FF};
-const Palette PAL0B = {0x003C1FFF};
-const Palette PAL0C = {0x00315CFF};
-const Palette PAL0D = {0x000000FF};
-const Palette PAL0E = {0x000000FF};
-const Palette PAL0F = {0x00000000};	// TRANSPARENCY
+#define PAL00   0x696969FF
+#define PAL01 	0x00148FFF
+#define PAL02 	0x1E029BFF 
+#define PAL03 	0x3F008AFF
+#define PAL04 	0x600060FF
+#define PAL05 	0x660017FF
+#define PAL06 	0x570D00FF
+#define PAL07 	0x451B00FF
+#define PAL08 	0x243400FF
+#define PAL09 	0x004200FF
+#define PAL0A 	0x004500FF
+#define PAL0B 	0x003C1FFF
+#define PAL0C 	0x00315CFF
+#define PAL0D 	0x000000FF
+#define PAL0E 	0x000000FF
+#define PAL0F 	0x00000000  // TRANSPARENCY
 
-const Palette PAL10 = {0xAFAFAFFF};
-const Palette PAL11 = {0x0F51DDFF};
-const Palette PAL12 = {0x442FF3FF};
-const Palette PAL13 = {0x7220E2FF};
-const Palette PAL14 = {0xA319B3FF};
-const Palette PAL15 = {0xAE1C51FF};
-const Palette PAL16 = {0xA43400FF};
-const Palette PAL17 = {0x884D00FF};
-const Palette PAL18 = {0x676D00FF};
-const Palette PAL19 = {0x208000FF};
-const Palette PAL1A = {0x008B00FF};
-const Palette PAL1B = {0x007F42FF};
-const Palette PAL1C = {0x006C97FF};
-const Palette PAL1D = {0x000000FF};
-const Palette PAL1E = {0x000000FF};
-const Palette PAL1F = {0x00000000};	// TRANSPARENCY
+#define PAL10 	0xAFAFAFFF
+#define PAL11 	0x0F51DDFF
+#define PAL12 	0x442FF3FF
+#define PAL13 	0x7220E2FF
+#define PAL14 	0xA319B3FF
+#define PAL15 	0xAE1C51FF
+#define PAL16 	0xA43400FF
+#define PAL17 	0x884D00FF
+#define PAL18 	0x676D00FF
+#define PAL19 	0x208000FF
+#define PAL1A 	0x008B00FF
+#define PAL1B 	0x007F42FF
+#define PAL1C 	0x006C97FF
+#define PAL1D 	0x000000FF
+#define PAL1E 	0x000000FF
+#define PAL1F 	0x00000000  // TRANSPARENCY
 
-const Palette PAL20 = {0xFFFFFFFF};
-const Palette PAL21 = {0x65AAFFFF};
-const Palette PAL22 = {0x8C96FFFF};
-const Palette PAL23 = {0xB983FFFF};
-const Palette PAL24 = {0xDD6FFFFF};
-const Palette PAL25 = {0xEA6FBDFF};
-const Palette PAL26 = {0xEB8466FF};
-const Palette PAL27 = {0xDCA21FFF};
-const Palette PAL28 = {0xBAB403FF};
-const Palette PAL29 = {0x7ECB07FF};
-const Palette PAL2A = {0x54D33EFF};
-const Palette PAL2B = {0x3CD284FF};
-const Palette PAL2C = {0x3EC7CCFF};
-const Palette PAL2D = {0x4B4B4BFF};
-const Palette PAL2E = {0x000000FF};
-const Palette PAL2F = {0x00000000};	// TRANSPARENCY
+#define PAL20 	0xFFFFFFFF
+#define PAL21 	0x65AAFFFF
+#define PAL22 	0x8C96FFFF
+#define PAL23 	0xB983FFFF
+#define PAL24 	0xDD6FFFFF
+#define PAL25 	0xEA6FBDFF
+#define PAL26 	0xEB8466FF
+#define PAL27 	0xDCA21FFF
+#define PAL28 	0xBAB403FF
+#define PAL29 	0x7ECB07FF
+#define PAL2A 	0x54D33EFF
+#define PAL2B 	0x3CD284FF
+#define PAL2C 	0x3EC7CCFF
+#define PAL2D 	0x4B4B4BFF
+#define PAL2E 	0x000000FF
+#define PAL2F 	0x00000000  // TRANSPARENCY
 
-const Palette PAL30 = {0xFFFFFFFF};
-const Palette PAL31 = {0xBDE2FFFF};
-const Palette PAL32 = {0xCECFFFFF};
-const Palette PAL33 = {0xE6C2FFFF};
-const Palette PAL34 = {0xF6bCFFFF};
-const Palette PAL35 = {0xF9C2EDFF};
-const Palette PAL36 = {0xFACFC6FF};
-const Palette PAL37 = {0xF8DEACFF};
-const Palette PAL38 = {0xEEE9A1FF};
-const Palette PAL39 = {0xD0F59FFF};
-const Palette PAL3A = {0xBBF5AFFF};
-const Palette PAL3B = {0xB3F5CDFF};
-const Palette PAL3C = {0xB9EDF0FF};
-const Palette PAL3D = {0xB9B9B9FF};
-const Palette PAL3E = {0x000000FF};
-const Palette PAL3F = {0x00000000};	// TRANSPARENCY
+#define PAL30 	0xFFFFFFFF
+#define PAL31 	0xBDE2FFFF
+#define PAL32 	0xCECFFFFF
+#define PAL33 	0xE6C2FFFF
+#define PAL34 	0xF6bCFFFF
+#define PAL35 	0xF9C2EDFF
+#define PAL36 	0xFACFC6FF
+#define PAL37 	0xF8DEACFF
+#define PAL38 	0xEEE9A1FF
+#define PAL39 	0xD0F59FFF
+#define PAL3A 	0xBBF5AFFF
+#define PAL3B 	0xB3F5CDFF
+#define PAL3C 	0xB9EDF0FF
+#define PAL3D 	0xB9B9B9FF
+#define PAL3E 	0x000000FF
+#define PAL3F 	0x00000000  // TRANSPARENCY
 
 /*
  ***************************
@@ -138,11 +139,8 @@ void Raquet_DestroySound(Raquet_Sound wav) {
  *********************************
  */
 
-int sign(float comp) {
-    return ((0) < comp) - (comp < (0));
-}
-
-#define pi 3.14159265358979323846
+#define sign(comp)  (0 < comp) - (comp < 0)
+#define pi 3.1415926535
 
 /*
  ***************************
@@ -150,65 +148,42 @@ int sign(float comp) {
  ***************************
  */
 
-/*
- * NES KEYMAP
- * UP, DOWN, LEFT, RIGHT
- * B, A, SELECT, START
- * 
- * If a key is being pressed, it is 1
- * If it is not being pressed, it is 0
- * TODO: make this rely on a configuration file for key remapping
- */
 const Uint8 * sdlkeys;
 uint8_t sdlmouse;
 uint8_t prevmouse;
 
-const uint8_t RAQUET_MOUSE_RIGHT = 4;
-const uint8_t RAQUET_MOUSE_LEFT = 1;
-const uint8_t RAQUET_MOUSE_MIDDLE = 2;
+#define RAQUET_MOUSE_RIGHT      4
+#define RAQUET_MOUSE_LEFT       1
+#define RAQUET_MOUSE_MIDDLE     2
 
-Uint8 prevkeys[322];
+Uint8 prevkeys[SDL_NUM_SCANCODES];
 
 /* Check if this key is being held down */
-int Raquet_KeyCheck(SDL_Scancode nkey) {
-    return sdlkeys[nkey];
-}
+#define Raquet_KeyCheck(nkey) sdlkeys[nkey]
 
-/* Will only return 1 if the key has been pressed down for 1 frame */
-int Raquet_KeyCheck_Pressed(SDL_Scancode nkey) {
-    int check = (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 0);
-    return check;
-}
+/* Will only return 1 for the first frame the key is being held down */
+#define Raquet_KeyCheck_Pressed(nkey) (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 0)
 
 /* Will only return 1 if the key has been released for 1 frame */
-int Raquet_KeyCheck_Released(SDL_Scancode nkey) {
-    int check = (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 1);
-    return check;
-}
+#define Raquet_KeyCheck_Released(nkey) (prevkeys[nkey] != sdlkeys[nkey] && sdlkeys[nkey] != 1)
 
-int Raquet_MouseCheck(int sdlbutton) {
-    return sdlbutton & sdlmouse;
-}
+/* Check if this mouse button is being held down */
+#define Raquet_MouseCheck(sdlbutton) sdlbutton & sdlmouse
 
-int Raquet_MouseCheck_Pressed(int sdlbutton) {
-    int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 0;
-    return check;
-}
+/* Will only return 1 for the first frame the mouse button is being held down */
+#define Raquet_MouseCheck_Pressed(sdlbutton) (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 0
 
-int Raquet_MouseCheck_Released(int sdlbutton) {
-    int check = (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1;
-    return check;
-}
+/* Will only return 1 if the mouse button has been released for 1 frame */
+#define Raquet_MouseCheck_Released(sdlbutton) (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1
 
 /* 
  **************************
  *     MISC FUNCTIONS     *
  **************************
  */
-
-void Raquet_ShowCursor(int toggle) {
-    SDL_ShowCursor(toggle);
-}
+ 
+/* 1 for display cursor, 0 for disable cursor */
+#define Raquet_ShowCursor(toggle) SDL_ShowCursor(toggle)
 
 /*
  ****************************
@@ -223,7 +198,7 @@ void createthedog(); // put all your creation code for the program here
 // FRAMERATE
 Uint64 start_tick = 0;
 
-int initsdl() {
+int Raquet_InitSDL() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("FAILED TO INITIALIZE SDL VIDEO.\n");
         return 0;
@@ -241,19 +216,23 @@ int initsdl() {
         } else {
             printf("SDL Initialized\n");
             fflush(stdout);
+
+            gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+
             // Init Window Renderer
             #ifdef VSYNC
             	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
             #else
             	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
             #endif
+
             SDL_RenderSetViewport(gRenderer, NULL);
             SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             #ifdef VSYNC
-            if (SDL_GL_SetSwapInterval(-1) < 0) {
-        	SDL_GL_SetSwapInterval(1);
-            }
+                if (SDL_GL_SetSwapInterval(-1) < 0) {
+        	        SDL_GL_SetSwapInterval(1);
+                }
             #endif
 
             SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
@@ -269,7 +248,7 @@ int initsdl() {
 /* Initialize the Raquet Engine */
 int Raquet_Init() {
     sdlkeys = SDL_GetKeyboardState(NULL);
-    if (!initsdl()) {
+    if (!Raquet_InitSDL()) {
         printf("Failed to Initialize SDL\n");
         return 0;
     }
@@ -368,7 +347,10 @@ void Raquet_Main() {
             sdlmouse = SDL_GetMouseState(NULL, NULL);
 
             start_tick = SDL_GetTicks64();
-            runthedog(); 
+            SDL_SetRenderTarget(gRenderer, gFinalTexture);
+            runthedog();
+            SDL_SetRenderTarget(gRenderer, NULL);
+            Raquet_Update();
             if ((1000.0f / FRAMERATE_CAP) > SDL_GetTicks64() - start_tick) {
                 SDL_Delay(1000.0f / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));
             }
@@ -728,18 +710,7 @@ void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha) {
 struct Camera {
     int x;
     int y;
-
-    int newx;
-    int newy;
-
-    int8_t shift;
-    int8_t movedelay_time;
-    int8_t movedelay;
-
-    uint8_t ismoved: 1;
-
-}
-Camera;
+} Camera;
 
 /*
  *************************

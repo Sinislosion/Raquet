@@ -4,8 +4,7 @@
 float point_dir(float x1, float y1, float x2, float y2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
-    float angle = atan2(dy, dx);
-    return angle;
+    return atan2(dy, dx);
 }
 
 // distance to an x point
@@ -27,17 +26,9 @@ int collision_line(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y
     float check3 = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
     float check4 = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
 
-    if (check1 == 0 || check2 == 0) {
-        line1 = -1; // set to undefined
-    } else {
-        line1 = (check1 / check2);
-    }
+    line1 = (check1 == 0 && check2 == 0) ? -1 : (check1 / check2);
+    line2 = (check3 == 0 && check4 == 0) ? -1 : (check3 / check4);
 
-    if (check3 == 0 || check4 == 0) {
-        line2 = -1; // set to undefined
-    } else {
-        line2 = (check3 / check4);
-    }
     return (line1 >= 0 && line1 <= 1 && line2 >= 0 && line2 <= 1);
 
 }

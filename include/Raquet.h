@@ -217,17 +217,16 @@ int Raquet_InitSDL() {
             printf("SDL Initialized\n");
             fflush(stdout);
 
-            gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
-
             // Init Window Renderer
             #ifdef VSYNC
-            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
             #else
-            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             #endif
+			
+			gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             SDL_RenderSetViewport(gRenderer, NULL);
-            SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             #ifdef VSYNC
                 if (SDL_GL_SetSwapInterval(-1) < 0) {
@@ -302,7 +301,9 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 /* This is used to update the Window within the Raquet_Main function */
 void Raquet_Update() {
     SDL_UpdateWindowSurface(gWindow);
+	SDL_SetRenderTarget(gRenderer, NULL);
     SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScrn, &gRectScrn);
     SDL_RenderPresent(gRenderer);
     SDL_RenderClear(gRenderer);
 }
@@ -347,9 +348,9 @@ void Raquet_Main() {
             sdlmouse = SDL_GetMouseState(NULL, NULL);
 
             start_tick = SDL_GetTicks64();
+			
             SDL_SetRenderTarget(gRenderer, gFinalTexture);
             runthedog();
-            SDL_SetRenderTarget(gRenderer, NULL);
             Raquet_Update();
             if ((1000.0f / FRAMERATE_CAP) > SDL_GetTicks64() - start_tick) {
                 SDL_Delay(1000.0f / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));

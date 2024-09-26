@@ -28,12 +28,14 @@ uint8_t gFullscreen = -1;
 SDL_Renderer * gRenderer;
 SDL_Texture * gFinalTexture;
 
-SDL_Rect gRectScrn = {
-    0,
-    0,
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT
+const SDL_Rect gRectScreen = {
+    0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 };
+
+SDL_Rect gRectScreenScale = {
+	0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
+};
+
 SDL_Event e;
 
 /*
@@ -220,6 +222,9 @@ int Raquet_InitSDL() {
             // Init Window Renderer
             #ifdef VSYNC
             	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
+				if (SDL_GL_SetSwapInterval(-1) < 0) {
+        	        SDL_GL_SetSwapInterval(1);
+                }
             #else
             	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             #endif
@@ -227,12 +232,6 @@ int Raquet_InitSDL() {
 			gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             SDL_RenderSetViewport(gRenderer, NULL);
-
-            #ifdef VSYNC
-                if (SDL_GL_SetSwapInterval(-1) < 0) {
-        	        SDL_GL_SetSwapInterval(1);
-                }
-            #endif
 
             SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
@@ -302,8 +301,14 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 void Raquet_Update() {
     SDL_UpdateWindowSurface(gWindow);
 	SDL_SetRenderTarget(gRenderer, NULL);
-    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-	SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScrn, &gRectScrn);
+	
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize(gWindow, &windowWidth, &windowHeight);
+	gRectScreenScale.w = SCREEN_WIDTH * (windowHeight / SCREEN_HEIGHT);
+	gRectScreenScale.h = SCREEN_HEIGHT * (windowHeight / SCREEN_HEIGHT);
+	
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScreen, &gRectScreenScale);
     SDL_RenderPresent(gRenderer);
     SDL_RenderClear(gRenderer);
 }

@@ -94,8 +94,8 @@ void bePlaceface()
 	int move_y = key_down - key_up; 
 
 	if (Raquet_ActorColliding(act_placeface->x + (move_x * 2), act_placeface->y, act_placeface, act_placeface2)) {
-		while (!Raquet_ActorColliding(act_placeface->x + sign(move_x), act_placeface->y, act_placeface, act_placeface2)) {
-			act_placeface->x += sign(move_x);
+		while (!Raquet_ActorColliding(act_placeface->x + Raquet_Sign(move_x), act_placeface->y, act_placeface, act_placeface2)) {
+			act_placeface->x += Raquet_Sign(move_x);
 		}
 		move_x = 0;
 	}
@@ -103,8 +103,8 @@ void bePlaceface()
 	act_placeface->x += move_x * 2;
 
 	if (Raquet_ActorColliding(act_placeface->x, act_placeface->y + (move_y * 2), act_placeface, act_placeface2))  {
-		while (!Raquet_ActorColliding(act_placeface->x, act_placeface->y + sign(move_y), act_placeface, act_placeface2)) {
-			act_placeface->y += sign(move_y);
+		while (!Raquet_ActorColliding(act_placeface->x, act_placeface->y + Raquet_Sign(move_y), act_placeface, act_placeface2)) {
+			act_placeface->y += Raquet_Sign(move_y);
 		}
 		move_y = 0;
 	}

@@ -141,8 +141,9 @@ void Raquet_DestroySound(Raquet_Sound wav) {
  *********************************
  */
 
-#define sign(comp)  (0 < comp) - (comp < 0)
-#define pi 3.1415926535
+#define Raquet_Sign(comp)  (0 < comp) - (comp < 0)
+#define Raquet_Min(x, y) (((x) < (y)) ? (x) : (y))
+#define Raquet_PI 3.1415926535
 
 /*
  ***************************
@@ -302,11 +303,20 @@ void Raquet_Update() {
     SDL_UpdateWindowSurface(gWindow);
 	SDL_SetRenderTarget(gRenderer, NULL);
 	
+	/* Integer Scaling Math */
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(gWindow, &windowWidth, &windowHeight);
-	gRectScreenScale.w = SCREEN_WIDTH * (windowHeight / SCREEN_HEIGHT);
-	gRectScreenScale.h = SCREEN_HEIGHT * (windowHeight / SCREEN_HEIGHT);
 	
+	int mult1, mult2, mult3;
+	
+	mult1 = SCREEN_HEIGHT * (windowHeight / SCREEN_HEIGHT);
+	mult2 = SCREEN_WIDTH * (windowWidth / SCREEN_WIDTH);
+
+	mult3 = Raquet_Min(mult1, mult2);
+	
+	gRectScreenScale.w = SCREEN_WIDTH * mult3;
+	gRectScreenScale.h = SCREEN_HEIGHT * mult3;
+
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 	SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScreen, &gRectScreenScale);
     SDL_RenderPresent(gRenderer);

@@ -1,11 +1,11 @@
 PROGRAMNAME = RAQUET
 
-CARGS := -std=c99 -O2
+CARGS := -std=c99 -O2 -Iinclude/
 
 ifeq ($(OS), Windows_NT)
 		EXTENSION = .exe
 		CFLAGS := -O2 -DWINDOWS
-		LFLAGS := -Lwinclude/lib/ -Iinclude/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
+		LFLAGS := -Lwinclude/lib/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
 		PLATFORM := win
 
 		INSULT := "Windows Dev? I am so sorry."

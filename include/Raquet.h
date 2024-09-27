@@ -5,10 +5,8 @@
 /* Comment this out if you dont want fullscreen */
 #define ALLOW_FULLSCREN
 
-/* other headers we need */
+/* headers we need */
 #include <stdio.h>
-
-#include <string.h>
 
 #include <SDL2/SDL.h>
 
@@ -22,7 +20,7 @@ const float FRAMERATE_CAP = 60.0f;      // Constant framerate
 #define GAME_NAME "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE 44100         // How high quality our sound is, decrease if you want moldy mp3 sound :)
 
-/* REDEFINABLES */
+/* VISUAL STUFF */
 #define VSYNC               // DSIABLE FOR NO VSYNC
 #define INTEGER_SCALING     // DISABLE FOR NO INTEGER SCALING
 //#define BACKGROUND_CLEARING_COLOR   // Makes Raquet_Clear also change the window background color
@@ -51,74 +49,79 @@ SDL_Event e;
 
 typedef Uint32 Palette;
 
-// Digital Prime Palette
-#define PAL00   0x696969FF
-#define PAL01 	0x00148FFF
-#define PAL02 	0x1E029BFF 
-#define PAL03 	0x3F008AFF
-#define PAL04 	0x600060FF
-#define PAL05 	0x660017FF
-#define PAL06 	0x570D00FF
-#define PAL07 	0x451B00FF
-#define PAL08 	0x243400FF
-#define PAL09 	0x004200FF
-#define PAL0A 	0x004500FF
-#define PAL0B 	0x003C1FFF
-#define PAL0C 	0x00315CFF
-#define PAL0D 	0x000000FF
-#define PAL0E 	0x000000FF
-#define PAL0F 	0x00000000  // TRANSPARENCY
+Palette Raquet_GlobalPalette[] = {
+    /* 0x00 - 0x0F */
+    0x696969FF,
+    0x00148FFF,
+    0x1E029BFF,
+    0x3F008AFF,
+    0x600060FF,
+    0x660017FF,
+    0x570D00FF,
+    0x451B00FF,
+    0x243400FF,
+    0x004200FF,
+    0x004500FF,
+    0x003C1FFF,
+    0x00315CFF,
+    0x000000FF,
+    0x000000FF,
+    0x00000000,
 
-#define PAL10 	0xAFAFAFFF
-#define PAL11 	0x0F51DDFF
-#define PAL12 	0x442FF3FF
-#define PAL13 	0x7220E2FF
-#define PAL14 	0xA319B3FF
-#define PAL15 	0xAE1C51FF
-#define PAL16 	0xA43400FF
-#define PAL17 	0x884D00FF
-#define PAL18 	0x676D00FF
-#define PAL19 	0x208000FF
-#define PAL1A 	0x008B00FF
-#define PAL1B 	0x007F42FF
-#define PAL1C 	0x006C97FF
-#define PAL1D 	0x000000FF
-#define PAL1E 	0x000000FF
-#define PAL1F 	0x00000000  // TRANSPARENCY
+    /* 0x10 - 0x1F */
+    0xAFAFAFFF,
+    0x0F51DDFF,
+    0x442FF3FF,
+    0x7220E2FF,
+    0xA319B3FF,
+    0xAE1C51FF,
+    0xA43400FF,
+    0x884D00FF,
+    0x676D00FF,
+    0x208000FF,
+    0x008B00FF,
+    0x007F42FF,
+    0x006C97FF,
+    0x000000FF,
+    0x000000FF,
+    0x00000000,
 
-#define PAL20 	0xFFFFFFFF
-#define PAL21 	0x65AAFFFF
-#define PAL22 	0x8C96FFFF
-#define PAL23 	0xB983FFFF
-#define PAL24 	0xDD6FFFFF
-#define PAL25 	0xEA6FBDFF
-#define PAL26 	0xEB8466FF
-#define PAL27 	0xDCA21FFF
-#define PAL28 	0xBAB403FF
-#define PAL29 	0x7ECB07FF
-#define PAL2A 	0x54D33EFF
-#define PAL2B 	0x3CD284FF
-#define PAL2C 	0x3EC7CCFF
-#define PAL2D 	0x4B4B4BFF
-#define PAL2E 	0x000000FF
-#define PAL2F 	0x00000000  // TRANSPARENCY
+    /* 0x20 - 0x2F */
+    0xFFFFFFFF,
+    0x65AAFFFF,
+    0x8C96FFFF,
+    0xB983FFFF,
+    0xDD6FFFFF,
+    0xEA6FBDFF,
+    0xEB8466FF,
+    0xDCA21FFF,
+    0xBAB403FF,
+    0x7ECB07FF,
+    0x54D33EFF,
+    0x3CD284FF,
+    0x3EC7CCFF,
+    0x4B4B4BFF,
+    0x000000FF,
+    0x00000000,
 
-#define PAL30 	0xFFFFFFFF
-#define PAL31 	0xBDE2FFFF
-#define PAL32 	0xCECFFFFF
-#define PAL33 	0xE6C2FFFF
-#define PAL34 	0xF6bCFFFF
-#define PAL35 	0xF9C2EDFF
-#define PAL36 	0xFACFC6FF
-#define PAL37 	0xF8DEACFF
-#define PAL38 	0xEEE9A1FF
-#define PAL39 	0xD0F59FFF
-#define PAL3A 	0xBBF5AFFF
-#define PAL3B 	0xB3F5CDFF
-#define PAL3C 	0xB9EDF0FF
-#define PAL3D 	0xB9B9B9FF
-#define PAL3E 	0x000000FF
-#define PAL3F 	0x00000000  // TRANSPARENCY
+    /* 0x30 - 0x3F */
+    0xFFFFFFFF,
+    0xBDE2FFFF,
+    0xCECFFFFF,
+    0xE6C2FFFF,
+    0xF6bCFFFF,
+    0xF9C2EDFF,
+    0xFACFC6FF,
+    0xF8DEACFF,
+    0xEEE9A1FF,
+    0xD0F59FFF,
+    0xBBF5AFFF,
+    0xB3F5CDFF,
+    0xB9EDF0FF,
+    0xB9B9B9FF,
+    0x000000FF,
+    0x00000000
+};
 
 /*
  ***************************
@@ -271,6 +274,12 @@ void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3) {
     dest[0] = pal1;
     dest[1] = pal2;
     dest[2] = pal3;
+}
+
+void Raquet_CopyPalette(Palette dest[3], Palette origin[3]) {
+    dest[0] = origin[0];
+    dest[1] = origin[1];
+    dest[2] = origin[2];
 }
 
 /* I'm actually not sure what you can use this for yet, but you can use it */
@@ -509,7 +518,7 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
 
     ret.palette[0] = pal[0];
     ret.palette[1] = pal[1];
-    ret.palette[2] = pal[2]; 
+    ret.palette[2] = pal[2];
     
     Uint32 pixels[64];
 
@@ -699,49 +708,39 @@ void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, dou
 }
 
 /* Swap a CHR's Palette */ 
-Raquet_CHR Raquet_SwapCHRPalette(Raquet_CHR chr, Palette pal[3]) {
-  
-    Uint32 pixels[chr.width * chr.height];
+void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[3]) {
 
-    if (pal[0] == chr.palette[0] && pal[1] == chr.palette[1] && pal[2] == chr.palette[2]) {
-        return chr;
-      
+    if (memcmp(chr->palette, pal, sizeof(Palette[3])) == 0) {
+        return;
     }
 
-    chr.palette[0] = pal[0];
-    chr.palette[1] = pal[1];
-    chr.palette[2] = pal[2];
+    Palette pixels[chr->width * chr->height];
 
-    for (int y = 0; y < chr.height; y++) {
-        for (int x = 0; x < chr.width; x++) {
-            int dest = (y * chr.width) + x;
-            switch (chr.data[dest]) {
+    chr->palette[0] = pal[0];
+    chr->palette[1] = pal[1];
+    chr->palette[2] = pal[2];
+
+    for (int y = 0; y < chr->height; y++) {
+        for (int x = 0; x < chr->width; x++) {
+            int dest = (y * chr->width) + x;
+            switch (chr->data[dest]) {
                 case 0:
                     pixels[dest] = 0x00000000;
                     break;
 
-                case 1:
-                    pixels[dest] = pal[0];
-                    break;
-
-                case 2:
-                    pixels[dest] = pal[1];
-                    break;
-
-                case 3:
-                    pixels[dest] = pal[2];
+                default:
+                    pixels[dest] = pal[chr->data[dest] - 1];
                     break;
            } 
 
         }
     }
-    SDL_UpdateTexture(chr.tex, NULL, pixels, chr.width * sizeof(Palette));
-    return chr;
+    SDL_UpdateTexture(chr->tex, NULL, pixels, chr->width * sizeof(Palette));
 
 }
 
 /* Destroy a CHR after we're done using it */
-void DestroyCHR(SDL_Texture * tex) {
+void Raquet_DestroyCHR(SDL_Texture * tex) {
     SDL_DestroyTexture(tex);
 }
 

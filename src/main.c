@@ -20,6 +20,8 @@ Star stararray[PARTICLE_AMOUNT];
 
 // Palettes
 Palette pal_face[3];
+Palette pal_face2[3];
+
 Palette pal_logo[3];
 
 // Characters
@@ -65,7 +67,7 @@ void drawStars() {
 		stararray[i].x--;
 		for (int o = 0; o < 4; o++) {
 			int tempx = stararray[i].x;
-			Raquet_DrawPoint(PAL30, tempx + o, stararray[i].y, 255 - (64 * o));
+			Raquet_DrawPoint(Raquet_GlobalPalette[0x30], tempx + o, stararray[i].y, 255 - (64 * o));
 		}
 
 		// if a point exceeds 0, plus its length, loop it back to the screen width
@@ -109,7 +111,6 @@ void bePlaceface()
 		move_y = 0;
 	}
 	act_placeface->y += move_y * 2;
-	act_placeface->angle++;
 
 	Raquet_DrawActor(act_placeface);
 	Raquet_DrawActor(act_placeface2);
@@ -126,8 +127,9 @@ void createthedog()
 	/* Graphical */
 	Raquet_LoadPPFBank(&ppf_main, "./assets/main.ppf");
   
-	Raquet_SetPalette(pal_face, PAL0D, PAL00, PAL20);
-	Raquet_SetPalette(pal_logo, PAL20, PAL20, PAL20);
+	Raquet_SetPalette(pal_face, Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x00], Raquet_GlobalPalette[0x20]);
+	Raquet_SetPalette(pal_face2, Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x05], Raquet_GlobalPalette[0x25]);
+	Raquet_SetPalette(pal_logo, Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20]);
 	
 	chr_placeface = Raquet_LoadCHR(ppf_main, 0, pal_face);
 	int arr_raquetlogo_R[2] = {1, 7};
@@ -148,8 +150,6 @@ void createthedog()
 	/* Actors */
 	act_placeface = Raquet_AllocateActor();
 	Raquet_CreateActor(act_placeface, chr_placeface);
-	act_placeface->origin.x = 4;
-	act_placeface->origin.y = 4;
 
 	act_placeface->x = SCREEN_WIDTH/2;
 	act_placeface->y = 64;
@@ -174,7 +174,7 @@ void runthedog()
 	demotime++;
   
 	// Draw our stuffs
-	Raquet_Clear(PAL12); 
+	Raquet_Clear(Raquet_GlobalPalette[0x12]); 
 
 	drawStars();
 	
@@ -187,6 +187,24 @@ void runthedog()
 	}
   
 	bePlaceface(); 
+
+	if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_1)) {
+		Palette swap1 = Raquet_GlobalPalette[0x12];
+		Palette swap2 = Raquet_GlobalPalette[0x15];
+
+		Raquet_GlobalPalette[0x12] = swap2;
+		Raquet_GlobalPalette[0x15] = swap1;
+
+		Palette swap3[3]; 
+		Palette swap4[3]; 
+		Raquet_CopyPalette(swap3, pal_face);
+		Raquet_CopyPalette(swap4, pal_face2);
+
+		Raquet_CopyPalette(pal_face, swap4);
+		Raquet_CopyPalette(pal_face2, swap3);
+
+		Raquet_SwapCHRPalette(&act_placeface->cur_image, pal_face);
+	}
 
 }
 

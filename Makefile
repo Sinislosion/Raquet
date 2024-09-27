@@ -2,10 +2,11 @@ PROGRAMNAME = RAQUET
 
 EXTENSION = .x86_64
 CFLAGS := -Wall -O2
-LFLAGS := -Iinclude/ `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
+IFLAGS := -Iinclude/
+LFLAGS := `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
 PLATFORM := nix
 
-CARGS := -std=c99 -O2 src/main.c
+CARGS := -std=c99 -O2
 
 W_EXTENSION = .exe
 W_CFLAGS := -O2 -DWINDOWS
@@ -14,14 +15,12 @@ W_PLATFORM := win
 
 COMPILER := clang
 
-start: src/main.c
+start: bin/Raquet.o bin/main.o
 		
 ifeq ($(OS), Windows_NT)
 		@echo "Windows Dev? I am so sorry."
-		mkdir -p bin
-		mkdir -p bin/$(W_PLATFORM)
 		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) $(CARGS) -o bin/$(W_PLATFORM)/$(PROGRAMNAME)$(W_EXTENSION) $(W_CFLAGS) $(W_LFLAGS)
+		$(COMPILER) $(CARGS) bin/Raquet.o bin/main.o -o bin/$(W_PLATFORM)/$(PROGRAMNAME)$(W_EXTENSION) $(W_CFLAGS) $(IFLAGS) $(W_LFLAGS)
 		cp -r winclude/bin/* bin/$(W_PLATFORM)
 		cp -r assets bin/$(W_PLATFORM)
 		./bin/$(W_PLATFORM)/$(PROGRAMNAME)$(W_EXTENSION)
@@ -30,11 +29,19 @@ else
 		mkdir -p bin
 		mkdir -p bin/$(PLATFORM)
 		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) $(CARGS) -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(LFLAGS)
+		$(COMPILER) $(CARGS) -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(IFLAGS) $(LFLAGS)
 		chmod u+x bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
 		cp -r assets bin/$(PLATFORM)
 		./bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
 endif
+
+bin/Raquet.o:
+		mkdir -p bin
+		mkdir -p bin/$(W_PLATFORM)
+		$(COMPILER) $(CARGS) include/Raquet.c -c -o bin/Raquet.o $(IFLAGS) $(W_CFLAGS)
+		
+bin/main.o:
+		$(COMPILER) $(CARGS) src/main.c -c -o bin/main.o $(IFLAGS) $(W_CFLAGS)
 
 clean:
 ifeq ($(OS), Windows_NT)

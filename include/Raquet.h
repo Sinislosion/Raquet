@@ -15,14 +15,19 @@
 #include <SDL2/SDL_mixer.h>
 
 /* WINDOW CONSTANTS */
-#define SCREEN_WIDTH 480 // Internal screen width
-#define SCREEN_HEIGHT 360 // Internal screen height
-#define SCREEN_SCALE 2 // How much we scale the window by default
-const float FRAMERATE_CAP = 60.0f; // Constant framerate
-#define GAME_NAME "Raquet Game Engine" // Window Title
-#define AUDIO_SAMPLE_RATE 44100 // How high quality our sound is, decrease if you want moldy mp3 sound :)
-#define VSYNC
+#define SCREEN_WIDTH 256                // Internal screen width
+#define SCREEN_HEIGHT 240               // Internal screen height
+#define SCREEN_SCALE 2                  // How much we scale the window by default
+const float FRAMERATE_CAP = 60.0f;      // Constant framerate
+#define GAME_NAME "Raquet Game Engine"  // Window Title
+#define AUDIO_SAMPLE_RATE 44100         // How high quality our sound is, decrease if you want moldy mp3 sound :)
 
+/* REDEFINABLES */
+#define VSYNC               // DSIABLE FOR NO VSYNC
+#define INTEGER_SCALING     // DISABLE FOR NO INTEGER SCALING
+//#define BACKGROUND_CLEARING_COLOR   // Makes Raquet_Clear also change the window background color
+
+/* More Constants */
 SDL_Window * gWindow;
 uint8_t gFullscreen = -1;
 SDL_Renderer * gRenderer;
@@ -230,9 +235,15 @@ int Raquet_InitSDL() {
             	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             #endif
 			
-			gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+            #ifdef INTEGER_SCALING
+			    gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+            #else
+                SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+            #endif
 
             SDL_RenderSetViewport(gRenderer, NULL);
+
+            
 
             SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
@@ -271,9 +282,18 @@ void Raquet_SetDrawColor(Palette pal, int alpha) {
 }
 
 /* Clear the screen with a solid color */
+#ifdef BACKGROUND_CLEARING_COLOR
+    Palette gClearColor;
+#endif
+
 void Raquet_Clear(Palette pal) {
     Raquet_SetDrawColor(pal, 255);
     SDL_RenderFillRect(gRenderer, NULL);
+
+    #ifdef BACKGROUND_CLEARING_COLOR
+        gClearColor = pal;
+    #endif
+
 }
 
 /* Draw a rectangle (x position, y position, width, height, color, alpha, fill) */
@@ -302,25 +322,39 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 void Raquet_Update() {
     SDL_UpdateWindowSurface(gWindow);
 	SDL_SetRenderTarget(gRenderer, NULL);
-	
-	/* Integer Scaling Math */
-	int windowWidth, windowHeight;
-	SDL_GetWindowSize(gWindow, &windowWidth, &windowHeight);
-	
-	int mult1, mult2, mult3;
-	
-	mult1 = SCREEN_HEIGHT * (windowHeight / SCREEN_HEIGHT);
-	mult2 = SCREEN_WIDTH * (windowWidth / SCREEN_WIDTH);
 
-	mult3 = Raquet_Min(mult1, mult2);
-	
-	gRectScreenScale.w = SCREEN_WIDTH * mult3;
-	gRectScreenScale.h = SCREEN_HEIGHT * mult3;
+    #ifdef INTEGER_SCALING
+        /* Integer Scaling Math */
+        int windowWidth, windowHeight;
+        SDL_GetWindowSize(gWindow, &windowWidth, &windowHeight);
+        
+        int mult1, mult2, mult3;
+        
+        mult1 = (windowHeight / SCREEN_HEIGHT);
+        mult2 = (windowWidth / SCREEN_WIDTH);
 
-	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-	SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScreen, &gRectScreenScale);
+        mult3 = Raquet_Min(mult1, mult2);
+        
+        gRectScreenScale.w = SCREEN_WIDTH * mult3;
+        gRectScreenScale.h = SCREEN_HEIGHT * mult3;
+
+        gRectScreenScale.x = windowWidth/2 - (gRectScreenScale.w / 2);
+        gRectScreenScale.y = windowHeight/2 - (gRectScreenScale.h / 2);
+    
+        SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScreen, &gRectScreenScale);
+
+    #endif
+
     SDL_RenderPresent(gRenderer);
+
+    #ifndef BACKGROUND_CLEARING_COLOR
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+    #else
+        Raquet_SetDrawColor(gClearColor, 255);
+    #endif
+
     SDL_RenderClear(gRenderer);
+
 }
 
 /* The main Raquet function. Everything runs from here. */
@@ -364,7 +398,10 @@ void Raquet_Main() {
 
             start_tick = SDL_GetTicks64();
 			
-            SDL_SetRenderTarget(gRenderer, gFinalTexture);
+            #ifdef INTEGER_SCALING
+                SDL_SetRenderTarget(gRenderer, gFinalTexture);
+            #endif
+
             runthedog();
             Raquet_Update();
             if ((1000.0f / FRAMERATE_CAP) > SDL_GetTicks64() - start_tick) {

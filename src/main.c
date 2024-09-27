@@ -160,8 +160,8 @@ void createthedog()
 	act_placeface2->height = 32;
 	act_placeface2->bbox.x2 = act_placeface2->width;
 	act_placeface2->bbox.y2 = act_placeface2->height;
-	act_placeface2->x = 100;
-	act_placeface2->y = 100;
+	act_placeface2->x = 64;
+	act_placeface2->y = 64;
 
 	/* Audio */
 	Raquet_Sound snd_placeface = Raquet_LoadSound("./assets/2A03_Kevvviiinnn-Superfusion.wav");

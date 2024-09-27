@@ -2,7 +2,7 @@ PROGRAMNAME = RAQUET
 
 EXTENSION = .x86_64
 CFLAGS := -Wall -O2
-LFLAGS := -Iinclude/ `sdl2-config --libs` -lSDL2_mixer 
+LFLAGS := -Iinclude/ `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
 PLATFORM := nix
 
 CARGS := -std=c99 -O2 src/main.c
@@ -30,7 +30,7 @@ else
 		mkdir -p bin
 		mkdir -p bin/$(PLATFORM)
 		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(LFLAGS)
+		$(COMPILER) $(CARGS) -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(LFLAGS)
 		chmod u+x bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
 		cp -r assets bin/$(PLATFORM)
 		./bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)

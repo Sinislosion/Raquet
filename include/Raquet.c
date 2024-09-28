@@ -1,12 +1,9 @@
 #include "Raquet.h"
 
 SDL_Window * gWindow;
-uint8_t gFullscreen;
+uint8_t gFullscreen = -1;
 SDL_Renderer * gRenderer;
 SDL_Texture * gFinalTexture;
-const SDL_Rect gRectScreen;
-SDL_Rect gRectScreenScale;
-SDL_Event e;
 
 const SDL_Rect gRectScreen = {
     0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
@@ -15,6 +12,10 @@ const SDL_Rect gRectScreen = {
 SDL_Rect gRectScreenScale = {
 	0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 };
+
+SDL_Event e;
+
+Raquet_Camera Camera = {0, 0};
 
 /*
  ************************
@@ -126,6 +127,10 @@ int Raquet_Sign(int comp) {
 
 int Raquet_Min(int x, int y) {
 	return (((x) < (y)) ? (x) : (y));
+}
+
+int Raquet_Max(int x, int y) {
+    return (((x) > (y)) ? (x) : (y));
 }
 
 float Raquet_PI = 3.1415926535;
@@ -330,8 +335,8 @@ void Raquet_Update() {
 
         mult3 = Raquet_Min(mult1, mult2);
         
-        gRectScreenScale.w = SCREEN_WIDTH * mult3;
-        gRectScreenScale.h = SCREEN_HEIGHT * mult3;
+        gRectScreenScale.w = Raquet_Max(SCREEN_WIDTH, SCREEN_WIDTH * mult3);
+        gRectScreenScale.h = Raquet_Max(SCREEN_HEIGHT, SCREEN_HEIGHT * mult3);
 
         gRectScreenScale.x = windowWidth/2 - (gRectScreenScale.w / 2);
         gRectScreenScale.y = windowHeight/2 - (gRectScreenScale.h / 2);
@@ -373,7 +378,7 @@ void Raquet_Main() {
             }
 
             // If we allow fullscreen, then let us use fullscreen with F11
-            #ifdef ALLOW_FULLSCREN
+            #ifdef ALLOW_FULLSCREEN
             if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11)) {
                 gFullscreen = -gFullscreen;
             }
@@ -729,16 +734,7 @@ void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha) {
     SDL_RenderDrawLine(gRenderer, x1, y1, x2, y2);
 }
 
-/*
- ******************
- *     CAMERA     *
- ******************
- */
 
-struct Camera {
-    int x;
-    int y;
-} Camera;
 
 /*
  *************************

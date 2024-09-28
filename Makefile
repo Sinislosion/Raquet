@@ -21,28 +21,29 @@ endif
 
 COMPILER := clang
 
-start: bin/Raquet.o bin/main.o
+all: bin/Raquet.o bin/Raquet_Math.o bin/main.o
 		@echo $(INSULT)
 		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) $(CARGS) bin/Raquet.o bin/main.o -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(IFLAGS) $(LFLAGS)
-		cp -r winclude/bin/* bin/$(W_PLATFORM)
-		cp -r assets bin/$(W_PLATFORM)
+		$(COMPILER) $(CARGS) bin/Raquet.o bin/Raquet_Math.o bin/main.o -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(IFLAGS) $(LFLAGS)
+ifeq ($(OS), Windows_NT)
+		cp -r winclude/bin/* bin/$(PLATFORM)
+endif
+		cp -r assets bin/$(PLATFORM)
 		./bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
 
 
 bin/Raquet.o:
 		mkdir -p bin
-		mkdir -p bin/$(W_PLATFORM)
+		mkdir -p bin/$(PLATFORM)
 		$(COMPILER) $(CARGS) include/Raquet.c -c -o bin/Raquet.o $(IFLAGS) $(W_CFLAGS)
+
+bin/Raquet_Math.o:
+		$(COMPILER) $(CARGS) include/Raquet_Math.c -c -o bin/Raquet_Math.o $(IFLAGS) $(W_CFLAGS)
 		
 bin/main.o:
 		$(COMPILER) $(CARGS) src/main.c -c -o bin/main.o $(IFLAGS) $(W_CFLAGS)
 
 clean:
-ifeq ($(OS), Windows_NT)
-		rm -r bin/$(W_PLATFORM)
+		rm -r bin/*
+		make
 		@echo "Erased from History"
-else
-		rm -r bin/$(PLATFORM)
-		@echo "Erased from History"
-endif

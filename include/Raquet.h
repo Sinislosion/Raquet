@@ -3,7 +3,7 @@
 #define SDL_MAIN_HANDLED
 
 /* Comment this out if you dont want fullscreen */
-#define ALLOW_FULLSCREN
+#define ALLOW_FULLSCREEN
 
 /* headers we need */
 #include <stdio.h>
@@ -64,6 +64,7 @@ extern void Raquet_DestroySound(Raquet_Sound wav);
 
 extern int Raquet_Sign(int comp);
 extern int Raquet_Min(int x, int y);
+extern int Raquet_Max(int x, int y);
 extern float Raquet_PI;
 
 /*
@@ -119,19 +120,19 @@ extern void Raquet_ShowCursor(int toggle);
 extern Uint64 start_tick;
 
 /* Initialize SDL2 */
-int Raquet_InitSDL();
+extern int Raquet_InitSDL();
 
 /* Initialize the Raquet Engine */
-int Raquet_Init();
+extern int Raquet_Init();
 
 /* Set a palette variable within runtime */
-void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3);
+extern void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3);
 
 /* Copy a Palette to another array */
-void Raquet_CopyPalette(Palette dest[3], Palette origin[3]);
+extern void Raquet_CopyPalette(Palette dest[3], Palette origin[3]);
 
 /* I'm actually not sure what you can use this for yet, but you can use it */
-void Raquet_SetDrawColor(Palette pal, int alpha);
+extern void Raquet_SetDrawColor(Palette pal, int alpha);
 
 /* Clear the screen with a solid color */
 #ifdef BACKGROUND_CLEARING_COLOR
@@ -139,16 +140,16 @@ void Raquet_SetDrawColor(Palette pal, int alpha);
 #endif
 
 /* Clear the screen */
-void Raquet_Clear(Palette pal);
+extern void Raquet_Clear(Palette pal);
 
 /* Draw a rectangle (x position, y position, width, height, color, alpha, fill) */
-void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill);
+extern void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill);
 
 /* This is used to update the Window within the Raquet_Main function */
-void Raquet_Update();
+extern void Raquet_Update();
 
 /* The main Raquet function. Everything runs from here. */
-void Raquet_Main();
+extern void Raquet_Main();
 
 /*
  *************************
@@ -174,11 +175,11 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir);
 //typedef SDL_Texture * Raquet_CHR;
 
 typedef struct Raquet_CHR {
-  SDL_Texture * tex;
-  int width;
-  int height;
-  int * data;
-  Palette palette[3];
+    SDL_Texture * tex;
+    int width;
+    int height;
+    int * data;
+    Palette palette[3];
 } Raquet_CHR;
 
 Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]);
@@ -215,7 +216,14 @@ void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha);
  *     CAMERA     *
  ******************
  */
-struct Camera;
+
+typedef struct Raquet_Camera {
+    int x;
+    int y;
+} Raquet_Camera;
+
+extern Raquet_Camera Camera;
+
 /*
  *************************
  *     ACTORS SYSTEM     *

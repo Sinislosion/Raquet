@@ -1,46 +1,49 @@
 PROGRAMNAME = RAQUET
 
-EXTENSION = .x86_64
-CFLAGS := -Wall -O2
-LFLAGS := -Iinclude/ `sdl2-config --libs` -lSDL2_mixer 
-PLATFORM := nix
+CARGS := -std=c99 -O2 -Iinclude/
 
-CARGS := -std=c99 -O2 src/main.c
+ifeq ($(OS), Windows_NT)
+		EXTENSION = .exe
+		CFLAGS := -O2 -DWINDOWS
+		LFLAGS := -Lwinclude/lib/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
+		PLATFORM := win
 
-W_EXTENSION = .exe
-W_CFLAGS := -O2 -DWINDOWS
-W_LFLAGS := -Lwinclude/lib/ -Iinclude/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
-W_PLATFORM := win
+		INSULT := "Windows Dev? I am so sorry."
+else
+		EXTENSION = .x86_64
+		CFLAGS := -Wall -O2
+		IFLAGS := -Iinclude/
+		LFLAGS := `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
+		PLATFORM := nix
+		
+		INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
+endif
 
 COMPILER := clang
 
-start: src/main.c
-		
+all: bin/Raquet.o bin/Raquet_Math.o bin/main.o
+		@echo $(INSULT)
+		@echo "Compiling $(PROGRAMNAME)"
+		$(COMPILER) $(CARGS) bin/Raquet.o bin/Raquet_Math.o bin/main.o -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(IFLAGS) $(LFLAGS)
 ifeq ($(OS), Windows_NT)
-		@echo "Windows Dev? I am so sorry."
-		mkdir -p bin
-		mkdir -p bin/$(W_PLATFORM)
-		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) $(CARGS) -o bin/$(W_PLATFORM)/$(PROGRAMNAME)$(W_EXTENSION) $(W_CFLAGS) $(W_LFLAGS)
-		cp -r winclude/bin/* bin/$(W_PLATFORM)
-		cp -r assets bin/$(W_PLATFORM)
-		./bin/$(W_PLATFORM)/$(PROGRAMNAME)$(W_EXTENSION)
-else
-		@echo "*Nix Dev? How's your waifu wallper holding up?"
-		mkdir -p bin
-		mkdir -p bin/$(PLATFORM)
-		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(LFLAGS)
-		chmod u+x bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
+		cp -r winclude/bin/* bin/$(PLATFORM)
+endif
 		cp -r assets bin/$(PLATFORM)
 		./bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
-endif
+
+
+bin/Raquet.o:
+		mkdir -p bin
+		mkdir -p bin/$(PLATFORM)
+		$(COMPILER) $(CARGS) include/Raquet.c -c -o bin/Raquet.o $(IFLAGS) $(W_CFLAGS)
+
+bin/Raquet_Math.o:
+		$(COMPILER) $(CARGS) include/Raquet_Math.c -c -o bin/Raquet_Math.o $(IFLAGS) $(W_CFLAGS)
+		
+bin/main.o:
+		$(COMPILER) $(CARGS) src/main.c -c -o bin/main.o $(IFLAGS) $(W_CFLAGS)
 
 clean:
-ifeq ($(OS), Windows_NT)
-		rm -r bin/$(W_PLATFORM)
+		rm -r bin/*
+		make
 		@echo "Erased from History"
-else
-		rm -r bin/$(PLATFORM)
-		@echo "Erased from History"
-endif

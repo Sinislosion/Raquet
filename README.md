@@ -31,7 +31,7 @@ You'll need to use MSYS2, or use a cross compiler like MinGW GCC for this
 1. On Windows, download [MSYS2](https://www.msys2.org/)
 2. Run `MSYS2 MINGW64`
 3. Update MSYS2 with `pacman -Syyu`
-4. Install the necessary dependencies with `pacman -S mingw-w64-x86_64-clang mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer`
+4. Install the necessary dependencies with `pacman -S make mingw-w64-x86_64-clang mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer`
 5. cd into the repo's directory
 6. Run `make`
 

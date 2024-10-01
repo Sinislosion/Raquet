@@ -19,17 +19,19 @@ Documentation can be found at [https://raquet.sinislosion.net/](https://raquet.s
 1. First install the necessary dependencies<br>
 	Debian Linux:<br>
 	`sudo apt-get install clang sdl2-devel libsdl2-mixer-dev`<br>
-    Arch Linux:<br>
+ 	Arch Linux:<br>
 	`sudo pacman -S clang sdl2 sdl2_mixer`
-2. cd into the repo's directory
-3. run `make`
+	Gentoo Linux:<br>
+ 	`sudo emerge -a sys-devel/clang media-libs/libsdl2 media-libs/sdl2-mixer`
+3. cd into the repo's directory
+4. run `make`
 
 ### Windows
-You'll need to use MSYS2, or use a cross compiler for this
+You'll need to use MSYS2, or use a cross compiler like MinGW GCC for this
 1. On Windows, download [MSYS2](https://www.msys2.org/)
 2. Run `MSYS2 MINGW64`
 3. Update MSYS2 with `pacman -Syyu`
-4. Install the necessary dependencies with `pacman -S mingw-w64-x86_64-clang mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer`
+4. Install the necessary dependencies with `pacman -S make mingw-w64-x86_64-clang mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer`
 5. cd into the repo's directory
 6. Run `make`
 

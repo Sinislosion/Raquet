@@ -183,8 +183,13 @@ int Raquet_MouseCheck_Released(unsigned int sdlbutton) {
  */
  
 /* 1 for display cursor, 0 for disable cursor */
-extern void Raquet_ShowCursor(int toggle) {
+void Raquet_ShowCursor(int toggle) {
 	SDL_ShowCursor(toggle);
+}
+
+/* Get an absolute string to an asset from the assets folder */
+const char* Raquet_AbsoluteToAsset(const char* relativepath) {
+    return strcat(strcat(SDL_GetBasePath(), "assets/"), relativepath);
 }
 
 /*

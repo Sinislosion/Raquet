@@ -15,7 +15,7 @@ else
 		IFLAGS := -Iinclude/
 		LFLAGS := `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
 		PLATFORM := nix
-		
+
 		INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
 endif
 
@@ -39,11 +39,11 @@ bin/Raquet.o:
 
 bin/Raquet_Math.o:
 		$(COMPILER) $(CARGS) include/Raquet_Math.c -c -o bin/Raquet_Math.o $(IFLAGS) $(W_CFLAGS)
-		
+
 bin/main.o:
 		$(COMPILER) $(CARGS) src/main.c -c -o bin/main.o $(IFLAGS) $(W_CFLAGS)
 
 clean:
 		rm -r bin/*
-		make
 		@echo "Erased from History"
+		make

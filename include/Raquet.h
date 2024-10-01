@@ -101,14 +101,17 @@ extern int Raquet_MouseCheck_Pressed(unsigned int sdlbutton);
 /* Will only return 1 if the mouse button has been released for 1 frame */
 extern int Raquet_MouseCheck_Released(unsigned int sdlbutton);
 
-/* 
+/*
  **************************
  *     MISC FUNCTIONS     *
  **************************
  */
- 
+
 /* 1 for display cursor, 0 for disable cursor */
 extern void Raquet_ShowCursor(int toggle);
+
+/* Get an absolute string to an asset from the assets folder */
+extern const char* Raquet_AbsoluteToAsset(const char* relativepath);
 
 /*
  ****************************

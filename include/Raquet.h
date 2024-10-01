@@ -62,9 +62,9 @@ extern void Raquet_DestroySound(Raquet_Sound wav);
  *********************************
  */
 
-extern int Raquet_Sign(int comp);
-extern int Raquet_Min(int x, int y);
-extern int Raquet_Max(int x, int y);
+extern int Raquet_Sign(float comp);
+extern float Raquet_Min(float x, float y);
+extern float Raquet_Max(float x, float y);
 extern float Raquet_PI;
 
 /*

@@ -121,15 +121,15 @@ void Raquet_DestroySound(Raquet_Sound wav) {
  *********************************
  */
 
-int Raquet_Sign(int comp) {
+int Raquet_Sign(float comp) {
 	return (0 < comp) - (comp < 0);
 }
 
-int Raquet_Min(int x, int y) {
+float Raquet_Min(float x, float y) {
 	return (((x) < (y)) ? (x) : (y));
 }
 
-int Raquet_Max(int x, int y) {
+float Raquet_Max(float x, float y) {
     return (((x) > (y)) ? (x) : (y));
 }
 

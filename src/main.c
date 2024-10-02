@@ -217,12 +217,12 @@ void runthedog()
 		Raquet_CopyPalette(pal_face, swap4);
 		Raquet_CopyPalette(pal_face2, swap3);
 
-		Raquet_SwapCHRPalette(&act_placeface->cur_image, pal_face);
+		Raquet_SwapCHRPalette(&act_placeface->chr, pal_face);
 	}
 
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 
 	Raquet_Main();
 	return 0;

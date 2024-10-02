@@ -121,15 +121,15 @@ void Raquet_DestroySound(Raquet_Sound wav) {
  *********************************
  */
 
-int Raquet_Sign(int comp) {
+int Raquet_Sign(float comp) {
 	return (0 < comp) - (comp < 0);
 }
 
-int Raquet_Min(int x, int y) {
+float Raquet_Min(float x, float y) {
 	return (((x) < (y)) ? (x) : (y));
 }
 
-int Raquet_Max(int x, int y) {
+float Raquet_Max(float x, float y) {
     return (((x) > (y)) ? (x) : (y));
 }
 
@@ -233,7 +233,7 @@ int Raquet_InitSDL() {
             #else
             	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             #endif
-			
+
             #ifdef INTEGER_SCALING
 			    gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
             #else
@@ -242,7 +242,7 @@ int Raquet_InitSDL() {
 
             SDL_RenderSetViewport(gRenderer, NULL);
 
-            
+
 
             SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
@@ -332,20 +332,20 @@ void Raquet_Update() {
         /* Integer Scaling Math */
         int windowWidth, windowHeight;
         SDL_GetWindowSize(gWindow, &windowWidth, &windowHeight);
-        
+
         int mult1, mult2, mult3;
-        
+
         mult1 = (windowHeight / SCREEN_HEIGHT);
         mult2 = (windowWidth / SCREEN_WIDTH);
 
         mult3 = Raquet_Min(mult1, mult2);
-        
+
         gRectScreenScale.w = Raquet_Max(SCREEN_WIDTH, SCREEN_WIDTH * mult3);
         gRectScreenScale.h = Raquet_Max(SCREEN_HEIGHT, SCREEN_HEIGHT * mult3);
 
         gRectScreenScale.x = windowWidth/2 - (gRectScreenScale.w / 2);
         gRectScreenScale.y = windowHeight/2 - (gRectScreenScale.h / 2);
-    
+
         SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScreen, &gRectScreenScale);
 
     #endif
@@ -402,7 +402,7 @@ void Raquet_Main() {
             sdlmouse = SDL_GetMouseState(NULL, NULL);
 
             start_tick = SDL_GetTicks64();
-			
+
             #ifdef INTEGER_SCALING
                 SDL_SetRenderTarget(gRenderer, gFinalTexture);
             #endif
@@ -415,7 +415,6 @@ void Raquet_Main() {
             for (int i = 0; i < 322; i++)(prevkeys[i] = sdlkeys[i]);
             prevmouse = sdlmouse;
 
-            
         }
 
     }
@@ -464,7 +463,7 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
 		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
 		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
-		
+
 		SDL_RWread(ppfdata, *targetarray, 8, 1024);
 
 		for (int i = 0; i < 8; i++) {
@@ -472,14 +471,14 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 				printf("WARNING: HEADER DATA DOES NOT MATCH\n");
 				fflush(stdout);
 			}
-			
+
 		} 
-		
+
 		SDL_RWclose(ppfdata);
 		printf("Loaded PPF Data at: %s successfully\n", dir);
 		fflush(stdout);
 		return 1;
-		
+
 	} else {
 		printf("Failed to load PPF at: %s\n", dir);
         fflush(stdout);
@@ -504,7 +503,7 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
     ret.palette[0] = pal[0];
     ret.palette[1] = pal[1];
     ret.palette[2] = pal[2];
-    
+
     Uint32 pixels[64];
 
     /*
@@ -575,14 +574,13 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
 /* Load a multi-tile sprite. More info is in the wiki */
 Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette palette[3]) {
     Raquet_CHR ret;
-    
+
     ret.width = xwrap * 8;
     ret.height = ywrap * 8;
-    
-    ret.tex = SDL_CreateTexture(
-        gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
- 
-    
+
+    ret.tex = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
+
+
 
     ret.data = (int*)malloc(sizeof(int) * (ret.width * ret.height));
 
@@ -759,7 +757,7 @@ void Raquet_CreateActor(Actor * act, Raquet_CHR chr) {
     act -> angle = 0;
     act -> flip = SDL_FLIP_NONE;
     Raquet_Point size = Raquet_SizeofCHR(chr.tex);
-    act -> cur_image = chr;
+    act -> chr = chr;
     act -> width = size.x;
     act -> height = size.y;
     act -> bbox.x1 = 0;
@@ -774,7 +772,7 @@ void Raquet_DestroyActor(Actor * act) {
 }
 
 void Raquet_DrawActor(Actor * act) {
-    Raquet_PlaceCHR_ext(act -> cur_image, act -> x - Camera.x, act -> y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
+    Raquet_PlaceCHR_ext(act -> chr, act -> x - Camera.x, act -> y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
 }
 
 int Raquet_ActorColliding(int x, int y, Actor * act1, Actor * act2) {

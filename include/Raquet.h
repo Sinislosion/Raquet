@@ -1,9 +1,6 @@
-/* If you for some reason include Raquet.h several times, don't worry, I've got your back. */
 #ifndef RAQUET_GAME_ENGINE
 #define SDL_MAIN_HANDLED
-
-/* Comment this out if you dont want fullscreen */
-#define ALLOW_FULLSCREEN
+#define RAQUET_GAME_ENGINE
 
 /* headers we need */
 #include <stdio.h>
@@ -11,17 +8,20 @@
 #include <SDL2/SDL_mixer.h>
 
 /* WINDOW CONSTANTS */
-#define SCREEN_WIDTH 256                // Internal screen width
-#define SCREEN_HEIGHT 240               // Internal screen height
-#define SCREEN_SCALE 2                  // How much we scale the window by default
-#define FRAMERATE_CAP 60      			// Constant framerate
+#define SCREEN_WIDTH 256
+#define SCREEN_HEIGHT 240
+#define SCREEN_SCALE 3
+#define ALLOW_FULLSCREEN
+
+/* RENDERING SETTINGS */
+#define INTEGER_SCALING
+#define VSYNC
+//#define BACKGROUND_CLEARING_COLOR
+
+/* MISC SETTINGS */
 #define GAME_NAME "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE 44100         // How high quality our sound is, decrease if you want moldy mp3 sound :)
-
-/* VISUAL STUFF */
-#define VSYNC               // DSIABLE FOR NO VSYNC
-#define INTEGER_SCALING     // DISABLE FOR NO INTEGER SCALING
-//#define BACKGROUND_CLEARING_COLOR   // Makes Raquet_Clear also change the window background color
+#define FRAMERATE_CAP 60                // Internal framerate cap. Disable VSYNC if this is higher than 60
 
 /* More Constants */
 extern SDL_Window * gWindow;
@@ -62,9 +62,9 @@ extern void Raquet_DestroySound(Raquet_Sound wav);
  *********************************
  */
 
-extern int Raquet_Sign(int comp);
-extern int Raquet_Min(int x, int y);
-extern int Raquet_Max(int x, int y);
+extern int Raquet_Sign(float comp);
+extern float Raquet_Min(float x, float y);
+extern float Raquet_Max(float x, float y);
 extern float Raquet_PI;
 
 /*
@@ -248,16 +248,16 @@ typedef struct Actor {
     int y;
 
     // how we're displayed
-    Raquet_CHR cur_image; // Current CHR
+    Raquet_CHR chr; // Current CHR
     Raquet_Point origin; // Our Orgigin Point (x, y) default is (0, 0)
     int width; // How wide we are (default is the width of the sprite)
     int height; // How tall we are (default is the height of the sprite)
     int angle; // angle of the object, rotated around its origin
-    
+
     Palette color; // used in very specific circumstances (barriers in B-TRON)
 
     // collision info
-    Raquet_BoundingBox bbox; // Bounding box                  
+    Raquet_BoundingBox bbox; // Bounding box
 
     SDL_RendererFlip flip;
 
@@ -273,5 +273,4 @@ void Raquet_DrawActor(Actor * act);
 
 int Raquet_ActorColliding(int x, int y, Actor * act1, Actor * act2);
 
-#define RAQUET_GAME_ENGINE
 #endif

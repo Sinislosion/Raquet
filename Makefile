@@ -1,49 +1,68 @@
-PROGRAMNAME = RAQUET
+CC := gcc
+CFLAGS := -Wall -Wextra -O2
+TARGET := Raquet
 
-CARGS := -std=c99 -O2 -Iinclude/
+IFLAGS := -Iinclude/
 
 ifeq ($(OS), Windows_NT)
-		EXTENSION = .exe
-		CFLAGS := -O2 -DWINDOWS
-		LFLAGS := -Lwinclude/lib/ -Iwinclude/include -lSDL2 -lSDL2_mixer -lSDL2main -mwindows
+		LFLAGS := -Lwinclude/lib/ -lSDL2 -lSDL2_mixer -lm -lSDL2main -mwindows
 		PLATFORM := win
-
 		INSULT := "Windows Dev? I am so sorry."
+		EXTENSION := .exe
 else
-		EXTENSION = .x86_64
-		CFLAGS := -Wall -O2
-		IFLAGS := -Iinclude/
 		LFLAGS := `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
 		PLATFORM := nix
-
 		INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
+		EXTENSION := .x86_64
 endif
 
-COMPILER := clang
+SRCS := $(wildcard src/*.c)
+OBJS := $(patsubst src/%.c,bin/%.o,$(SRCS))
 
-all: bin/Raquet.o bin/Raquet_Math.o bin/main.o
+all: announce bin/ $(TARGET)
+$(TARGET): $(OBJS)
+		@mkdir -p bin/$(PLATFORM)
 		@echo $(INSULT)
-		@echo "Compiling $(PROGRAMNAME)"
-		$(COMPILER) $(CARGS) bin/Raquet.o bin/Raquet_Math.o bin/main.o -o bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION) $(CFLAGS) $(IFLAGS) $(LFLAGS)
 ifeq ($(OS), Windows_NT)
+		@echo
+		@echo "Adding icon to executable"
+		windres winclude/program.rc -o bin/program.o
+		@echo
+		@echo "Compiling the final program"
+		$(CC) -o bin/$(PLATFORM)/$@ $^ bin/program.o $(LFLAGS)
+		@echo
+		@echo "Copying DLL Files"
 		cp -r winclude/bin/* bin/$(PLATFORM)
+else
+		@echo
+		@echo "Compiling the final program"
+		$(CC) -o bin/$(PLATFORM)/$@ $^ $(LFLAGS)
 endif
-		cp -r assets bin/$(PLATFORM)
-		./bin/$(PLATFORM)/$(PROGRAMNAME)$(EXTENSION)
+		@echo
+		@echo "Copying assets"
+		cp -r assets/ bin/$(PLATFORM)
+		@echo
+		@echo "Running $(TARGET)"
+		./bin/$(PLATFORM)/$(TARGET)
 
+bin/:
+	@echo "No build directory, creating one now"
+	mkdir -p bin
 
-bin/Raquet.o:
-		mkdir -p bin
-		mkdir -p bin/$(PLATFORM)
-		$(COMPILER) $(CARGS) include/Raquet.c -c -o bin/Raquet.o $(IFLAGS) $(W_CFLAGS)
+bin/%.o: src/%.c
+		$(CC) $(CFLAGS) -c $< $(IFLAGS) -o bin/$(patsubst src/%.c,%.o,$<)
 
-bin/Raquet_Math.o:
-		$(COMPILER) $(CARGS) include/Raquet_Math.c -c -o bin/Raquet_Math.o $(IFLAGS) $(W_CFLAGS)
+announce:
+		@echo
+		@echo "Starting compilation"
+		@echo
 
-bin/main.o:
-		$(COMPILER) $(CARGS) src/main.c -c -o bin/main.o $(IFLAGS) $(W_CFLAGS)
+clean: delete all announce
 
-clean:
-		rm -r bin/*
-		@echo "Erased from History"
-		make
+delete:
+		@echo
+		@echo "Deleting all build files"
+		@rm -rf bin/*.o
+	
+.PHONY: all clean delete announce
+.NOTPARALLEL: announce clean delete bin/ all

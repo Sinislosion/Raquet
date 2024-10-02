@@ -222,7 +222,7 @@ void runthedog()
 
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 
 	Raquet_Main();
 	return 0;

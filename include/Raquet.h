@@ -248,16 +248,16 @@ typedef struct Actor {
     int y;
 
     // how we're displayed
-    Raquet_CHR cur_image; // Current CHR
+    Raquet_CHR chr; // Current CHR
     Raquet_Point origin; // Our Orgigin Point (x, y) default is (0, 0)
     int width; // How wide we are (default is the width of the sprite)
     int height; // How tall we are (default is the height of the sprite)
     int angle; // angle of the object, rotated around its origin
-    
+
     Palette color; // used in very specific circumstances (barriers in B-TRON)
 
     // collision info
-    Raquet_BoundingBox bbox; // Bounding box                  
+    Raquet_BoundingBox bbox; // Bounding box
 
     SDL_RendererFlip flip;
 

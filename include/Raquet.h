@@ -12,7 +12,6 @@
 #define SCREEN_HEIGHT 240
 #define SCREEN_SCALE 3
 #define ALLOW_FULLSCREEN
-#define FRAMERATE_CAP 60
 
 /* RENDERING SETTINGS */
 #define INTEGER_SCALING
@@ -22,6 +21,7 @@
 /* MISC SETTINGS */
 #define GAME_NAME "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE 44100         // How high quality our sound is, decrease if you want moldy mp3 sound :)
+#define FRAMERATE_CAP 60                // Internal framerate cap. Disable VSYNC if this is higher than 60
 
 /* More Constants */
 extern SDL_Window * gWindow;

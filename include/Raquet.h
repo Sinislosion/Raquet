@@ -1,9 +1,6 @@
-/* If you for some reason include Raquet.h several times, don't worry, I've got your back. */
 #ifndef RAQUET_GAME_ENGINE
 #define SDL_MAIN_HANDLED
-
-/* Comment this out if you dont want fullscreen */
-#define ALLOW_FULLSCREEN
+#define RAQUET_GAME_ENGINE
 
 /* headers we need */
 #include <stdio.h>
@@ -11,17 +8,20 @@
 #include <SDL2/SDL_mixer.h>
 
 /* WINDOW CONSTANTS */
-#define SCREEN_WIDTH 256                // Internal screen width
-#define SCREEN_HEIGHT 240               // Internal screen height
-#define SCREEN_SCALE 2                  // How much we scale the window by default
-#define FRAMERATE_CAP 60      			// Constant framerate
+#define SCREEN_WIDTH 256
+#define SCREEN_HEIGHT 240
+#define SCREEN_SCALE 3
+#define ALLOW_FULLSCREEN
+#define FRAMERATE_CAP 60
+
+/* RENDERING SETTINGS */
+#define INTEGER_SCALING
+#define VSYNC
+//#define BACKGROUND_CLEARING_COLOR
+
+/* MISC SETTINGS */
 #define GAME_NAME "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE 44100         // How high quality our sound is, decrease if you want moldy mp3 sound :)
-
-/* VISUAL STUFF */
-#define VSYNC               // DSIABLE FOR NO VSYNC
-#define INTEGER_SCALING     // DISABLE FOR NO INTEGER SCALING
-//#define BACKGROUND_CLEARING_COLOR   // Makes Raquet_Clear also change the window background color
 
 /* More Constants */
 extern SDL_Window * gWindow;
@@ -273,5 +273,4 @@ void Raquet_DrawActor(Actor * act);
 
 int Raquet_ActorColliding(int x, int y, Actor * act1, Actor * act2);
 
-#define RAQUET_GAME_ENGINE
 #endif

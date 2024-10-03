@@ -176,12 +176,12 @@ int Raquet_MouseCheck_Released(unsigned int sdlbutton) {
 	return (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1;
 }
 
-/* 
+/*
  **************************
  *     MISC FUNCTIONS     *
  **************************
  */
- 
+
 /* 1 for display cursor, 0 for disable cursor */
 void Raquet_ShowCursor(int toggle) {
 	SDL_ShowCursor(toggle);
@@ -189,7 +189,11 @@ void Raquet_ShowCursor(int toggle) {
 
 /* Get an absolute string to an asset from the assets folder */
 const char* Raquet_AbsoluteToAsset(const char* relativepath) {
-    return strcat(strcat(SDL_GetBasePath(), "assets/"), relativepath);
+    char ret[1024] = "";
+    strcpy(ret, SDL_GetBasePath());
+    strcat(ret, "assets/");
+    strcat(ret, relativepath);
+    return (const char*)strcpy((char*)malloc(sizeof(char*) * strlen(ret)), ret);
 }
 
 /*
@@ -204,6 +208,8 @@ extern void createthedog(); // put all your creation code for the program here
 
 // FRAMERATE
 Uint64 start_tick = 0;
+Uint64 last_tick = 0;
+double Raquet_DeltaTime = 1;
 
 int Raquet_InitSDL() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -401,19 +407,27 @@ void Raquet_Main() {
 
             sdlmouse = SDL_GetMouseState(NULL, NULL);
 
-            start_tick = SDL_GetTicks64();
-
             #ifdef INTEGER_SCALING
                 SDL_SetRenderTarget(gRenderer, gFinalTexture);
             #endif
 
+            start_tick = SDL_GetTicks64();
             runthedog();
             Raquet_Update();
-            if ((1000.0f / FRAMERATE_CAP) > SDL_GetTicks64() - start_tick) {
-                SDL_Delay(1000.0f / FRAMERATE_CAP - (SDL_GetTicks64() - start_tick));
-            }
-            for (int i = 0; i < 322; i++)(prevkeys[i] = sdlkeys[i]);
+
+            for (int i = 0; i < 322; i++) {prevkeys[i] = sdlkeys[i];}
             prevmouse = sdlmouse;
+
+            #ifdef DELTA_TIME
+                Raquet_DeltaTime = double(start_tick - last_tick) * 0.06;
+                last_tick = start_tick;
+                SDL_Delay(1);
+            #else
+                int cur_tick = SDL_GetTicks64();
+                if ((1000.0f / FRAMERATE_CAP) > cur_tick - start_tick) {
+                    SDL_Delay(1000.0f / FRAMERATE_CAP - (cur_tick - start_tick));
+                }
+            #endif
 
         }
 

@@ -1,4 +1,4 @@
-CC := clang
+COMPILER := g++
 CFLAGS := -Wall -Wextra -O2
 TARGET := Raquet
 
@@ -10,7 +10,7 @@ ifeq ($(OS), Windows_NT)
 		INSULT := "Windows Dev? I am so sorry."
 		EXTENSION := .exe
 else
-		LFLAGS := `sdl2-config --libs` -lSDL2_mixer -lSDL2main -lm
+		LFLAGS := -lSDL2 -lSDL2_mixer -lSDL2main -lm
 		PLATFORM := nix
 		INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
 		EXTENSION := .x86_64
@@ -19,8 +19,8 @@ endif
 SRCS := $(wildcard src/*.c)
 OBJS := $(patsubst src/%.c,bin/%.o,$(SRCS))
 
-all: announce bin/ $(TARGET)
-$(TARGET): $(OBJS)
+all: announce bin/ $(TARGET)$(EXTENSION)
+$(TARGET)$(EXTENSION): $(OBJS)
 		@mkdir -p bin/$(PLATFORM)
 		@echo $(INSULT)
 ifeq ($(OS), Windows_NT)
@@ -29,28 +29,28 @@ ifeq ($(OS), Windows_NT)
 		windres winclude/program.rc -o bin/program.o
 		@echo
 		@echo "Compiling the final program"
-		$(CC) -o bin/$(PLATFORM)/$@ $^ bin/program.o $(LFLAGS)
+		$(COMPILER) -o bin/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ bin/program.o $(LFLAGS)
 		@echo
 		@echo "Copying DLL Files"
 		cp -r winclude/bin/* bin/$(PLATFORM)
 else
 		@echo
 		@echo "Compiling the final program"
-		$(CC) -o bin/$(PLATFORM)/$@ $^ $(LFLAGS)
+		$(COMPILER) -o bin/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LFLAGS)
 endif
 		@echo
 		@echo "Copying assets"
 		cp -r assets/ bin/$(PLATFORM)
 		@echo
 		@echo "Running $(TARGET)"
-		./bin/$(PLATFORM)/$(TARGET)
+		./bin/$(PLATFORM)/$(TARGET)$(EXTENSION)
 
 bin/:
 	@echo "No build directory, creating one now"
 	mkdir -p bin
 
 bin/%.o: src/%.c
-		$(CC) $(CFLAGS) -c $< $(IFLAGS) -o bin/$(patsubst src/%.c,%.o,$<)
+		$(COMPILER) $(CFLAGS) -c $< $(IFLAGS) -o bin/$(patsubst src/%.c,%.o,$<)
 
 announce:
 		@echo
@@ -63,6 +63,6 @@ delete:
 		@echo
 		@echo "Deleting all build files"
 		@rm -rf bin/*.o
-	
+
 .PHONY: all clean delete announce
 .NOTPARALLEL: announce clean delete bin/ all

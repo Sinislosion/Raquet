@@ -52,7 +52,7 @@ Star createStars() {
 void initStars() {
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
 		stararray[i] = createStars();
-		stararray[i].x += 4.0 * i;
+		stararray[i].x += 10.0 * i;
 	}
 }
 
@@ -61,7 +61,7 @@ void drawStars() {
 
 	// for every star we know exists, and for every 4 points we need to draw.
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
-		stararray[i].x--;
+		stararray[i].x -= 1 * Raquet_DeltaTime;
 		for (int o = 0; o < 4; o++) {
 			int tempx = stararray[i].x;
 			Raquet_DrawPoint(Raquet_GlobalPalette[0x30], tempx + o, stararray[i].y, 255 - (64 * o));
@@ -70,9 +70,9 @@ void drawStars() {
 		// if a point exceeds 0, plus its length, loop it back to the screen width
 		if (stararray[i].x <= -4) {
 			stararray[i] = createStars();
-			stararray[i].x = SCREEN_WIDTH;
+			stararray[i].x += SCREEN_WIDTH;
 		}
-	} 
+	}
 }
 
 /*
@@ -89,7 +89,7 @@ void bePlaceface() {
 	int key_right = Raquet_KeyCheck(SDL_SCANCODE_RIGHT);
 
 	int move_x = key_right - key_left;
-	int move_y = key_down - key_up; 
+	int move_y = key_down - key_up;;
 
 	if (Raquet_ActorColliding(act_placeface->x + (move_x * 2), act_placeface->y, act_placeface, act_placeface2)) {
 		while (!Raquet_ActorColliding(act_placeface->x + Raquet_Sign(move_x), act_placeface->y, act_placeface, act_placeface2)) {
@@ -98,7 +98,7 @@ void bePlaceface() {
 		move_x = 0;
 	}
 
-	act_placeface->x += move_x * 2;
+	act_placeface->x += (move_x * 2) * Raquet_DeltaTime;
 
 	if (Raquet_ActorColliding(act_placeface->x, act_placeface->y + (move_y * 2), act_placeface, act_placeface2))  {
 		while (!Raquet_ActorColliding(act_placeface->x, act_placeface->y + Raquet_Sign(move_y), act_placeface, act_placeface2)) {
@@ -106,7 +106,7 @@ void bePlaceface() {
 		}
 		move_y = 0;
 	}
-	act_placeface->y += move_y * 2;
+	act_placeface->y += (move_y * 2) * Raquet_DeltaTime;
 
 	Raquet_DrawActor(act_placeface);
 	Raquet_DrawActor(act_placeface2);
@@ -179,7 +179,7 @@ void createthedog()
 
 void runthedog()
 {
-	demotime++;
+	demotime += Raquet_DeltaTime;
 
 	// Draw our stuffs
 	Raquet_Clear(Raquet_GlobalPalette[0x12]); 
@@ -199,8 +199,8 @@ void runthedog()
 	int move_x = Raquet_KeyCheck(SDL_SCANCODE_D) - Raquet_KeyCheck(SDL_SCANCODE_A);
 	int move_y = Raquet_KeyCheck(SDL_SCANCODE_S) - Raquet_KeyCheck(SDL_SCANCODE_W);
 
-	Camera.x += move_x;
-	Camera.y += move_y;
+	Camera.x += move_x * Raquet_DeltaTime;
+	Camera.y += move_y * Raquet_DeltaTime;
 
 	if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_1)) {
 		Palette swap1 = Raquet_GlobalPalette[0x12];
@@ -209,8 +209,8 @@ void runthedog()
 		Raquet_GlobalPalette[0x12] = swap2;
 		Raquet_GlobalPalette[0x15] = swap1;
 
-		Palette swap3[3]; 
-		Palette swap4[3]; 
+		Palette swap3[3];
+		Palette swap4[3];
 		Raquet_CopyPalette(swap3, pal_face);
 		Raquet_CopyPalette(swap4, pal_face2);
 

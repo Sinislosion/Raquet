@@ -4,6 +4,8 @@
 
 /* headers we need */
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -16,6 +18,7 @@
 /* RENDERING SETTINGS */
 #define INTEGER_SCALING
 #define VSYNC
+#define DELTA_TIME
 //#define BACKGROUND_CLEARING_COLOR
 
 /* MISC SETTINGS */
@@ -121,6 +124,8 @@ extern const char* Raquet_AbsoluteToAsset(const char* relativepath);
 
 // FRAMERATE
 extern Uint64 start_tick;
+extern Uint64 last_tick;
+extern double Raquet_DeltaTime;
 
 /* Initialize SDL2 */
 extern int Raquet_InitSDL();
@@ -165,7 +170,7 @@ typedef char * PPF_Bank;
 // PPF HEADER V1.0
 extern const unsigned char PPFHEADER[8];
 
-/* 
+/*
  * fixed bitmask we use to read CHR data 
  * (this is probably sloppy, but im not smart enough to know another way)
  */
@@ -244,8 +249,8 @@ Raquet_BoundingBox;
 
 typedef struct Actor {
     // where we are in virtual space
-    int x;
-    int y;
+    float x;
+    float y;
 
     // how we're displayed
     Raquet_CHR chr; // Current CHR

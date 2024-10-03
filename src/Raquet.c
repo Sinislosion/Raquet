@@ -213,21 +213,29 @@ double Raquet_DeltaTime = 1;
 
 int Raquet_InitSDL() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-        printf("FAILED TO INITIALIZE SDL VIDEO.\n");
+        #ifdef PRINT_DEBUG
+            printf("FAILED TO INITIALIZE SDL VIDEO.\n");
+        #endif
         return 0;
     } else {
         // Init SDL_mixer
         if (Mix_OpenAudio(AUDIO_SAMPLE_RATE, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-            printf("FAILED TO INITIALIZE SDL MIXER.\n");
+            #ifdef PRINT_DEBUG
+                printf("FAILED TO INITIALIZE SDL MIXER.\n");
+            #endif
             return 0;
         }
         // Create window
         gWindow = SDL_CreateWindow(GAME_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         if (gWindow == NULL) {
-            printf("FAILED TO CREATE SDL WINDOW.\n");
+            #ifdef PRINT_DEBUG
+                printf("FAILED TO CREATE SDL WINDOW.\n");
+            #endif
             return 0;
         } else {
-            printf("SDL Initialized\n");
+            #ifdef PRINT_DEBUG
+                printf("SDL Initialized\n");
+            #endif
             fflush(stdout);
 
             // Init Window Renderer
@@ -264,7 +272,9 @@ int Raquet_InitSDL() {
 int Raquet_Init() {
     sdlkeys = SDL_GetKeyboardState(NULL);
     if (!Raquet_InitSDL()) {
-        printf("Failed to Initialize SDL\n");
+        #ifdef PRINT_DEBUG
+            printf("Failed to Initialize SDL\n");
+        #endif
         return 0;
     }
 
@@ -371,11 +381,14 @@ void Raquet_Update() {
 /* The main Raquet function. Everything runs from here. */
 void Raquet_Main() {
     if (!Raquet_Init()) {
-        printf("Failed to Initialize Raquet\n");
+        #ifdef PRINT_DEBUG
+            printf("Failed to Initialize Raquet\n");
+        #endif
         return;
     } else {
-        printf("Raquet Initialized\n");
-        fflush(stdout);
+        #ifdef PRINT_DEBUG
+            printf("Raquet Initialized\n");
+        #endif
         createthedog(); // run our creation code
 
         /* SDL While loop, and frame counter */
@@ -482,20 +495,30 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 
 		for (int i = 0; i < 8; i++) {
 			if ((*targetarray)[i] != PPFHEADER[i]) {
-				printf("WARNING: HEADER DATA DOES NOT MATCH\n");
-				fflush(stdout);
+                #ifdef PRINT_DEBUG
+				    printf("WARNING: HEADER DATA DOES NOT MATCH\n");
+				    fflush(stdout);
+                #endif
 			}
 
-		} 
+		}
 
 		SDL_RWclose(ppfdata);
-		printf("Loaded PPF Data at: %s successfully\n", dir);
-		fflush(stdout);
-		return 1;
+
+        #ifdef PRINT_DEBUG
+		    printf("Loaded PPF Data at: %s successfully\n", dir);
+		    fflush(stdout);
+		#endif
+
+        return 1;
 
 	} else {
-		printf("Failed to load PPF at: %s\n", dir);
-        fflush(stdout);
+
+        #ifdef PRINT_DEBUG
+		    printf("Failed to load PPF at: %s\n", dir);
+            fflush(stdout);
+        #endif
+
         exit(1);
 		return 0;
 	}
@@ -787,6 +810,11 @@ void Raquet_DestroyActor(Actor * act) {
 
 void Raquet_DrawActor(Actor * act) {
     Raquet_PlaceCHR_ext(act -> chr, act -> position.x - Camera.x, act -> position.y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
+    #ifdef VISUALIZE_BBOX
+        int* x = &act -> position.x;
+        int* y = &act -> position.y;
+        Raquet_DrawRectangle(*x + act -> bbox.x1, *y + act -> bbox.y1, act -> bbox.x2, act -> bbox.y2, 0xFF00FFFF, 255, 0);
+    #endif
 }
 
 int Raquet_ActorColliding(int x, int y, Actor * act1, Actor * act2) {

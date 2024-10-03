@@ -3,7 +3,6 @@
 #define RAQUET_GAME_ENGINE
 
 /* headers we need */
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
@@ -25,6 +24,18 @@
 #define GAME_NAME "Raquet Game Engine"  // Window Title
 #define AUDIO_SAMPLE_RATE 44100         // How high quality our sound is, decrease if you want moldy mp3 sound :)
 #define FRAMERATE_CAP 60                // Internal framerate cap. Disable VSYNC if this is higher than 60
+
+/* DEBUG SETTINGS */
+#define VISUALIZE_BBOX
+#define PRINT_DEBUG
+
+#ifdef VISUALIZE_BBOX
+    #define BBOX_DEBUG_COLOR    0xFF00FFFF
+#endif
+
+#ifdef PRINT_DEBUG
+    #include <stdio.h>
+#endif
 
 /* More Constants */
 extern SDL_Window * gWindow;
@@ -242,7 +253,6 @@ typedef struct Raquet_BoundingBox {
     int y1;
     int x2;
     int y2;
-
 }
 Raquet_BoundingBox;
 

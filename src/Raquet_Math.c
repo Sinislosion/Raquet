@@ -32,8 +32,8 @@ int Raquet_CollisionLine(int x1, int y1, int x2, int y2, int x3, int y3, int x4,
 }
 
 int Raquet_CollisionLineRect(int x1, int y1, int x2, int y2, Actor * act) {
-    const int rx = (act -> x - act -> origin.x) + act -> bbox.x1;
-    const int ry = (act -> y - act -> origin.y) + act -> bbox.y1;
+    const int rx = (act -> position.x - act -> origin.x) + act -> bbox.x1;
+    const int ry = (act -> position.y - act -> origin.y) + act -> bbox.y1;
     const int rw = act -> bbox.x2 - act -> bbox.x1;
     const int rh = act -> bbox.y2 - act -> bbox.y1;
 

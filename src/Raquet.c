@@ -419,7 +419,7 @@ void Raquet_Main() {
             prevmouse = sdlmouse;
 
             #ifdef DELTA_TIME
-                Raquet_DeltaTime = double(start_tick - last_tick) * 0.06;
+                Raquet_DeltaTime = double(start_tick - last_tick) * 0.060f;
                 last_tick = start_tick;
                 SDL_Delay(1);
             #else
@@ -764,8 +764,8 @@ Actor * Raquet_AllocateActor() {
 }
 
 void Raquet_CreateActor(Actor * act, Raquet_CHR chr) {
-    act -> x = 0;
-    act -> y = 0;
+    act -> position.x = 0;
+    act -> position.y = 0;
     act -> origin.x = 0;
     act -> origin.y = 0;
     act -> angle = 0;
@@ -786,9 +786,9 @@ void Raquet_DestroyActor(Actor * act) {
 }
 
 void Raquet_DrawActor(Actor * act) {
-    Raquet_PlaceCHR_ext(act -> chr, act -> x - Camera.x, act -> y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
+    Raquet_PlaceCHR_ext(act -> chr, act -> position.x - Camera.x, act -> position.y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
 }
 
 int Raquet_ActorColliding(int x, int y, Actor * act1, Actor * act2) {
-    return (x - act1 -> origin.x + act1 -> bbox.x2 > act2 -> x - act2 -> origin.x + act2 -> bbox.x1) && (x - act1 -> origin.x + act1 -> bbox.x1 < act2 -> x - act2 -> origin.x + act2 -> bbox.x2) && (y - act1 -> origin.y + act1 -> bbox.y2 > act2 -> y - act2 -> origin.y + act2 -> bbox.y1) && (y - act1 -> origin.y + act1 -> bbox.y1 < act2 -> y - act2 -> origin.y + act2 -> bbox.y2);
+    return (x - act1 -> origin.x + act1 -> bbox.x2 > act2 -> position.x - act2 -> origin.x + act2 -> bbox.x1) && (x - act1 -> origin.x + act1 -> bbox.x1 < act2 -> position.x - act2 -> origin.x + act2 -> bbox.x2) && (y - act1 -> origin.y + act1 -> bbox.y2 > act2 -> position.y - act2 -> origin.y + act2 -> bbox.y1) && (y - act1 -> origin.y + act1 -> bbox.y1 < act2 -> position.y - act2 -> origin.y + act2 -> bbox.y2);
 }

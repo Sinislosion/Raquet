@@ -18,7 +18,7 @@
 /* RENDERING SETTINGS */
 #define INTEGER_SCALING
 #define VSYNC
-#define DELTA_TIME
+//#define DELTA_TIME
 //#define BACKGROUND_CLEARING_COLOR
 
 /* MISC SETTINGS */
@@ -226,8 +226,7 @@ void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha);
  */
 
 typedef struct Raquet_Camera {
-    int x;
-    int y;
+    float x, y;
 } Raquet_Camera;
 
 extern Raquet_Camera Camera;
@@ -249,8 +248,8 @@ Raquet_BoundingBox;
 
 typedef struct Actor {
     // where we are in virtual space
-    float x;
-    float y;
+    // can be accessed with position.x or position.y
+    Raquet_Point position;
 
     // how we're displayed
     Raquet_CHR chr; // Current CHR

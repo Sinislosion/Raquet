@@ -11,7 +11,7 @@ float demotime = 0;
 // BG Stars
 #define PARTICLE_AMOUNT		SCREEN_WIDTH/4
 typedef struct Star {
-  double x;
+	float x;
 	int y;
 } Star;
 
@@ -61,7 +61,7 @@ void drawStars() {
 
 	// for every star we know exists, and for every 4 points we need to draw.
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
-		stararray[i].x -= 1 * Raquet_DeltaTime;
+		stararray[i].x -= 1;
 		for (int o = 0; o < 4; o++) {
 			int tempx = stararray[i].x;
 			Raquet_DrawPoint(Raquet_GlobalPalette[0x30], tempx + o, stararray[i].y, 255 - (64 * o));
@@ -91,22 +91,22 @@ void bePlaceface() {
 	int move_x = key_right - key_left;
 	int move_y = key_down - key_up;;
 
-	if (Raquet_ActorColliding(act_placeface->x + (move_x * 2), act_placeface->y, act_placeface, act_placeface2)) {
-		while (!Raquet_ActorColliding(act_placeface->x + Raquet_Sign(move_x), act_placeface->y, act_placeface, act_placeface2)) {
-			act_placeface->x += Raquet_Sign(move_x);
+	if (Raquet_ActorColliding(act_placeface->position.x + (move_x * 2), act_placeface->position.y, act_placeface, act_placeface2)) {
+		while (!Raquet_ActorColliding(act_placeface->position.x + Raquet_Sign(move_x), act_placeface->position.y, act_placeface, act_placeface2)) {
+			act_placeface->position.x += Raquet_Sign(move_x);
 		}
 		move_x = 0;
 	}
 
-	act_placeface->x += (move_x * 2) * Raquet_DeltaTime;
+	act_placeface->position.x += (move_x * 2);
 
-	if (Raquet_ActorColliding(act_placeface->x, act_placeface->y + (move_y * 2), act_placeface, act_placeface2))  {
-		while (!Raquet_ActorColliding(act_placeface->x, act_placeface->y + Raquet_Sign(move_y), act_placeface, act_placeface2)) {
-			act_placeface->y += Raquet_Sign(move_y);
+	if (Raquet_ActorColliding(act_placeface->position.x, act_placeface->position.y + (move_y * 2), act_placeface, act_placeface2))  {
+		while (!Raquet_ActorColliding(act_placeface->position.x, act_placeface->position.y + Raquet_Sign(move_y), act_placeface, act_placeface2)) {
+			act_placeface->position.y += Raquet_Sign(move_y);
 		}
 		move_y = 0;
 	}
-	act_placeface->y += (move_y * 2) * Raquet_DeltaTime;
+	act_placeface->position.y += (move_y * 2);
 
 	Raquet_DrawActor(act_placeface);
 	Raquet_DrawActor(act_placeface2);
@@ -158,15 +158,15 @@ void createthedog()
 	Raquet_CreateActor(act_placeface2, chr_placeface);
 
 	/* Setup our actors */
-	act_placeface->x = SCREEN_WIDTH/2;
-	act_placeface->y = 64;
+	act_placeface->position.x = SCREEN_WIDTH/2;
+	act_placeface->position.y = 64;
 
 	act_placeface2->width = 32;
 	act_placeface2->height = 32;
 	act_placeface2->bbox.x2 = act_placeface2->width;
 	act_placeface2->bbox.y2 = act_placeface2->height;
-	act_placeface2->x = 64;
-	act_placeface2->y = 64;
+	act_placeface2->position.x = 64;
+	act_placeface2->position.y = 64;
 
 	/* Audio */
 	Raquet_Sound snd_placeface = Raquet_LoadSound(Raquet_AbsoluteToAsset("2A03_Kevvviiinnn-Superfusion.wav"));
@@ -179,7 +179,7 @@ void createthedog()
 
 void runthedog()
 {
-	demotime += Raquet_DeltaTime;
+	demotime++;
 
 	// Draw our stuffs
 	Raquet_Clear(Raquet_GlobalPalette[0x12]); 
@@ -199,8 +199,8 @@ void runthedog()
 	int move_x = Raquet_KeyCheck(SDL_SCANCODE_D) - Raquet_KeyCheck(SDL_SCANCODE_A);
 	int move_y = Raquet_KeyCheck(SDL_SCANCODE_S) - Raquet_KeyCheck(SDL_SCANCODE_W);
 
-	Camera.x += move_x * Raquet_DeltaTime;
-	Camera.y += move_y * Raquet_DeltaTime;
+	Camera.x += move_x;
+	Camera.y += move_y;
 
 	if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_1)) {
 		Palette swap1 = Raquet_GlobalPalette[0x12];

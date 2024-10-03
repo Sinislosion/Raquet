@@ -813,7 +813,7 @@ void Raquet_DrawActor(Actor * act) {
     #ifdef VISUALIZE_BBOX
         int* x = &act -> position.x;
         int* y = &act -> position.y;
-        Raquet_DrawRectangle(*x + act -> bbox.x1, *y + act -> bbox.y1, act -> bbox.x2, act -> bbox.y2, 0xFF00FFFF, 255, 0);
+        Raquet_DrawRectangle(*x - Camera.x + act -> bbox.x1, *y - Camera.y + act -> bbox.y1, act -> bbox.x2, act -> bbox.y2, 0xFF00FFFF, 255, 0);
     #endif
 }
 

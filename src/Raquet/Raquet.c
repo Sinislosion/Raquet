@@ -17,12 +17,6 @@ SDL_Event e;
 
 Raquet_Camera Camera = {0, 0};
 
-/*
- ************************
- *     PALETTE INFO     *
- ************************
- */
-
 Palette Raquet_GlobalPalette[0x40] = {
     /* 0x00 - 0x0F */
     0x696969FF,
@@ -96,85 +90,6 @@ Palette Raquet_GlobalPalette[0x40] = {
     0x000000FF,
     0x00000000
 };
-
-/*
- ***************************
- *     AUDIO FUNCTIONS     *
- ***************************
- */
-
-Raquet_Sound Raquet_LoadSound(const char * file) {
-    return Mix_LoadWAV(file);
-}
-
-void Raquet_PlaySound(Raquet_Sound wav, int loops) {
-    Mix_PlayChannel(-1, wav, loops);
-}
-
-void Raquet_DestroySound(Raquet_Sound wav) {
-    Mix_FreeChunk(wav);
-}
-
-/*
- *********************************
- *     CUSTOM MATH FUNCTIONS     *
- *********************************
- */
-
-int Raquet_Sign(float comp) {
-	return (0 < comp) - (comp < 0);
-}
-
-float Raquet_Min(float x, float y) {
-	return (((x) < (y)) ? (x) : (y));
-}
-
-float Raquet_Max(float x, float y) {
-    return (((x) > (y)) ? (x) : (y));
-}
-
-float Raquet_PI = 3.1415926535;
-
-/*
- ***************************
- *     INPUT FUNCTIONS     *
- ***************************
- */
-
-const Uint8 * sdlkeys;
-uint8_t sdlmouse;
-uint8_t prevmouse;
-uint8_t prevkeys[SDL_NUM_SCANCODES];
-
-/* Check if this key is being held down */
-int Raquet_KeyCheck(unsigned int key) {
-	return sdlkeys[key];
-}
-
-/* Will only return 1 for the first frame the key is being held down */
-int Raquet_KeyCheck_Pressed(unsigned int key) {
-	return (prevkeys[key] != sdlkeys[key] && sdlkeys[key] != 0);
-}
-
-/* Will only return 1 if the key has been released for 1 frame */
-int Raquet_KeyCheck_Released(unsigned int key) {
-	return (prevkeys[key] != sdlkeys[key] && sdlkeys[key] != 1);
-}
-
-/* Check if this mouse button is being held down */
-int Raquet_MouseCheck(unsigned int sdlbutton) {
-	return sdlbutton & sdlmouse;
-}
-
-/* Will only return 1 for the first frame the mouse button is being held down */
-int Raquet_MouseCheck_Pressed(unsigned int sdlbutton) {
-	return (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 0;
-}
-
-/* Will only return 1 if the mouse button has been released for 1 frame */
-int Raquet_MouseCheck_Released(unsigned int sdlbutton) {
-	return (prevmouse & sdlbutton) != (sdlmouse & sdlbutton) && (sdlmouse & sdlbutton) != 1;
-}
 
 /*
  **************************

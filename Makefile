@@ -5,7 +5,7 @@ CFLAGS := --std=c99 -Wall -Wextra -O2
 #Name of the final executable
 TARGET := Raquet
 
-IFLAGS := -Iinclude/
+IFLAGS := -Iinclude/*
 
 # build and source directories. no you cannot have 2 files with the same name
 # in seperate recursive directories.

@@ -11,8 +11,7 @@ float demotime = 0;
 // BG Stars
 #define PARTICLE_AMOUNT		SCREEN_WIDTH/4
 typedef struct Star {
-	float x;
-	int y;
+	int x, y;
 } Star;
 
 Star stararray[PARTICLE_AMOUNT];
@@ -52,7 +51,7 @@ Star createStars() {
 void initStars() {
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
 		stararray[i] = createStars();
-		stararray[i].x += 10.0 * i;
+		stararray[i].x = i * 4;
 	}
 }
 

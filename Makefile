@@ -1,8 +1,16 @@
-COMPILER := g++
-CFLAGS := -Wall -Wextra -O2
+# Modify these if you need
+COMPILER := gcc
+CFLAGS := --std=c99 -Wall -Wextra -O2
+
+#Name of the final executable
 TARGET := Raquet
 
 IFLAGS := -Iinclude/
+
+# build and source directories. no you cannot have 2 files with the same name
+# in seperate recursive directories.
+BUILD_DIR := bin
+SRC_DIR := src
 
 ifeq ($(OS), Windows_NT)
 		LFLAGS := -Lwinclude/lib/ -lSDL2 -lSDL2_mixer -lm -lSDL2main -mwindows
@@ -16,41 +24,44 @@ else
 		EXTENSION := .x86_64
 endif
 
-SRCS := $(wildcard src/*.c)
-OBJS := $(patsubst src/%.c,bin/%.o,$(SRCS))
+# some guy on stack overflow made this. i am forever in his debt
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-all: announce bin/ $(TARGET)$(EXTENSION)
+SRCS := $(call rwildcard, $(SRC_DIR), *.c)
+OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
+
+all: announce $(BUILD_DIR)/ $(TARGET)$(EXTENSION)
 $(TARGET)$(EXTENSION): $(OBJS)
-		@mkdir -p bin/$(PLATFORM)
+		@mkdir -p $(BUILD_DIR)/$(PLATFORM)
 		@echo $(INSULT)
 ifeq ($(OS), Windows_NT)
 		@echo
 		@echo "Adding icon to executable"
-		windres winclude/program.rc -o bin/program.o
+		windres winclude/program.rc -o $(BUILD_DIR)/program.o
 		@echo
 		@echo "Compiling the final program"
-		$(COMPILER) -o bin/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ bin/program.o $(LFLAGS)
+		$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $(addprefix $(BUILD_DIR)/, $(notdir $^)) $(BUILD_DIR)/program.o $(LFLAGS)
 		@echo
 		@echo "Copying DLL Files"
-		cp -r winclude/bin/* bin/$(PLATFORM)
+		cp -r winclude/$(BUILD_DIR)/* $(BUILD_DIR)/$(PLATFORM)
 else
 		@echo
 		@echo "Compiling the final program"
-		$(COMPILER) -o bin/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LFLAGS)
+		$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LFLAGS)
 endif
 		@echo
 		@echo "Copying assets"
-		cp -r assets/ bin/$(PLATFORM)
+		cp -r assets/ $(BUILD_DIR)/$(PLATFORM)
 		@echo
 		@echo "Running $(TARGET)"
-		./bin/$(PLATFORM)/$(TARGET)$(EXTENSION)
+		./$(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION)
 
-bin/:
+$(BUILD_DIR)/:
 	@echo "No build directory, creating one now"
-	mkdir -p bin
+	mkdir -p $(BUILD_DIR)
 
-bin/%.o: src/%.c
-		$(COMPILER) $(CFLAGS) -c $< $(IFLAGS) -o bin/$(patsubst src/%.c,%.o,$<)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+		$(COMPILER) $(CFLAGS) -c $< $(IFLAGS) -o $(BUILD_DIR)/$(notdir $(patsubst $(SRC_DIR)/%.c,%.o,$<))
 
 announce:
 		@echo
@@ -62,7 +73,7 @@ clean: delete all announce
 delete:
 		@echo
 		@echo "Deleting all build files"
-		@rm -rf bin/*.o
+		@rm -rf $(BUILD_DIR)/*.o
 
 .PHONY: all clean delete announce
-.NOTPARALLEL: announce clean delete bin/ all
+.NOTPARALLEL: announce clean delete $(BUILD_DIR)/ all

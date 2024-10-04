@@ -1,5 +1,5 @@
 # Modify these if you need
-COMPILER := gcc
+COMPILER := clang
 CFLAGS := --std=c99 -Wall -Wextra -O2
 
 #Name of the final executable

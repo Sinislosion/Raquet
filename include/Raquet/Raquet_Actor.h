@@ -3,7 +3,7 @@
 
 #include "Raquet_Types.h"
 
-Actor * Raquet_AllocateActor();
+Actor * Raquet_AllocateActor(void);
 
 void Raquet_CreateActor(Actor * act, Raquet_CHR chr);
 

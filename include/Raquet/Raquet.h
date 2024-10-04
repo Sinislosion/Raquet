@@ -45,10 +45,10 @@ extern Uint64 last_tick;
 extern double Raquet_DeltaTime;
 
 /* Initialize SDL2 */
-extern int Raquet_InitSDL();
+extern int Raquet_InitSDL(void);
 
 /* Initialize the Raquet Engine */
-extern int Raquet_Init();
+extern int Raquet_Init(void);
 
 /* I'm actually not sure what you can use this for yet, but you can use it */
 extern void Raquet_SetDrawColor(Palette pal, int alpha);
@@ -65,9 +65,9 @@ extern void Raquet_Clear(Palette pal);
 extern void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill);
 
 /* This is used to update the Window within the Raquet_Main function */
-extern void Raquet_Update();
+extern void Raquet_Update(void);
 
 /* The main Raquet function. Everything runs from here. */
-extern void Raquet_Main();
+extern void Raquet_Main(void);
 
 #endif

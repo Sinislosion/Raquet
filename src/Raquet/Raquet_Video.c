@@ -134,7 +134,7 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
         ret.palette[i] = pal[i];
     }
 
-    Uint32 pixels[ret.width * ret.height];
+    Palette* pixels = (Palette*)malloc(sizeof(Palette) * (ret.width * ret.height));
 
     for (int chrcounty = 0; chrcounty < ywrap; chrcounty++) {
         for (int y = 0; y < 8; y++) {
@@ -270,7 +270,7 @@ void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
         return;
     }*/
 
-    Palette pixels[chr->width * chr->height];
+    Palette* pixels = (Palette*)malloc(sizeof(Palette) * (chr->width * chr->height));
 
     chr->palette[0] = pal[0];
     chr->palette[1] = pal[1];

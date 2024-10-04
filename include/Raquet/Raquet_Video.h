@@ -8,7 +8,7 @@
 extern const unsigned char PPFHEADER[8];
 
 /*
- * fixed bitmask we use to read CHR data 
+ * fixed bitmask we use to read CHR data
  * (this is probably sloppy, but im not smart enough to know another way)
  */
 extern const unsigned int ppfbitmask[8];

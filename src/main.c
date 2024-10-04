@@ -37,7 +37,7 @@ Raquet_CHR chr_raquetlogo_T;
 */
 
 // Init each star particle
-Star createStars() {
+Star createStars(void) {
 	int pos  = (rand() % (SCREEN_HEIGHT + 1));
 	Star par;
 	par.x = 0;
@@ -47,7 +47,7 @@ Star createStars() {
 }
 
 // init all our stars
-void initStars() {
+void initStars(void) {
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
 		stararray[i] = createStars();
 		stararray[i].x = i * 4;
@@ -55,7 +55,7 @@ void initStars() {
 }
 
 // draw the stars
-void drawStars() {
+void drawStars(void) {
 
 	// for every star we know exists, and for every 4 points we need to draw.
 	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
@@ -80,7 +80,7 @@ void drawStars() {
 */
 Actor* act_placeface;
 Actor* act_placeface2;
-void bePlaceface() {
+void bePlaceface(void) {
 	int key_up = Raquet_KeyCheck(SDL_SCANCODE_UP);
 	int key_down = Raquet_KeyCheck(SDL_SCANCODE_DOWN);
 	int key_left = Raquet_KeyCheck(SDL_SCANCODE_LEFT);
@@ -116,7 +116,7 @@ void bePlaceface() {
  **************************
 */
 
-void createthedog()
+void createthedog(void)
 {
 	/* Graphical */
 	Raquet_LoadPPFBank(&ppf_main, Raquet_AbsoluteToAsset("main.ppf"));
@@ -175,7 +175,7 @@ void createthedog()
 
 }
 
-void runthedog()
+void runthedog(void)
 {
 	demotime++;
 
@@ -220,9 +220,7 @@ void runthedog()
 
 }
 
-int main() {
-
+int main(void) {
 	Raquet_Main();
 	return 0;
-
 }

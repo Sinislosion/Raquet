@@ -22,15 +22,15 @@ SDL_Event e;
  */
 
 // DOG FUNCTIONS
-extern void runthedog(); // put this somewhere in your program, the default code to run
-extern void createthedog(); // put all your creation code for the program here
+extern void runthedog(void); // put this somewhere in your program, the default code to run
+extern void createthedog(void); // put all your creation code for the program here
 
 // FRAMERATE
 Uint64 start_tick = 0;
 Uint64 last_tick = 0;
 double Raquet_DeltaTime = 1;
 
-int Raquet_InitSDL() {
+int Raquet_InitSDL(void) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         #ifdef PRINT_DEBUG
             printf("FAILED TO INITIALIZE SDL VIDEO.\n");
@@ -88,7 +88,7 @@ int Raquet_InitSDL() {
 }
 
 /* Initialize the Raquet Engine */
-int Raquet_Init() {
+int Raquet_Init(void) {
     sdlkeys = SDL_GetKeyboardState(NULL);
     if (!Raquet_InitSDL()) {
         #ifdef PRINT_DEBUG
@@ -101,7 +101,7 @@ int Raquet_Init() {
 }
 
 /* This is used to update the Window within the Raquet_Main function */
-void Raquet_Update() {
+void Raquet_Update(void) {
     SDL_UpdateWindowSurface(gWindow);
 	SDL_SetRenderTarget(gRenderer, NULL);
 
@@ -140,7 +140,7 @@ void Raquet_Update() {
 }
 
 /* The main Raquet function. Everything runs from here. */
-void Raquet_Main() {
+void Raquet_Main(void) {
     if (!Raquet_Init()) {
         #ifdef PRINT_DEBUG
             printf("Failed to Initialize Raquet\n");

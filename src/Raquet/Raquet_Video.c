@@ -103,13 +103,13 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
 
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
-
             uint8_t v1, v2, v3;
+            int dest = x + (y * 8);
             v1 = (ppfbank[y + 8 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
             v2 = (ppfbank[y + 16 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
             v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
-            pixels[x + (y * 8)] = pal[v3];
-            ret.data[x + (y * 8)] = pal[v3];
+            pixels[dest] = pal[v3];
+            ret.data[dest] = v3;
         }
     }
 
@@ -117,6 +117,47 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
     SDL_UpdateTexture(ret.tex, NULL, pixels, 8 * sizeof(Palette));
 
     return ret;
+}
+
+/* Load a multi-tile sprite. More info is in the wiki */
+Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette pal[4]) {
+    Raquet_CHR ret;
+
+    ret.width = xwrap * 8;
+    ret.height = ywrap * 8;
+
+    ret.tex = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
+
+    ret.data = (int*)malloc(sizeof(int) * (ret.width * ret.height));
+
+    for (uint8_t i = 0; i < 4; i++) {
+        ret.palette[i] = pal[i];
+    }
+
+    Uint32 pixels[ret.width * ret.height];
+
+    for (int chrcounty = 0; chrcounty < ywrap; chrcounty++) {
+        for (int y = 0; y < 8; y++) {
+            for (int chrcountx = 0; chrcountx < xwrap; chrcountx++) {
+                for (int x = 0; x < 8; x++) {
+                    int dest = x + (y * ret.width) + (chrcountx * 8) + (chrcounty * (ret.width * 8));
+                    int curid = chrcountx + (chrcounty * xwrap);
+                    uint8_t v1, v2, v3;
+                    v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                    v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                    v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
+                    pixels[dest] = pal[v3];
+                    ret.data[dest] = v3;
+                }
+            }
+        }
+    }
+
+    SDL_SetTextureBlendMode(ret.tex, SDL_BLENDMODE_BLEND);
+    SDL_UpdateTexture(ret.tex, NULL, pixels, ret.width * sizeof(Palette));
+
+    return ret;
+
 }
 
 /* Set a palette variable within runtime */
@@ -131,6 +172,7 @@ void Raquet_CopyPalette(Palette dest[4], Palette origin[4]) {
     dest[0] = origin[0];
     dest[1] = origin[1];
     dest[2] = origin[2];
+    dest[3] = origin[3];
 }
 
 /* I'm actually not sure what you can use this for yet, but you can use it */
@@ -178,45 +220,6 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
 }
 
-/* Load a multi-tile sprite. More info is in the wiki */
-Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette pal[4]) {
-    Raquet_CHR ret;
-
-    ret.width = xwrap * 8;
-    ret.height = ywrap * 8;
-
-    ret.tex = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
-
-    ret.data = (int*)malloc(sizeof(int) * (ret.width * ret.height));
-
-    for (uint8_t i = 0; i < 4; i++) {
-        ret.palette[i] = pal[i];
-    }
-
-    Uint32 pixels[ret.width * ret.height];
-
-    for (int chrcounty = 0; chrcounty < ywrap; chrcounty++) {
-        for (int y = 0; y < 8; y++) {
-            for (int chrcountx = 0; chrcountx < xwrap; chrcountx++) {
-                for (int x = 0; x < 8; x++) {
-                    int dest = x + (y * ret.width) + (chrcountx * 8) + (chrcounty * (ret.width * 8));
-                    int curid = chrcountx + (chrcounty * xwrap);
-                    uint8_t v1, v2;
-                    v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
-                    v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
-                    pixels[dest] = pal[v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0))];
-                }
-            }
-        }
-    }
-
-    SDL_SetTextureBlendMode(ret.tex, SDL_BLENDMODE_BLEND);
-    SDL_UpdateTexture(ret.tex, NULL, pixels, ret.width * sizeof(Palette));
-
-    return ret;
-
-}
-
 /* Returns a struct of the width and height of the CHR, accessable with x and y */
 Raquet_Point Raquet_SizeofCHR(SDL_Texture * tex) {
     Raquet_Point size;
@@ -260,12 +263,12 @@ void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, dou
     SDL_RenderCopyEx(gRenderer, chr.tex, NULL, & dstrect, angle, & center, flip);
 }
 
-/* Swap a CHR's Palette */ 
+/* Swap a CHR's Palette */
 void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
 
-    if (memcmp(chr->palette, pal, sizeof(Palette[4])) == 0) {
+    /*if (memcmp(chr->palette, pal, sizeof(Palette[4])) == 0) {
         return;
-    }
+    }*/
 
     Palette pixels[chr->width * chr->height];
 

@@ -39,7 +39,10 @@ void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y);
 void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_RendererFlip flip);
 
 /* Swap a CHR's Palette */ 
-void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[3]);
+void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]);
+
+/* Copy a Palette to another array */
+extern void Raquet_CopyPalette(Palette dest[4], Palette origin[4]);
 
 /* Destroy a CHR after we're done using it */
 void Raquet_DestroyCHR(SDL_Texture * tex);

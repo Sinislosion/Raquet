@@ -104,10 +104,12 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
 
-            uint8_t v1, v2;
+            uint8_t v1, v2, v3;
             v1 = (ppfbank[y + 8 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
             v2 = (ppfbank[y + 16 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
-            pixels[x + (y * 8)] = pal[v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0))];
+            v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
+            pixels[x + (y * 8)] = pal[v3];
+            ret.data[x + (y * 8)] = pal[v3];
         }
     }
 
@@ -125,7 +127,7 @@ void Raquet_SetPalette(Palette dest[4], Uint32 pal1, Uint32 pal2, Uint32 pal3, U
     dest[3] = pal4;
 }
 
-void Raquet_CopyPalette(Palette dest[3], Palette origin[3]) {
+void Raquet_CopyPalette(Palette dest[4], Palette origin[4]) {
     dest[0] = origin[0];
     dest[1] = origin[1];
     dest[2] = origin[2];
@@ -259,9 +261,9 @@ void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, dou
 }
 
 /* Swap a CHR's Palette */ 
-void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[3]) {
+void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
 
-    if (memcmp(chr->palette, pal, sizeof(Palette[3])) == 0) {
+    if (memcmp(chr->palette, pal, sizeof(Palette[4])) == 0) {
         return;
     }
 
@@ -270,21 +272,17 @@ void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[3]) {
     chr->palette[0] = pal[0];
     chr->palette[1] = pal[1];
     chr->palette[2] = pal[2];
+    chr->palette[3] = pal[3];
 
     for (int y = 0; y < chr->height; y++) {
         for (int x = 0; x < chr->width; x++) {
             int dest = (y * chr->width) + x;
-            switch (chr->data[dest]) {
-                case 0:
-                    pixels[dest] = 0x00000000;
-                    break;
-
-                default:
-                    pixels[dest] = pal[chr->data[dest] - 1];
-                    break;
-           } 
-
+            printf("%d, ", chr->data[dest]);
+            fflush(stdout);
+            pixels[dest] = pal[chr->data[dest]];
         }
+        printf("\n");
+        fflush(stdout);
     }
     SDL_UpdateTexture(chr->tex, NULL, pixels, chr->width * sizeof(Palette));
 

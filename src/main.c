@@ -180,7 +180,7 @@ void runthedog()
 	demotime++;
 
 	// Draw our stuffs
-	Raquet_Clear(Raquet_GlobalPalette[0x12]); 
+	Raquet_Clear(Raquet_GlobalPalette[0x12]);
 
 	drawStars();
 
@@ -207,8 +207,8 @@ void runthedog()
 		Raquet_GlobalPalette[0x12] = swap2;
 		Raquet_GlobalPalette[0x15] = swap1;
 
-		Palette swap3[3];
-		Palette swap4[3];
+		Palette swap3[4];
+		Palette swap4[4];
 		Raquet_CopyPalette(swap3, pal_face);
 		Raquet_CopyPalette(swap4, pal_face2);
 

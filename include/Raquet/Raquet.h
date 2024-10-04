@@ -50,9 +50,6 @@ extern int Raquet_InitSDL();
 /* Initialize the Raquet Engine */
 extern int Raquet_Init();
 
-/* Copy a Palette to another array */
-extern void Raquet_CopyPalette(Palette dest[3], Palette origin[3]);
-
 /* I'm actually not sure what you can use this for yet, but you can use it */
 extern void Raquet_SetDrawColor(Palette pal, int alpha);
 

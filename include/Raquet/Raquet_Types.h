@@ -3,6 +3,13 @@
 
 #include "Raquet.h"
 
+/* Camera */
+typedef struct Raquet_Camera {
+    float x, y;
+} Raquet_Camera;
+
+extern Raquet_Camera Camera;
+
 /* Raquet_Point contains an x and a y variable */
 typedef SDL_Point Raquet_Point;
 

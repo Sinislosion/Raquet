@@ -5,7 +5,7 @@ CFLAGS := --std=c99 -Wall -Wextra -O2
 #Name of the final executable
 TARGET := Raquet
 
-IFLAGS := -Iinclude/*
+IFLAGS := -Iinclude/ -Iinclude/Raquet
 
 # build and source directories. no you cannot have 2 files with the same name
 # in seperate recursive directories.
@@ -47,7 +47,7 @@ ifeq ($(OS), Windows_NT)
 else
 		@echo
 		@echo "Compiling the final program"
-		$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LFLAGS)
+		$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $(addprefix $(BUILD_DIR)/, $(notdir $^)) $(LFLAGS)
 endif
 		@echo
 		@echo "Copying assets"

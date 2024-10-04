@@ -266,9 +266,9 @@ void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, dou
 /* Swap a CHR's Palette */
 void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
 
-    /*if (memcmp(chr->palette, pal, sizeof(Palette[4])) == 0) {
+    if (memcmp(chr->palette, pal, sizeof(Palette[4])) == 0) {
         return;
-    }*/
+    }
 
     Palette* pixels = (Palette*)malloc(sizeof(Palette) * (chr->width * chr->height));
 

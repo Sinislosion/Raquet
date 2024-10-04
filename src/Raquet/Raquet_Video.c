@@ -280,12 +280,8 @@ void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
     for (int y = 0; y < chr->height; y++) {
         for (int x = 0; x < chr->width; x++) {
             int dest = (y * chr->width) + x;
-            printf("%d, ", chr->data[dest]);
-            fflush(stdout);
             pixels[dest] = pal[chr->data[dest]];
         }
-        printf("\n");
-        fflush(stdout);
     }
     SDL_UpdateTexture(chr->tex, NULL, pixels, chr->width * sizeof(Palette));
 

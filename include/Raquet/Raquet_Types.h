@@ -25,7 +25,7 @@ typedef struct Raquet_CHR {
     int width;
     int height;
     int * data;
-    Palette palette[3];
+    Palette palette[4];
 } Raquet_CHR;
 
 /* Bounding Boxes */

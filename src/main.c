@@ -16,10 +16,10 @@ typedef struct Star {
 Star stararray[PARTICLE_AMOUNT];
 
 // Palettes
-Palette pal_face[3];
-Palette pal_face2[3];
+Palette pal_face[4];
+Palette pal_face2[4];
 
-Palette pal_logo[3];
+Palette pal_logo[4];
 
 // Characters
 Raquet_CHR chr_placeface;
@@ -122,9 +122,9 @@ void createthedog()
 	Raquet_LoadPPFBank(&ppf_main, Raquet_AbsoluteToAsset("main.ppf"));
 
 	/* Setup our palettes */
-	Raquet_SetPalette(pal_face, Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x00], Raquet_GlobalPalette[0x20]);
-	Raquet_SetPalette(pal_face2, Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x05], Raquet_GlobalPalette[0x25]);
-	Raquet_SetPalette(pal_logo, Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20]);
+	Raquet_SetPalette(pal_face, Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x00], Raquet_GlobalPalette[0x20]);
+	Raquet_SetPalette(pal_face2, Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x05], Raquet_GlobalPalette[0x25]);
+	Raquet_SetPalette(pal_logo, Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20]);
 
 	/* Create our CHRs */
 

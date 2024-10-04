@@ -75,7 +75,7 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 
 /* Load a single-tile sprite. More info is in the wiki */
 
-Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
+Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
 
     Raquet_CHR ret;
 
@@ -86,19 +86,11 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
     ret.width = 8;
     ret.height = 8;
 
-    ret.palette[0] = pal[0];
-    ret.palette[1] = pal[1];
-    ret.palette[2] = pal[2];
+    for (uint8_t i = 0; i < 4; i++) {
+        ret.palette[i] = pal[i];
+    }
 
     Uint32 pixels[64];
-
-    /*
-     * For every y row, write a pixel that corresponds to the palette
-     * If our first palette index is 0, and our second palette index is 0, write transparency
-     * If our first palette index is 1, and our second palette index is 0, write color 1
-     * If our first palette index is 0, and our second palette index is 1, write color 2
-     * If our first palette index is 1, and our second palette index is 1, write color 3
-     */
 
     if (id == -1) // if our tile is transparency, make it transparent
     {
@@ -111,42 +103,12 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
 
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
-            int dest = x + (y * 8); // dest is where in our array of pixels we will place the color
-            int index = y + 8 + (id * 16); // index is the byte in the file we're reading for palette data
-            int index2 = y + 16 + (id * 16); // index2 is the second byte in the file we read for palette data
 
-            int check1 = ((ppfbank[index] & ppfbitmask[x]) > 0);
-            int check2 = ((ppfbank[index2] & ppfbitmask[x]) > 0);
-            int place = check1 + check2;
-
-            switch (place) {
-            case 0:
-                pixels[dest] = 0x00000000;
-                ret.data[dest] = 0;
-                break;
-
-            case 1:
-                switch (check1) {
-                case 1:
-                    pixels[dest] = pal[0];
-                    ret.data[dest] = 1;
-                    break;
-
-                default:
-                    pixels[dest] = pal[1];
-                    ret.data[dest] = 2;
-                    break;
-                }
-                break;
-
-            case 2:
-                pixels[dest] = pal[2];
-                ret.data[dest] = 3;
-                break;
-            }
-
+            uint8_t v1, v2;
+            v1 = (ppfbank[y + 8 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
+            v2 = (ppfbank[y + 16 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
+            pixels[x + (y * 8)] = pal[v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0))];
         }
-
     }
 
     SDL_SetTextureBlendMode(ret.tex, SDL_BLENDMODE_BLEND);
@@ -156,10 +118,11 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[3]) {
 }
 
 /* Set a palette variable within runtime */
-void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3) {
+void Raquet_SetPalette(Palette dest[4], Uint32 pal1, Uint32 pal2, Uint32 pal3, Uint32 pal4) {
     dest[0] = pal1;
     dest[1] = pal2;
     dest[2] = pal3;
+    dest[3] = pal4;
 }
 
 void Raquet_CopyPalette(Palette dest[3], Palette origin[3]) {
@@ -214,7 +177,7 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 }
 
 /* Load a multi-tile sprite. More info is in the wiki */
-Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette palette[3]) {
+Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette pal[4]) {
     Raquet_CHR ret;
 
     ret.width = xwrap * 8;
@@ -222,19 +185,13 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
 
     ret.tex = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
 
-
-
     ret.data = (int*)malloc(sizeof(int) * (ret.width * ret.height));
 
-    Uint32 pixels[ret.width * ret.height];
+    for (uint8_t i = 0; i < 4; i++) {
+        ret.palette[i] = pal[i];
+    }
 
-    /*
-     * For every y row, write a pixel that corresponds to the palette
-     * If our first palette index is 0, and our second palette index is 0, write transparency
-     * If our first palette index is 1, and our second palette index is 0, write color 1
-     * If our first palette index is 0, and our second palette index is 1, write color 2
-     * If our first palette index is 1, and our second palette index is 1, write color 3
-     */
+    Uint32 pixels[ret.width * ret.height];
 
     for (int chrcounty = 0; chrcounty < ywrap; chrcounty++) {
         for (int y = 0; y < 8; y++) {
@@ -242,41 +199,10 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
                 for (int x = 0; x < 8; x++) {
                     int dest = x + (y * ret.width) + (chrcountx * 8) + (chrcounty * (ret.width * 8));
                     int curid = chrcountx + (chrcounty * xwrap);
-                    int index = y + 8 + (id[curid] * 16);
-                    int index2 = y + 16 + (id[curid] * 16);
-
-                    int check1 = ((ppfbank[index] & ppfbitmask[x]) > 0);
-                    int check2 = ((ppfbank[index2] & ppfbitmask[x]) > 0);
-                    int place = check1 + check2;
-                    if (id[curid] < 0) {
-                        pixels[dest] = 0x00000000; // if our tile is transparency, make it transparent.
-                        ret.data[dest] = 0;
-                    } else {
-                        switch (place) {
-                        case 0:
-                            pixels[dest] = 0x00000000;
-                            ret.data[dest] = 0;
-                            break;
-                        case 1:
-                            switch (check1) {
-                            case 1:
-                                pixels[dest] = palette[0];
-                                ret.data[dest] = 1;
-                                break;
-
-                            default:
-                                pixels[dest] = palette[1];
-                                ret.data[dest] = 2;
-                                break;
-                            }
-                            break;
-
-                        case 2:
-                            pixels[dest] = palette[2];
-                            ret.data[dest] = 3;
-                            break;
-                        }
-                    }
+                    uint8_t v1, v2;
+                    v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                    v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                    pixels[dest] = pal[v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0))];
                 }
             }
         }

@@ -50,9 +50,6 @@ extern int Raquet_InitSDL();
 /* Initialize the Raquet Engine */
 extern int Raquet_Init();
 
-/* Set a palette variable within runtime */
-extern void Raquet_SetPalette(Palette dest[3], Uint32 pal1, Uint32 pal2, Uint32 pal3);
-
 /* Copy a Palette to another array */
 extern void Raquet_CopyPalette(Palette dest[3], Palette origin[3]);
 

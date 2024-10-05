@@ -1,24 +1,23 @@
 # Modify these if you need
 COMPILER := clang
-CFLAGS := --std=c99 -Wall -Wextra -O2
+CFLAGS := --std=c99 -Wall -Wextra -O2  # Change CFLAGS to C++ flags
 
 # Name of the final executable
 TARGET := Raquet
 
-IFLAGS := -Iinclude/ -Iinclude/Raquet
+INCLUDES := -Iinclude/ -Iinclude/Raquet
 
-# Build and source directories. No you cannot have 2 files with the same name
-# in separate recursive directories.
+# Build and Source directories.
 BUILD_DIR := bin
 SRC_DIR := src
 
 ifeq ($(OS), Windows_NT)
-    LFLAGS := -Lwinclude/lib/ -lSDL2 -lSDL2_mixer -lm -lSDL2main -mwindows
+    LIBS := -Lwinclude/lib/ -lSDL2 -lSDL2_mixer -lm -lSDL2main -mwindows
     PLATFORM := win
     INSULT := "Windows Dev? I am so sorry."
     EXTENSION := .exe
 else
-    LFLAGS := -lSDL2 -lSDL2_mixer -lSDL2main -lm
+    LIBS := -lSDL2 -lSDL2_mixer -lSDL2main -lm
     PLATFORM := nix
     INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
     EXTENSION := .x86_64
@@ -28,13 +27,19 @@ endif
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
 # Find all source files recursively
-SRCS := $(call rwildcard, $(SRC_DIR), *.c)
+SRCS_C := $(call rwildcard, $(SRC_DIR), *.c)
+# Find C++ files
+SRCS_CPP := $(call rwildcard, $(SRC_DIR), *.cpp)
+# Round up everything
+SRCS := $(SRCS_C) $(SRCS_CPP)
 
 # Create object file paths maintaining directory structure
-OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
+OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS_C)) \
+        $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS_CPP))
 
 all: announce $(BUILD_DIR)/ $(TARGET)$(EXTENSION)
 
+# Bash command hell
 $(TARGET)$(EXTENSION): $(OBJS)
 	@mkdir -p $(BUILD_DIR)/$(PLATFORM)
 	@echo $(INSULT)
@@ -44,14 +49,14 @@ ifeq ($(OS), Windows_NT)
 	windres winclude/program.rc -o $(BUILD_DIR)/program.o
 	@echo
 	@echo "Compiling the final program"
-	$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(BUILD_DIR)/program.o $(LFLAGS)
+	$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(BUILD_DIR)/program.o $(LIBS)
 	@echo
 	@echo "Copying DLL Files"
 	cp -r winclude/$(BUILD_DIR)/* $(BUILD_DIR)/$(PLATFORM)
 else
 	@echo
 	@echo "Compiling the final program"
-	$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LFLAGS)
+	$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LIBS)
 endif
 	@echo
 	@echo "Copying assets"
@@ -67,7 +72,12 @@ $(BUILD_DIR)/:
 # Rule for building object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)  # Create the directory structure in BUILD_DIR
-	$(COMPILER) $(CFLAGS) -c $< $(IFLAGS) -o $@
+	$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
+
+# Rule for building C++ object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)  # Create the directory structure in BUILD_DIR
+	$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
 
 announce:
 	@echo

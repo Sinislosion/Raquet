@@ -142,12 +142,16 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
                 for (int x = 0; x < 8; x++) {
                     int dest = x + (y * ret.width) + (chrcountx * 8) + (chrcounty * (ret.width * 8));
                     int curid = chrcountx + (chrcounty * xwrap);
-                    uint8_t v1, v2, v3;
-                    v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
-                    v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
-                    v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
-                    pixels[dest] = pal[v3];
-                    ret.data[dest] = v3;
+                    if (id[curid] >= 0) {
+                        const uint8_t v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                        const uint8_t v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                        const uint8_t v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
+                        pixels[dest] = pal[v3];
+                        ret.data[dest] = v3;
+                    } else if (id[curid] < 0){
+                        pixels[dest] = pal[0];
+                        ret.data[dest] = 0;
+                    }
                 }
             }
         }

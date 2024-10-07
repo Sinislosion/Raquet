@@ -1,18 +1,29 @@
 #include "Raquet_Math.h"
 
-// find angle in rads from 2 points
+int Raquet_Sign(float comp) {
+	return (0 < comp) - (comp < 0);
+}
+
+float Raquet_Min(float x, float y) {
+	return (((x) < (y)) ? (x) : (y));
+}
+
+float Raquet_Max(float x, float y) {
+    return (((x) > (y)) ? (x) : (y));
+}
+
+float Raquet_PI = 3.1415926535;
+
 float Raquet_PointDir(float x1, float y1, float x2, float y2) {
     const float dx = x2 - x1;
     const float dy = y2 - y1;
     return atan2(dy, dx);
 }
 
-// distance to an x point
 float Raquet_LengthDirX(float dist, float angle) {
     return dist * cos(angle);
 }
 
-// distance to a y point
 float Raquet_LengthDirY(float dist, float angle) {
     return dist * sin(angle);
 }
@@ -31,9 +42,9 @@ int Raquet_CollisionLine(int x1, int y1, int x2, int y2, int x3, int y3, int x4,
 
 }
 
-int Raquet_CollisionLineRect(int x1, int y1, int x2, int y2, Actor * act) {
-    const int rx = (act -> x - act -> origin.x) + act -> bbox.x1;
-    const int ry = (act -> y - act -> origin.y) + act -> bbox.y1;
+int Raquet_CollisionLineActor(int x1, int y1, int x2, int y2, Actor * act) {
+    const int rx = (act -> position.x - act -> origin.x) + act -> bbox.x1;
+    const int ry = (act -> position.y - act -> origin.y) + act -> bbox.y1;
     const int rw = act -> bbox.x2 - act -> bbox.x1;
     const int rh = act -> bbox.y2 - act -> bbox.y1;
 

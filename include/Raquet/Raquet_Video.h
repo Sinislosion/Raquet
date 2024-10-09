@@ -47,6 +47,6 @@ extern void Raquet_CopyPalette(Palette dest[4], Palette origin[4]);
 /* Destroy a CHR after we're done using it */
 void Raquet_DestroyCHR(SDL_Texture * tex);
 
-void Raquet_DrawPoint(Palette pal, int x, int y, int alpha);
+void Raquet_DrawPoint(int x, int y, Palette pal, int alpha);
 
-void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha);
+void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha);

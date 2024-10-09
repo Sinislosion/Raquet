@@ -1,0 +1,48 @@
+\chapter{README}
+\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{README@{README}}
+ ~\newline
+ \hypertarget{md__r_e_a_d_m_e_autotoc_md0}{}\doxysection{\texorpdfstring{Raquet Game Engine}{Raquet Game Engine}}\label{md__r_e_a_d_m_e_autotoc_md0}
+~\newline
+ Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/\+Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.~\newline
+ Documentation can be found at \href{https://raquet.sinislosion.net/}{\texttt{ https\+://raquet.\+sinislosion.\+net/}} ~\newline
+~\newline
+\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysection{\texorpdfstring{Features}{Features}}\label{md__r_e_a_d_m_e_autotoc_md1}
+
+\begin{DoxyItemize}
+\item 2D 4 Color Tile-\/\+Based Rendering
+\item Audio Playback using SDL Mixer
+\item Keyboard and Mouse Input Handling
+\item Collision Detection
+\item Video-\/\+Game-\/\+Specific Math Functions
+\item Palette Swapping
+\item Basic Game Object Management (Actors)
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysubsection{\texorpdfstring{Compilation}{Compilation}}\label{md__r_e_a_d_m_e_autotoc_md2}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysubsubsection{\texorpdfstring{Linux}{Linux}}\label{md__r_e_a_d_m_e_autotoc_md3}
+
+\begin{DoxyEnumerate}
+\item First install the necessary dependencies~\newline
+ Debian Linux\+:~\newline
+ {\ttfamily sudo apt-\/get install clang sdl2-\/devel libsdl2-\/mixer-\/dev}~\newline
+ Arch Linux\+:~\newline
+ {\ttfamily sudo pacman -\/S clang sdl2 sdl2\+\_\+mixer} Gentoo Linux\+:~\newline
+ {\ttfamily sudo emerge -\/a sys-\/devel/clang media-\/libs/libsdl2 media-\/libs/sdl2-\/mixer}
+\item cd into the repo\textquotesingle{}s directory
+\item run {\ttfamily make}
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxysubsubsection{\texorpdfstring{Windows}{Windows}}\label{md__r_e_a_d_m_e_autotoc_md4}
+You\textquotesingle{}ll need to use MSYS2, or use a cross compiler like Min\+GW GCC for this
+\begin{DoxyEnumerate}
+\item On Windows, download \href{https://www.msys2.org/}{\texttt{ MSYS2}}
+\item Run {\ttfamily MSYS2 MINGW64}
+\item Update MSYS2 with {\ttfamily pacman -\/Syyu}
+\item Install the necessary dependencies with {\ttfamily pacman -\/S make mingw-\/w64-\/x86\+\_\+64-\/binutils mingw-\/w64-\/x86\+\_\+64-\/clang mingw-\/w64-\/x86\+\_\+64-\/\+SDL2 mingw-\/w64-\/x86\+\_\+64-\/\+SDL2\+\_\+mixer}
+\item cd into the repo\textquotesingle{}s directory
+\item Run {\ttfamily make}
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxysection{\texorpdfstring{License/\+Credits}{License/\+Credits}}\label{md__r_e_a_d_m_e_autotoc_md5}
+
+\begin{DoxyItemize}
+\item "{}2\+A03\+\_\+\+Kevvviiinnn-\/\+Superfusion.\+wav"{} exported from Famitracker\textquotesingle{}s demo included songs is licensed under the GPL v2.\+0 and was created by \href{https://www.youtube.com/watch?v=gvhjNV9uKl8}{\texttt{ symfonikev}}~\newline
+
+\item Everything else is licensed under the \href{http://www.wtfpl.net/about/}{\texttt{ WTFPL}}
+\item Palette is "{}\+Digital Prime"{} by FirebrandX at \href{http://www.firebrandx.com/nespalettes.html}{\texttt{ firebrandx.\+com}} and used with permission$<$br$>$~\newline
+  
+\end{DoxyItemize}

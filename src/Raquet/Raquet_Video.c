@@ -296,12 +296,12 @@ void Raquet_DestroyCHR(SDL_Texture * tex) {
     SDL_DestroyTexture(tex);
 }
 
-void Raquet_DrawPoint(Palette pal, int x, int y, int alpha) {
+void Raquet_DrawPoint(int x, int y, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
     SDL_RenderDrawPoint(gRenderer, x, y);
 }
 
-void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha) {
+void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
     SDL_RenderDrawLine(gRenderer, x1, y1, x2, y2);
 }

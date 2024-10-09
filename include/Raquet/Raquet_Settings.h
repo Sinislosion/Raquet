@@ -16,7 +16,7 @@
 #define FRAMERATE_CAP 60                // Internal framerate cap. Disable VSYNC if this is higher than 60
 
 /* DEBUG SETTINGS */
-#define VISUALIZE_BBOX
+//#define VISUALIZE_BBOX
 #define PRINT_DEBUG
 
 #ifdef VISUALIZE_BBOX

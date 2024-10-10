@@ -2,6 +2,8 @@
 #define SDL_MAIN_HANDLED
 #define RAQUET_GAME_ENGINE
 
+/** @file */
+
 /* headers we need */
 #include "Raquet_Settings.h"
 #ifdef PRINT_DEBUG
@@ -58,10 +60,22 @@ extern void Raquet_SetDrawColor(Palette pal, int alpha);
     Palette gClearColor;
 #endif
 
-/* Clear the screen */
+/**
+ * @brief Clears the screen with a specified color
+ * @param pal The Palette color to clear the screen with.
+ */
 extern void Raquet_Clear(Palette pal);
 
-/* Draw a rectangle (x position, y position, width, height, color, alpha, fill) */
+/**
+ * @brief Draws a rectangle of a given color onto the screen
+ * @param x The X position of the rectangle in Screen space
+ * @param y The Y position of the rectangle in Screen space
+ * @param width The width of the rectangle
+ * @param height The height of the rectangle
+ * @param pal The Palette color of the rectangle
+ * @param alpha The transparecny of the rectangle, with 255 being the max and 0 being the minimum
+ * @param fill Whether or not to fill in the rectangle (1 or yes, 0 for no)
+ */
 extern void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill);
 
 /* This is used to update the Window within the Raquet_Main function */

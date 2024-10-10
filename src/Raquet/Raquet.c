@@ -21,8 +21,8 @@ SDL_Event e;
  ****************************
  */
 
-// DOG FUNCTIONS
-extern void runthedog(void); // put this somewhere in your program, the default code to run
+extern void runthedog(void);
+
 extern void createthedog(void); // put all your creation code for the program here
 
 // FRAMERATE

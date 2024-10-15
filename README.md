@@ -1,7 +1,7 @@
 ![Version Badge](https://img.shields.io/badge/Pre_Release-1.1.0-%2365aaff) ![SDL Badge](https://img.shields.io/badge/Backend-SDL2-%23dd6fff)<br>
 # Raquet Game Engine
 ![Raquet Game Engine -- Logo by Chris S.](https://raw.githubusercontent.com/Sinislosion/Raquet/refs/heads/master/raquetlogo.png)<br>
-Lightweight SDL Engine made for Sinislosion Projects, and also free (as in free speech AND free beer) Game Engine/Framework to speed up SDL development while also providing tools to make games resembling those from the computers of yesteryear.<br>
+Lightweight free (as in free speech AND free beer) SDL2 based Game Engine/Framework to providing tools to make games resembling the computers of yesteryear.<br>
 Documentation can be found at [https://raquet.sinislosion.net/](https://raquet.sinislosion.net/)
 <br><br>
 

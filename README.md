@@ -20,7 +20,7 @@ Documentation can be found at [https://raquet.sinislosion.net/](https://raquet.s
 	Debian Linux:<br>
 	`sudo apt-get install clang sdl2-devel libsdl2-mixer-dev`<br>
  	Arch Linux:<br>
-	`sudo pacman -S clang sdl2 sdl2_mixer`
+	`sudo pacman -S clang sdl2 sdl2_mixer`<br>
 	Gentoo Linux:<br>
  	`sudo emerge -a sys-devel/clang media-libs/libsdl2 media-libs/sdl2-mixer`
 3. cd into the repo's directory

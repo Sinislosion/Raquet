@@ -80,7 +80,7 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
     Raquet_CHR ret;
 
     ret.tex = SDL_CreateTexture(
-        gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 8, 8);
+        Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 8, 8);
 
     ret.data = (int*)malloc(sizeof(int) * 64);
     ret.width = 8;
@@ -126,7 +126,7 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
     ret.width = xwrap * 8;
     ret.height = ywrap * 8;
 
-    ret.tex = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
+    ret.tex = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
 
     ret.data = (int*)malloc(sizeof(int) * (ret.width * ret.height));
 
@@ -184,7 +184,7 @@ void Raquet_SetDrawColor(Palette pal, int alpha) {
     Uint32 palr = (pal >> 24) & 0x000000FF;
     Uint32 palg = (pal >> 16) & 0x000000FF;
     Uint32 palb = (pal >> 8) & 0x000000FF;
-    SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+    SDL_SetRenderDrawColor(Raquet_Renderer, palr, palg, palb, alpha);
 }
 
 /* Clear the screen with a solid color */
@@ -194,10 +194,10 @@ void Raquet_SetDrawColor(Palette pal, int alpha) {
 
 void Raquet_Clear(Palette pal) {
     Raquet_SetDrawColor(pal, 255);
-    SDL_RenderFillRect(gRenderer, NULL);
+    SDL_RenderFillRect(Raquet_Renderer, NULL);
 
     #ifdef BACKGROUND_CLEARING_COLOR
-        gClearColor = pal;
+        Raquet_ClearColor = pal;
     #endif
 
 }
@@ -214,11 +214,11 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
     switch (fill) {
     default:
-        SDL_RenderDrawRect(gRenderer, & rect);
+        SDL_RenderDrawRect(Raquet_Renderer, & rect);
         break;
 
     case 1:
-        SDL_RenderFillRect(gRenderer, & rect);
+        SDL_RenderFillRect(Raquet_Renderer, & rect);
         break;
     }
 
@@ -253,7 +253,7 @@ void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y) {
         size.x,
         size.y
     };
-    SDL_RenderCopy(gRenderer, chr.tex, NULL, & dstrect);
+    SDL_RenderCopy(Raquet_Renderer, chr.tex, NULL, & dstrect);
 }
 
 /* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels, horizontal flip, vertical flip) */
@@ -264,7 +264,7 @@ void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, dou
         xsize,
         ysize
     };
-    SDL_RenderCopyEx(gRenderer, chr.tex, NULL, & dstrect, angle, & center, flip);
+    SDL_RenderCopyEx(Raquet_Renderer, chr.tex, NULL, & dstrect, angle, & center, flip);
 }
 
 /* Swap a CHR's Palette */
@@ -298,10 +298,10 @@ void Raquet_DestroyCHR(SDL_Texture * tex) {
 
 void Raquet_DrawPoint(int x, int y, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
-    SDL_RenderDrawPoint(gRenderer, x, y);
+    SDL_RenderDrawPoint(Raquet_Renderer, x, y);
 }
 
 void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
-    SDL_RenderDrawLine(gRenderer, x1, y1, x2, y2);
+    SDL_RenderDrawLine(Raquet_Renderer, x1, y1, x2, y2);
 }

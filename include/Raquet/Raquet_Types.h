@@ -38,7 +38,7 @@ typedef struct Raquet_BoundingBox {
 Raquet_BoundingBox;
 
 /* Actors */
-typedef struct Actor {
+typedef struct Raquet_Actor {
     // where we are in virtual space
     // can be accessed with position.x or position.y
     Raquet_Point position;
@@ -57,6 +57,6 @@ typedef struct Actor {
 
     SDL_RendererFlip flip;
 
-} Actor;
+} Raquet_Actor;
 
 #endif

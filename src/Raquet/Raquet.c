@@ -89,7 +89,7 @@ int Raquet_InitSDL(void) {
 
 /* Initialize the Raquet Engine */
 int Raquet_Init(void) {
-    sdlkeys = SDL_GetKeyboardState(NULL);
+    Raquet_SDLKeys = SDL_GetKeyboardState(NULL);
     if (!Raquet_InitSDL()) {
         #ifdef PRINT_DEBUG
             printf("Failed to Initialize SDL\n");
@@ -179,7 +179,7 @@ void Raquet_Main(void) {
             }
             #endif
 
-            sdlmouse = SDL_GetMouseState(NULL, NULL);
+            Raquet_SDLMouse = SDL_GetMouseState(NULL, NULL);
 
             #ifdef INTEGER_SCALING
                 SDL_SetRenderTarget(Raquet_Renderer, Raquet_FinalTexture);
@@ -189,8 +189,8 @@ void Raquet_Main(void) {
             runthedog();
             Raquet_Update();
 
-            for (int i = 0; i < 322; i++) {prevkeys[i] = sdlkeys[i];}
-            prevmouse = sdlmouse;
+            for (int i = 0; i < SDL_NUM_SCANCODES; i++) {Raquet_PrevSDLKeys[i] = Raquet_SDLKeys[i];}
+            Raquet_PrevSDLMouse = Raquet_SDLMouse;
 
             #ifdef DELTA_TIME
                 Raquet_DeltaTime = double(Raquet_StartTick - Raquet_LastTick) * 0.060f;

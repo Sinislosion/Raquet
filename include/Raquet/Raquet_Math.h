@@ -7,22 +7,25 @@
 #include <math.h>
 
 /**
- * @brief Returns -1 if a number is negative, 0 if 0, and 1 if positive
+ * @brief Checks for the sign of a given number
  * @param comp The value to get the sign from
+ * @returns -1 if a number is negative, 0 if 0, and 1 if positive
  */
 extern int Raquet_Sign(float comp);
 
 /**
- * @brief Returns the smallest number inputted
+ * @brief Finds the smallest number inputted given 2 values
  * @param x The first value to check
  * @param y The second value to check
+ * @returns the smallest number inputted
  */
 extern float Raquet_Min(float x, float y);
 
 /**
- * @brief Returns the largest number inputted
+ * @brief Finds the largest number inputted given 2 values
  * @param x The first value to check
  * @param y The second value to check
+ * @returns the largest number inputted
  */
 extern float Raquet_Max(float x, float y);
 
@@ -32,25 +35,28 @@ extern float Raquet_Max(float x, float y);
 extern float Raquet_PI;
 
 /**
- * @brief Returns the angle from 2 points in radians
+ * @brief Gets the angle between 2 points
  * @param x1 The x value of the first point
  * @param y1 The y value of the first point
  * @param x2 The x value of the second point
  * @param y2 The y value of the second point
+ * @returns the angle from 2 points in radians
  */
 extern float Raquet_PointDir(float x1, float y1, float x2, float y2);
 
 /**
- * @brief Returns the length on the X axis in a given direction
+ * @brief Gets the distance moved on the X axis via a given direction
  * @param dist The distance to move in the direction
  * @param angle The direction in radians
+ * @returns the length on the X axis in a given direction
  */
 extern float Raquet_LengthDirX(float dist, float angle);
 
 /**
- * @brief Returns the length on the Y axis in a given direction
+ * @brief Gets the distance moved on the Y axis via a given direction
  * @param dist The distance to move in the direction
  * @param angle The direction in radians
+ * @returns the length on the Y axis in a given direction
  */
 extern float Raquet_LengthDirY(float dist, float angle);
 
@@ -75,7 +81,7 @@ extern int Raquet_CollisionLine(int x1, int y1, int x2, int y2, int x3, int y3, 
  * @param y2 The second y value of the line
  * @param act The Actor to check
  */
-extern int Raquet_CollisionLineActor(int x1, int y1, int x2, int y2, Actor * act);
+extern int Raquet_CollisionLineActor(int x1, int y1, int x2, int y2, Raquet_Actor * act);
 
 /**
  * @brief It's lerp, Linear inerpolation

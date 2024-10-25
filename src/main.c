@@ -78,8 +78,8 @@ void drawStars(void) {
  *     PLACEFACE     *
  *********************
 */
-Actor* act_placeface;
-Actor* act_placeface2;
+Raquet_Actor* act_placeface;
+Raquet_Actor* act_placeface2;
 void bePlaceface(void) {
 	int key_up = Raquet_KeyCheck(SDL_SCANCODE_UP);
 	int key_down = Raquet_KeyCheck(SDL_SCANCODE_DOWN);

@@ -3,11 +3,11 @@
 
 #include "Raquet.h"
 
-extern const uint8_t * sdlkeys;
-extern uint8_t prevkeys[SDL_NUM_SCANCODES];
+extern const uint8_t * Raquet_SDLKeys;
+extern uint8_t Raquet_PrevSDLKeys[SDL_NUM_SCANCODES];
 
-extern uint8_t sdlmouse;
-extern uint8_t prevmouse;
+extern uint8_t Raquet_SDLMouse;
+extern uint8_t Raquet_PrevSDLMouse;
 
 #define RAQUET_MOUSE_RIGHT      4
 #define RAQUET_MOUSE_LEFT       1

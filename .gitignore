@@ -3,3 +3,4 @@ bin/
 compile_commands.json
 doxygen/html
 doxygen/latex
+desktop.ini

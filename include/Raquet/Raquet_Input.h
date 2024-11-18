@@ -1,6 +1,8 @@
 #ifndef RAQUET_INPUT_H
 #define RAQUET_INPUT_H
 
+/** @file */
+
 #include "Raquet.h"
 
 extern const uint8_t * Raquet_SDLKeys;
@@ -13,22 +15,46 @@ extern uint8_t Raquet_PrevSDLMouse;
 #define RAQUET_MOUSE_LEFT       1
 #define RAQUET_MOUSE_MIDDLE     2
 
-/* Check if this key is being held down */
-extern int Raquet_KeyCheck(unsigned int nkey);
+/**
+ * @brief Returns if the provided key is currently being pressed
+ * @param key The SDL_SCANCODE value to check for
+ * @returns 1 if true, 0 if false
+ */
+extern int Raquet_KeyCheck(unsigned int key);
 
-/* Will only return 1 for the first frame the key is being held down */
-extern int Raquet_KeyCheck_Pressed(unsigned int nkey);
+/**
+ * @brief Returns if the provided key has just been pressed
+ * @param key The SDL_SCANCODE value to check for
+ * @returns 1 if true, 0 if false
+ */
+extern int Raquet_KeyCheck_Pressed(unsigned int key);
 
-/* Will only return 1 if the key has been released for 1 frame */
-extern int Raquet_KeyCheck_Released(unsigned int nkey);
+/**
+ * @brief Returns if the provided key has just been released
+ * @param key The SDL_SCANCODE value to check for
+ * @returns 1 if true, 0 if false
+ */
+extern int Raquet_KeyCheck_Released(unsigned int key);
 
-/* Check if this mouse button is being held down */
-extern int Raquet_MouseCheck(unsigned int sdlbutton);
+/**
+ * @brief Returns if the provided mouse button is currently being pressed
+ * @param mouse_button The RAQUET_MOUSE value to check for
+ * @returns 1 if true, 0 if false
+ */
+extern int Raquet_MouseCheck(unsigned int mouse_button);
 
-/* Will only return 1 for the first frame the mouse button is being held down */
-extern int Raquet_MouseCheck_Pressed(unsigned int sdlbutton);
+/**
+ * @brief Returns if the provided mouse button has just been pressed
+ * @param mouse_button The RAQUET_MOUSE value to check for
+ * @returns 1 if true, 0 if false
+ */
+extern int Raquet_MouseCheck_Pressed(unsigned int mouse_button);
 
-/* Will only return 1 if the mouse button has been released for 1 frame */
-extern int Raquet_MouseCheck_Released(unsigned int sdlbutton);
+/**
+ * @brief Returns if the provided mouse button has just been released
+ * @param mouse_button The RAQUET_MOUSE value to check for
+ * @returns 1 if true, 0 if false
+ */
+extern int Raquet_MouseCheck_Released(unsigned int mouse_button);
 
 #endif

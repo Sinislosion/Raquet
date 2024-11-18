@@ -27,16 +27,16 @@ int Raquet_KeyCheck_Released(unsigned int key) {
 }
 
 /* Check if this mouse button is being held down */
-int Raquet_MouseCheck(unsigned int sdlbutton) {
-	return sdlbutton & Raquet_SDLMouse;
+int Raquet_MouseCheck(unsigned int mouse_button) {
+	return mouse_button & Raquet_SDLMouse;
 }
 
 /* Will only return 1 for the first frame the mouse button is being held down */
-int Raquet_MouseCheck_Pressed(unsigned int sdlbutton) {
-	return (Raquet_PrevSDLMouse & sdlbutton) != (Raquet_SDLMouse & sdlbutton) && (Raquet_SDLMouse & sdlbutton) != 0;
+int Raquet_MouseCheck_Pressed(unsigned int mouse_button) {
+	return (Raquet_PrevSDLMouse & mouse_button) != (Raquet_SDLMouse & mouse_button) && (Raquet_SDLMouse & mouse_button) != 0;
 }
 
 /* Will only return 1 if the mouse button has been released for 1 frame */
-int Raquet_MouseCheck_Released(unsigned int sdlbutton) {
-	return (Raquet_PrevSDLMouse & sdlbutton) != (Raquet_SDLMouse & sdlbutton) && (Raquet_SDLMouse & sdlbutton) != 1;
+int Raquet_MouseCheck_Released(unsigned int mouse_button) {
+	return (Raquet_PrevSDLMouse & mouse_button) != (Raquet_SDLMouse & mouse_button) && (Raquet_SDLMouse & mouse_button) != 1;
 }

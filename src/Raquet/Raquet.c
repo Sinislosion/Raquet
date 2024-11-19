@@ -14,6 +14,7 @@ SDL_Rect Raquet_RectScreenScale = {
 };
 
 SDL_Event Raquet_Event;
+Palette Raquet_ClearColor;
 
 /*
  ****************************

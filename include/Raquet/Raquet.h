@@ -103,7 +103,7 @@ extern void Raquet_SetDrawColor(Palette pal, int alpha);
 
 /* Clear the screen with a solid color */
 #ifdef BACKGROUND_CLEARING_COLOR
-    Palette Raquet_ClearColor;
+    extern Palette Raquet_ClearColor;
 #endif
 
 /**

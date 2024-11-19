@@ -1,3 +1,6 @@
+#ifndef RAQUET_VIDEO_H
+#define RAQUET_VIDEO_H
+
 /*
  *************************
  *     PPF FUNCTIONS     *
@@ -50,3 +53,5 @@ void Raquet_DestroyCHR(SDL_Texture * tex);
 void Raquet_DrawPoint(int x, int y, Palette pal, int alpha);
 
 void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha);
+
+#endif

@@ -1,11 +1,13 @@
 #ifndef RAQUET_ACTOR_H
 #define RAQUET_ACTOR_H
 
+/** @file */
+
 #include "Raquet_Types.h"
 
 /**
  * @brief Allocates the memory for an Actor
- * @returns Allocated memory for the Actor
+ * @returns The allocated memory for the Actor
  */
 Raquet_Actor * Raquet_AllocateActor(void);
 

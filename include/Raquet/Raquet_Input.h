@@ -5,14 +5,25 @@
 
 #include "Raquet.h"
 
+/** @brief The current map of keyboard inputs */
 extern const uint8_t * Raquet_SDLKeys;
+
+/** @brief The previous map of keyboard inputs */
 extern uint8_t Raquet_PrevSDLKeys[SDL_NUM_SCANCODES];
 
+/** @brief The current mouse state */
 extern uint8_t Raquet_SDLMouse;
+
+/** @brief The previous mouse state */
 extern uint8_t Raquet_PrevSDLMouse;
 
+/** @brief The right mouse button */
 #define RAQUET_MOUSE_RIGHT      4
+
+/** @brief The left mouse button */
 #define RAQUET_MOUSE_LEFT       1
+
+/** @brief The middle mouse button (mouse wheel) */
 #define RAQUET_MOUSE_MIDDLE     2
 
 /**

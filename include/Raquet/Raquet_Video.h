@@ -1,20 +1,13 @@
 #ifndef RAQUET_VIDEO_H
 #define RAQUET_VIDEO_H
 
-/*
- *************************
- *     PPF FUNCTIONS     *
- *************************
- */
+/** @file */
 
-// PPF HEADER V1.0
-extern const unsigned char PPFHEADER[8];
+/** @brief The header for the PPF format */
+extern const unsigned char Raquet_PPFHeader[8];
 
-/*
- * fixed bitmask we use to read CHR data
- * (this is probably sloppy, but im not smart enough to know another way)
- */
-extern const unsigned int ppfbitmask[8];
+/** @brief The bitmask used for loading the individual bits from the PPF file */
+extern const unsigned int Raquet_PPFBitmask[8];
 
 /* Load a PPF bank into memory. More info is in the wiki */
 int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir);

@@ -4,7 +4,7 @@
 Raquet_Camera Camera = {0, 0};
 
 /* PPF HEADER V1.0 */
-const unsigned char PPFHEADER[8] = {
+const unsigned char Raquet_PPFHeader[8] = {
     0x50,
     0x50,
     0x46,
@@ -19,7 +19,7 @@ const unsigned char PPFHEADER[8] = {
  * fixed bitmask we use to read CHR data
  * (this is probably sloppy, but im not smart enough to know another way)
  */
-const unsigned int ppfbitmask[8] = {
+const unsigned int Raquet_PPFBitmask[8] = {
     0x80,
     0x40,
     0x20,
@@ -43,7 +43,7 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 		SDL_RWread(ppfdata, *targetarray, 8, 1024);
 
 		for (int i = 0; i < 8; i++) {
-			if ((*targetarray)[i] != PPFHEADER[i]) {
+			if ((*targetarray)[i] != Raquet_PPFHeader[i]) {
                 #ifdef PRINT_DEBUG
 				    printf("WARNING: HEADER DATA DOES NOT MATCH\n");
 				    fflush(stdout);
@@ -105,8 +105,8 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
         for (int x = 0; x < 8; x++) {
             uint8_t v1, v2, v3;
             int dest = x + (y * 8);
-            v1 = (ppfbank[y + 8 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
-            v2 = (ppfbank[y + 16 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
+            v1 = (ppfbank[y + 8 + (id * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
+            v2 = (ppfbank[y + 16 + (id * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
             v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
             pixels[dest] = pal[v3];
             ret.data[dest] = v3;
@@ -143,8 +143,8 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
                     int dest = x + (y * ret.width) + (chrcountx * 8) + (chrcounty * (ret.width * 8));
                     int curid = chrcountx + (chrcounty * xwrap);
                     if (id[curid] >= 0) {
-                        const uint8_t v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
-                        const uint8_t v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                        const uint8_t v1 = (ppfbank[y + 8 + (id[curid] * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
+                        const uint8_t v2 = (ppfbank[y + 16 + (id[curid] * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
                         const uint8_t v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
                         pixels[dest] = pal[v3];
                         ret.data[dest] = v3;

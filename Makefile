@@ -49,14 +49,14 @@ ifeq ($(OS), Windows_NT)
 	windres winclude/program.rc -o $(BUILD_DIR)/program.o
 	@echo
 	@echo "Compiling the final program"
-	$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(BUILD_DIR)/program.o $(LIBS)
+	@$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(BUILD_DIR)/program.o $(LIBS)
 	@echo
 	@echo "Copying DLL Files"
 	cp -r winclude/$(BUILD_DIR)/* $(BUILD_DIR)/$(PLATFORM)
 else
 	@echo
 	@echo "Compiling the final program"
-	$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LIBS)
+	@$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LIBS)
 endif
 	@echo
 	@echo "Copying assets"
@@ -72,12 +72,14 @@ $(BUILD_DIR)/:
 # Rule for building object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)  # Create the directory structure in BUILD_DIR
-	$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
+	@$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
+	@echo "CC	$<" 
 
 # Rule for building C++ object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)  # Create the directory structure in BUILD_DIR
-	$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
+	@$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
+	@echo "CC	$<"
 
 announce:
 	@echo

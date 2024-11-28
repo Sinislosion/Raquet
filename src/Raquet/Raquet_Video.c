@@ -224,29 +224,8 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
 }
 
-/* Returns a struct of the width and height of the CHR, accessable with x and y */
-Raquet_Point Raquet_SizeofCHR(SDL_Texture * tex) {
-    Raquet_Point size;
-    SDL_QueryTexture(tex, NULL, NULL, & size.x, & size.y);
-    return size;
-}
-
-/* Returns the width of a CHR */
-int Raquet_WidthofCHR(SDL_Texture * tex) {
-    Raquet_Point size;
-    SDL_QueryTexture(tex, NULL, NULL, & size.x, & size.y);
-    return size.x;
-}
-
-/* returns the height of a CHR */
-int Raquet_HeightofCHR(SDL_Texture * tex) {
-    Raquet_Point size;
-    SDL_QueryTexture(tex, NULL, NULL, & size.x, & size.y);
-    return size.y;
-}
-
 void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y) {
-    SDL_Point size = Raquet_SizeofCHR(chr.tex);
+    SDL_Point size = { chr.width, chr.height };
     SDL_Rect dstrect = {
         x,
         y,
@@ -289,11 +268,6 @@ void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
     }
     SDL_UpdateTexture(chr->tex, NULL, pixels, chr->width * sizeof(Palette));
 
-}
-
-/* Destroy a CHR after we're done using it */
-void Raquet_DestroyCHR(SDL_Texture * tex) {
-    SDL_DestroyTexture(tex);
 }
 
 void Raquet_DrawPoint(int x, int y, Palette pal, int alpha) {

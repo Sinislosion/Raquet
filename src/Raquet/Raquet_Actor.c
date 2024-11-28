@@ -11,7 +11,7 @@ void Raquet_CreateActor(Raquet_Actor * act, Raquet_CHR chr) {
     act -> origin.y = 0;
     act -> angle = 0;
     act -> flip = SDL_FLIP_NONE;
-    Raquet_Point size = Raquet_SizeofCHR(chr.tex);
+    Raquet_Point size = { chr.width, chr.height };
     act -> chr = chr;
     act -> width = size.x;
     act -> height = size.y;

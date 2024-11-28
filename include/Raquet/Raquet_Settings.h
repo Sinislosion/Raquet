@@ -24,8 +24,8 @@
 // Whether or not to enable the Raquet_DeltaTime variable
 //#define DELTA_TIME
 
-/** @brief Whether or not to make Raquet_Clear also change the window background */
-#define BACKGROUND_CLEARING_COLOR
+// Whether or not to make Raquet_Clear also change the window background */
+//#define BACKGROUND_CLEARING_COLOR
 
 /** @brief The initial window title */
 #define GAME_NAME "Raquet Game Engine"

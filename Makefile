@@ -1,6 +1,6 @@
 # Modify these if you need
 COMPILER := clang
-CFLAGS := --std=c99 -Wall -Wextra -O2  # Change CFLAGS to C++ flags
+CFLAGS := --std=c99 -Wall -Wextra -O3  # Change CFLAGS to C++ flags
 
 # Name of the final executable
 TARGET := Raquet
@@ -46,13 +46,13 @@ $(TARGET)$(EXTENSION): $(OBJS)
 ifeq ($(OS), Windows_NT)
 	@echo
 	@echo "Adding icon to executable"
-	windres winclude/program.rc -o $(BUILD_DIR)/program.o
+	@windres winclude/program.rc -o $(BUILD_DIR)/program.o
 	@echo
 	@echo "Compiling the final program"
 	@$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(BUILD_DIR)/program.o $(LIBS)
 	@echo
 	@echo "Copying DLL Files"
-	cp -r winclude/$(BUILD_DIR)/* $(BUILD_DIR)/$(PLATFORM)
+	@cp -r winclude/$(BUILD_DIR)/* $(BUILD_DIR)/$(PLATFORM)
 else
 	@echo
 	@echo "Compiling the final program"
@@ -60,14 +60,14 @@ else
 endif
 	@echo
 	@echo "Copying assets"
-	cp -r assets/ $(BUILD_DIR)/$(PLATFORM)
+	@cp -r assets/ $(BUILD_DIR)/$(PLATFORM)
 	@echo
 	@echo "Running $(TARGET)"
-	./$(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION)
+	@./$(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION)
 
 $(BUILD_DIR)/:
 	@echo "No build directory, creating one now"
-	mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)
 
 # Rule for building object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c

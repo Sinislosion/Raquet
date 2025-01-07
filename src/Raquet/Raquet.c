@@ -61,15 +61,15 @@ int Raquet_InitSDL(void) {
             // Init Window Renderer
             #ifdef VSYNC
             	Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
-				if (SDL_GL_SetSwapInterval(-1) < 0) {
-        	        SDL_GL_SetSwapInterval(1);
+                if (SDL_GL_SetSwapInterval(-1) < 0) {
+                    SDL_GL_SetSwapInterval(1);
                 }
             #else
             	Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             #endif
 
             #ifdef INTEGER_SCALING
-			    Raquet_FinalTexture = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+                Raquet_FinalTexture = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
             #else
                 SDL_RenderSetLogicalSize(Raquet_Renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
             #endif
@@ -104,7 +104,7 @@ int Raquet_Init(void) {
 /* This is used to update the Window within the Raquet_Main function */
 void Raquet_Update(void) {
     SDL_UpdateWindowSurface(Raquet_Window);
-	SDL_SetRenderTarget(Raquet_Renderer, NULL);
+    SDL_SetRenderTarget(Raquet_Renderer, NULL);
 
     #ifdef INTEGER_SCALING
         /* Integer Scaling Math */

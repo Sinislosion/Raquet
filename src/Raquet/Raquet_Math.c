@@ -1,11 +1,11 @@
 #include "Raquet_Math.h"
 
 int Raquet_Sign(float comp) {
-	return (0 < comp) - (comp < 0);
+    return (0 < comp) - (comp < 0);
 }
 
 float Raquet_Min(float x, float y) {
-	return (((x) < (y)) ? (x) : (y));
+    return (((x) < (y)) ? (x) : (y));
 }
 
 float Raquet_Max(float x, float y) {

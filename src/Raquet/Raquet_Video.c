@@ -33,44 +33,44 @@ const unsigned int Raquet_PPFBitmask[8] = {
 /* Load a PPF bank into memory. More info is in the wiki */
 int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 
-	// check if ppf data is a valid directory
-	if (SDL_RWFromFile(dir, "rb") != NULL) {
+    // check if ppf data is a valid directory
+    if (SDL_RWFromFile(dir, "rb") != NULL) {
         SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
-		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
-		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
-		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
+        long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
+        SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
+        *targetarray = (char*)malloc(sizeoffile * sizeof(char));
 
-		SDL_RWread(ppfdata, *targetarray, 8, 1024);
+        SDL_RWread(ppfdata, *targetarray, 8, 1024);
 
-		for (int i = 0; i < 8; i++) {
-			if ((*targetarray)[i] != Raquet_PPFHeader[i]) {
+        for (int i = 0; i < 8; i++) {
+            if ((*targetarray)[i] != Raquet_PPFHeader[i]) {
                 #ifdef PRINT_DEBUG
-				    printf("WARNING: HEADER DATA DOES NOT MATCH\n");
-				    fflush(stdout);
+                    printf("WARNING: HEADER DATA DOES NOT MATCH\n");
+                    fflush(stdout);
                 #endif
-			}
+            }
 
-		}
+        }
 
-		SDL_RWclose(ppfdata);
+        SDL_RWclose(ppfdata);
 
         #ifdef PRINT_DEBUG
-		    printf("Loaded PPF Data at: %s successfully\n", dir);
-		    fflush(stdout);
-		#endif
+            printf("Loaded PPF Data at: %s successfully\n", dir);
+            fflush(stdout);
+        #endif
 
         return 1;
 
-	} else {
+    } else {
 
         #ifdef PRINT_DEBUG
-		    printf("Failed to load PPF at: %s\n", dir);
+            printf("Failed to load PPF at: %s\n", dir);
             fflush(stdout);
         #endif
 
         exit(1);
-		return 0;
-	}
+        return 0;
+    }
 }
 
 /* Load a single-tile sprite. More info is in the wiki */
@@ -79,9 +79,7 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
 
     Raquet_CHR ret;
 
-    ret.tex = SDL_CreateTexture(
-        Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 8, 8);
-
+    ret.tex = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 8, 8);
     ret.data = (int*)malloc(sizeof(int) * 64);
     ret.width = 8;
     ret.height = 8;
@@ -121,6 +119,7 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
 
 /* Load a multi-tile sprite. More info is in the wiki */
 Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette pal[4]) {
+
     Raquet_CHR ret;
 
     ret.width = xwrap * 8;

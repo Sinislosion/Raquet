@@ -22,10 +22,6 @@ void Raquet_CreateActor(Raquet_Actor * act, Raquet_CHR chr) {
 
 }
 
-void Raquet_DestroyActor(Raquet_Actor * act) {
-    free(act);
-}
-
 void Raquet_DrawActor(Raquet_Actor * act) {
     Raquet_PlaceCHR_ext(act -> chr, act -> position.x - Camera.x, act -> position.y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
     #ifdef VISUALIZE_BBOX

@@ -19,12 +19,6 @@ Raquet_Actor * Raquet_AllocateActor(void);
 void Raquet_CreateActor(Raquet_Actor * act, Raquet_CHR chr);
 
 /**
- * @brief Destroys an Actor and frees the memory
- * @param act The Actor to destroy
- */
-void Raquet_DestroyActor(Raquet_Actor * act);
-
-/**
  * @brief Draws an Actor onto the screen
  * @param act The Actor to draw
  */

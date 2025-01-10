@@ -1,11 +1,11 @@
 #include "Raquet_Math.h"
 
 int Raquet_Sign(float comp) {
-	return (0 < comp) - (comp < 0);
+    return (0 < comp) - (comp < 0);
 }
 
 float Raquet_Min(float x, float y) {
-	return (((x) < (y)) ? (x) : (y));
+    return (((x) < (y)) ? (x) : (y));
 }
 
 float Raquet_Max(float x, float y) {
@@ -42,7 +42,7 @@ int Raquet_CollisionLine(int x1, int y1, int x2, int y2, int x3, int y3, int x4,
 
 }
 
-int Raquet_CollisionLineActor(int x1, int y1, int x2, int y2, Actor * act) {
+int Raquet_CollisionLineActor(int x1, int y1, int x2, int y2, Raquet_Actor * act) {
     const int rx = (act -> position.x - act -> origin.x) + act -> bbox.x1;
     const int ry = (act -> position.y - act -> origin.y) + act -> bbox.y1;
     const int rw = act -> bbox.x2 - act -> bbox.x1;

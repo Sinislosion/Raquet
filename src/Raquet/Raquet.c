@@ -1,19 +1,20 @@
 #include "Raquet.h"
 
-SDL_Window * gWindow;
-uint8_t gFullscreen = -1;
-SDL_Renderer * gRenderer;
-SDL_Texture * gFinalTexture;
+SDL_Window * Raquet_Window;
+uint8_t Raquet_Fullscreen = -1;
+SDL_Renderer * Raquet_Renderer;
+SDL_Texture * Raquet_FinalTexture;
 
-const SDL_Rect gRectScreen = {
+const SDL_Rect Raquet_RectScreen = {
     0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 };
 
-SDL_Rect gRectScreenScale = {
+SDL_Rect Raquet_RectScreenScale = {
 	0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 };
 
-SDL_Event e;
+SDL_Event Raquet_Event;
+Palette Raquet_ClearColor;
 
 /*
  ****************************
@@ -21,13 +22,13 @@ SDL_Event e;
  ****************************
  */
 
-// DOG FUNCTIONS
-extern void runthedog(void); // put this somewhere in your program, the default code to run
+extern void runthedog(void);
+
 extern void createthedog(void); // put all your creation code for the program here
 
 // FRAMERATE
-Uint64 start_tick = 0;
-Uint64 last_tick = 0;
+Uint64 Raquet_StartTick = 0;
+Uint64 Raquet_LastTick = 0;
 double Raquet_DeltaTime = 1;
 
 int Raquet_InitSDL(void) {
@@ -45,8 +46,8 @@ int Raquet_InitSDL(void) {
             return 0;
         }
         // Create window
-        gWindow = SDL_CreateWindow(GAME_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-        if (gWindow == NULL) {
+        Raquet_Window = SDL_CreateWindow(GAME_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        if (Raquet_Window == NULL) {
             #ifdef PRINT_DEBUG
                 printf("FAILED TO CREATE SDL WINDOW.\n");
             #endif
@@ -59,25 +60,25 @@ int Raquet_InitSDL(void) {
 
             // Init Window Renderer
             #ifdef VSYNC
-            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
-				if (SDL_GL_SetSwapInterval(-1) < 0) {
-        	        SDL_GL_SetSwapInterval(1);
+            	Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
+                if (SDL_GL_SetSwapInterval(-1) < 0) {
+                    SDL_GL_SetSwapInterval(1);
                 }
             #else
-            	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+            	Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             #endif
 
             #ifdef INTEGER_SCALING
-			    gFinalTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+                Raquet_FinalTexture = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
             #else
-                SDL_RenderSetLogicalSize(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+                SDL_RenderSetLogicalSize(Raquet_Renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
             #endif
 
-            SDL_RenderSetViewport(gRenderer, NULL);
+            SDL_RenderSetViewport(Raquet_Renderer, NULL);
 
 
 
-            SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawBlendMode(Raquet_Renderer, SDL_BLENDMODE_BLEND);
 
         }
 
@@ -89,7 +90,7 @@ int Raquet_InitSDL(void) {
 
 /* Initialize the Raquet Engine */
 int Raquet_Init(void) {
-    sdlkeys = SDL_GetKeyboardState(NULL);
+    Raquet_SDLKeys = SDL_GetKeyboardState(NULL);
     if (!Raquet_InitSDL()) {
         #ifdef PRINT_DEBUG
             printf("Failed to Initialize SDL\n");
@@ -102,13 +103,13 @@ int Raquet_Init(void) {
 
 /* This is used to update the Window within the Raquet_Main function */
 void Raquet_Update(void) {
-    SDL_UpdateWindowSurface(gWindow);
-	SDL_SetRenderTarget(gRenderer, NULL);
+    SDL_UpdateWindowSurface(Raquet_Window);
+    SDL_SetRenderTarget(Raquet_Renderer, NULL);
 
     #ifdef INTEGER_SCALING
         /* Integer Scaling Math */
         int windowWidth, windowHeight;
-        SDL_GetWindowSize(gWindow, &windowWidth, &windowHeight);
+        SDL_GetWindowSize(Raquet_Window, &windowWidth, &windowHeight);
 
         int mult1, mult2, mult3;
 
@@ -117,25 +118,25 @@ void Raquet_Update(void) {
 
         mult3 = Raquet_Min(mult1, mult2);
 
-        gRectScreenScale.w = Raquet_Max(SCREEN_WIDTH, SCREEN_WIDTH * mult3);
-        gRectScreenScale.h = Raquet_Max(SCREEN_HEIGHT, SCREEN_HEIGHT * mult3);
+        Raquet_RectScreenScale.w = Raquet_Max(SCREEN_WIDTH, SCREEN_WIDTH * mult3);
+        Raquet_RectScreenScale.h = Raquet_Max(SCREEN_HEIGHT, SCREEN_HEIGHT * mult3);
 
-        gRectScreenScale.x = windowWidth/2 - (gRectScreenScale.w / 2);
-        gRectScreenScale.y = windowHeight/2 - (gRectScreenScale.h / 2);
+        Raquet_RectScreenScale.x = windowWidth/2 - (Raquet_RectScreenScale.w / 2);
+        Raquet_RectScreenScale.y = windowHeight/2 - (Raquet_RectScreenScale.h / 2);
 
-        SDL_RenderCopy(gRenderer, gFinalTexture, &gRectScreen, &gRectScreenScale);
+        SDL_RenderCopy(Raquet_Renderer, Raquet_FinalTexture, &Raquet_RectScreen, &Raquet_RectScreenScale);
 
     #endif
 
-    SDL_RenderPresent(gRenderer);
+    SDL_RenderPresent(Raquet_Renderer);
 
     #ifndef BACKGROUND_CLEARING_COLOR
-        SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(Raquet_Renderer, 0, 0, 0, 255);
     #else
-        Raquet_SetDrawColor(gClearColor, 255);
+        Raquet_SetDrawColor(Raquet_ClearColor, 255);
     #endif
 
-    SDL_RenderClear(gRenderer);
+    SDL_RenderClear(Raquet_Renderer);
 
 }
 
@@ -154,8 +155,8 @@ void Raquet_Main(void) {
 
         /* SDL While loop, and frame counter */
         while (1) {
-            while (SDL_PollEvent( & e)) {
-                switch (e.type) {
+            while (SDL_PollEvent(&Raquet_Event)) {
+                switch (Raquet_Event.type) {
                 case SDL_QUIT:
                     return;
                     break;
@@ -165,41 +166,41 @@ void Raquet_Main(void) {
             // If we allow fullscreen, then let us use fullscreen with F11
             #ifdef ALLOW_FULLSCREEN
             if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_F11)) {
-                gFullscreen = -gFullscreen;
+                Raquet_Fullscreen = -Raquet_Fullscreen;
             }
 
-            switch (gFullscreen) {
+            switch (Raquet_Fullscreen) {
             default:
-                SDL_SetWindowFullscreen(gWindow, 0);
+                SDL_SetWindowFullscreen(Raquet_Window, 0);
                 break;
 
             case 1:
-                SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                SDL_SetWindowFullscreen(Raquet_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
                 break;
             }
             #endif
 
-            sdlmouse = SDL_GetMouseState(NULL, NULL);
+            Raquet_SDLMouse = SDL_GetMouseState(NULL, NULL);
 
             #ifdef INTEGER_SCALING
-                SDL_SetRenderTarget(gRenderer, gFinalTexture);
+                SDL_SetRenderTarget(Raquet_Renderer, Raquet_FinalTexture);
             #endif
 
-            start_tick = SDL_GetTicks64();
+            Raquet_StartTick = SDL_GetTicks64();
             runthedog();
             Raquet_Update();
 
-            for (int i = 0; i < 322; i++) {prevkeys[i] = sdlkeys[i];}
-            prevmouse = sdlmouse;
+            for (int i = 0; i < SDL_NUM_SCANCODES; i++) {Raquet_PrevSDLKeys[i] = Raquet_SDLKeys[i];}
+            Raquet_PrevSDLMouse = Raquet_SDLMouse;
 
             #ifdef DELTA_TIME
-                Raquet_DeltaTime = double(start_tick - last_tick) * 0.060f;
-                last_tick = start_tick;
+                Raquet_DeltaTime = double(Raquet_StartTick - Raquet_LastTick) * 0.060f;
+                Raquet_LastTick = Raquet_StartTick;
                 SDL_Delay(1);
             #else
                 int cur_tick = SDL_GetTicks64();
-                if ((1000.0f / FRAMERATE_CAP) > cur_tick - start_tick) {
-                    SDL_Delay(1000.0f / FRAMERATE_CAP - (cur_tick - start_tick));
+                if ((1000.0f / FRAMERATE_CAP) > cur_tick - Raquet_StartTick) {
+                    SDL_Delay(1000.0f / FRAMERATE_CAP - (cur_tick - Raquet_StartTick));
                 }
             #endif
 

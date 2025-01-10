@@ -62,7 +62,7 @@ void drawStars(void) {
 		stararray[i].x -= 1;
 		for (int o = 0; o < 4; o++) {
 			int tempx = stararray[i].x;
-			Raquet_DrawPoint(Raquet_GlobalPalette[0x30], tempx + o, stararray[i].y, 255 - (64 * o));
+			Raquet_DrawPoint(tempx + o, stararray[i].y, Raquet_GlobalPalette[0x30], 255 - (64 * o));
 		}
 
 		// if a point exceeds 0, plus its length, loop it back to the screen width
@@ -78,8 +78,8 @@ void drawStars(void) {
  *     PLACEFACE     *
  *********************
 */
-Actor* act_placeface;
-Actor* act_placeface2;
+Raquet_Actor* act_placeface;
+Raquet_Actor* act_placeface2;
 void bePlaceface(void) {
 	int key_up = Raquet_KeyCheck(SDL_SCANCODE_UP);
 	int key_down = Raquet_KeyCheck(SDL_SCANCODE_DOWN);
@@ -169,9 +169,6 @@ void createthedog(void)
 	/* Audio */
 	Raquet_Sound snd_placeface = Raquet_LoadSound(Raquet_AbsoluteToAsset("2A03_Kevvviiinnn-Superfusion.wav"));
 	Raquet_PlaySound(snd_placeface, 0);
-
-	/* Hide the Cursor */
-	Raquet_ShowCursor(0);
 
 }
 

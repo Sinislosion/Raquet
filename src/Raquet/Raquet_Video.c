@@ -4,7 +4,7 @@
 Raquet_Camera Camera = {0, 0};
 
 /* PPF HEADER V1.0 */
-const unsigned char PPFHEADER[8] = {
+const unsigned char Raquet_PPFHeader[8] = {
     0x50,
     0x50,
     0x46,
@@ -19,7 +19,7 @@ const unsigned char PPFHEADER[8] = {
  * fixed bitmask we use to read CHR data
  * (this is probably sloppy, but im not smart enough to know another way)
  */
-const unsigned int ppfbitmask[8] = {
+const unsigned int Raquet_PPFBitmask[8] = {
     0x80,
     0x40,
     0x20,
@@ -33,44 +33,44 @@ const unsigned int ppfbitmask[8] = {
 /* Load a PPF bank into memory. More info is in the wiki */
 int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 
-	// check if ppf data is a valid directory
-	if (SDL_RWFromFile(dir, "rb") != NULL) {
+    // check if ppf data is a valid directory
+    if (SDL_RWFromFile(dir, "rb") != NULL) {
         SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
-		long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
-		SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
-		*targetarray = (char*)malloc(sizeoffile * sizeof(char));
+        long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
+        SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
+        *targetarray = (char*)malloc(sizeoffile * sizeof(char));
 
-		SDL_RWread(ppfdata, *targetarray, 8, 1024);
+        SDL_RWread(ppfdata, *targetarray, 8, 1024);
 
-		for (int i = 0; i < 8; i++) {
-			if ((*targetarray)[i] != PPFHEADER[i]) {
+        for (int i = 0; i < 8; i++) {
+            if ((*targetarray)[i] != Raquet_PPFHeader[i]) {
                 #ifdef PRINT_DEBUG
-				    printf("WARNING: HEADER DATA DOES NOT MATCH\n");
-				    fflush(stdout);
+                    printf("WARNING: HEADER DATA DOES NOT MATCH\n");
+                    fflush(stdout);
                 #endif
-			}
+            }
 
-		}
+        }
 
-		SDL_RWclose(ppfdata);
+        SDL_RWclose(ppfdata);
 
         #ifdef PRINT_DEBUG
-		    printf("Loaded PPF Data at: %s successfully\n", dir);
-		    fflush(stdout);
-		#endif
+            printf("Loaded PPF Data at: %s successfully\n", dir);
+            fflush(stdout);
+        #endif
 
         return 1;
 
-	} else {
+    } else {
 
         #ifdef PRINT_DEBUG
-		    printf("Failed to load PPF at: %s\n", dir);
+            printf("Failed to load PPF at: %s\n", dir);
             fflush(stdout);
         #endif
 
         exit(1);
-		return 0;
-	}
+        return 0;
+    }
 }
 
 /* Load a single-tile sprite. More info is in the wiki */
@@ -79,9 +79,7 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
 
     Raquet_CHR ret;
 
-    ret.tex = SDL_CreateTexture(
-        gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 8, 8);
-
+    ret.tex = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 8, 8);
     ret.data = (int*)malloc(sizeof(int) * 64);
     ret.width = 8;
     ret.height = 8;
@@ -105,8 +103,8 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
         for (int x = 0; x < 8; x++) {
             uint8_t v1, v2, v3;
             int dest = x + (y * 8);
-            v1 = (ppfbank[y + 8 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
-            v2 = (ppfbank[y + 16 + (id * 16)] & ppfbitmask[x]) >> (7 - x);
+            v1 = (ppfbank[y + 8 + (id * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
+            v2 = (ppfbank[y + 16 + (id * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
             v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
             pixels[dest] = pal[v3];
             ret.data[dest] = v3;
@@ -121,12 +119,13 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
 
 /* Load a multi-tile sprite. More info is in the wiki */
 Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, Palette pal[4]) {
+
     Raquet_CHR ret;
 
     ret.width = xwrap * 8;
     ret.height = ywrap * 8;
 
-    ret.tex = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
+    ret.tex = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ret.width, ret.height);
 
     ret.data = (int*)malloc(sizeof(int) * (ret.width * ret.height));
 
@@ -143,8 +142,8 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
                     int dest = x + (y * ret.width) + (chrcountx * 8) + (chrcounty * (ret.width * 8));
                     int curid = chrcountx + (chrcounty * xwrap);
                     if (id[curid] >= 0) {
-                        const uint8_t v1 = (ppfbank[y + 8 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
-                        const uint8_t v2 = (ppfbank[y + 16 + (id[curid] * 16)] & ppfbitmask[x]) >> (7 - x);
+                        const uint8_t v1 = (ppfbank[y + 8 + (id[curid] * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
+                        const uint8_t v2 = (ppfbank[y + 16 + (id[curid] * 16)] & Raquet_PPFBitmask[x]) >> (7 - x);
                         const uint8_t v3 = v1 + v2 == 2 ? 3 : (v1 == 1 ? 1 : (v2 == 1 ? 2 : 0));
                         pixels[dest] = pal[v3];
                         ret.data[dest] = v3;
@@ -184,7 +183,7 @@ void Raquet_SetDrawColor(Palette pal, int alpha) {
     Uint32 palr = (pal >> 24) & 0x000000FF;
     Uint32 palg = (pal >> 16) & 0x000000FF;
     Uint32 palb = (pal >> 8) & 0x000000FF;
-    SDL_SetRenderDrawColor(gRenderer, palr, palg, palb, alpha);
+    SDL_SetRenderDrawColor(Raquet_Renderer, palr, palg, palb, alpha);
 }
 
 /* Clear the screen with a solid color */
@@ -194,10 +193,10 @@ void Raquet_SetDrawColor(Palette pal, int alpha) {
 
 void Raquet_Clear(Palette pal) {
     Raquet_SetDrawColor(pal, 255);
-    SDL_RenderFillRect(gRenderer, NULL);
+    SDL_RenderFillRect(Raquet_Renderer, NULL);
 
     #ifdef BACKGROUND_CLEARING_COLOR
-        gClearColor = pal;
+        Raquet_ClearColor = pal;
     #endif
 
 }
@@ -214,46 +213,25 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
     switch (fill) {
     default:
-        SDL_RenderDrawRect(gRenderer, & rect);
+        SDL_RenderDrawRect(Raquet_Renderer, & rect);
         break;
 
     case 1:
-        SDL_RenderFillRect(gRenderer, & rect);
+        SDL_RenderFillRect(Raquet_Renderer, & rect);
         break;
     }
 
 }
 
-/* Returns a struct of the width and height of the CHR, accessable with x and y */
-Raquet_Point Raquet_SizeofCHR(SDL_Texture * tex) {
-    Raquet_Point size;
-    SDL_QueryTexture(tex, NULL, NULL, & size.x, & size.y);
-    return size;
-}
-
-/* Returns the width of a CHR */
-int Raquet_WidthofCHR(SDL_Texture * tex) {
-    Raquet_Point size;
-    SDL_QueryTexture(tex, NULL, NULL, & size.x, & size.y);
-    return size.x;
-}
-
-/* returns the height of a CHR */
-int Raquet_HeightofCHR(SDL_Texture * tex) {
-    Raquet_Point size;
-    SDL_QueryTexture(tex, NULL, NULL, & size.x, & size.y);
-    return size.y;
-}
-
 void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y) {
-    SDL_Point size = Raquet_SizeofCHR(chr.tex);
+    SDL_Point size = { chr.width, chr.height };
     SDL_Rect dstrect = {
         x,
         y,
         size.x,
         size.y
     };
-    SDL_RenderCopy(gRenderer, chr.tex, NULL, & dstrect);
+    SDL_RenderCopy(Raquet_Renderer, chr.tex, NULL, & dstrect);
 }
 
 /* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels, horizontal flip, vertical flip) */
@@ -264,7 +242,7 @@ void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, dou
         xsize,
         ysize
     };
-    SDL_RenderCopyEx(gRenderer, chr.tex, NULL, & dstrect, angle, & center, flip);
+    SDL_RenderCopyEx(Raquet_Renderer, chr.tex, NULL, & dstrect, angle, & center, flip);
 }
 
 /* Swap a CHR's Palette */
@@ -291,17 +269,12 @@ void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
 
 }
 
-/* Destroy a CHR after we're done using it */
-void Raquet_DestroyCHR(SDL_Texture * tex) {
-    SDL_DestroyTexture(tex);
+void Raquet_DrawPoint(int x, int y, Palette pal, int alpha) {
+    Raquet_SetDrawColor(pal, alpha);
+    SDL_RenderDrawPoint(Raquet_Renderer, x, y);
 }
 
-void Raquet_DrawPoint(Palette pal, int x, int y, int alpha) {
+void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
-    SDL_RenderDrawPoint(gRenderer, x, y);
-}
-
-void Raquet_DrawLine(Palette pal, int x1, int y1, int x2, int y2, int alpha) {
-    Raquet_SetDrawColor(pal, alpha);
-    SDL_RenderDrawLine(gRenderer, x1, y1, x2, y2);
+    SDL_RenderDrawLine(Raquet_Renderer, x1, y1, x2, y2);
 }

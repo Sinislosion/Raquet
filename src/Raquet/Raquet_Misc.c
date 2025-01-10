@@ -2,7 +2,7 @@
 
 /* 1 for display cursor, 0 for disable cursor */
 void Raquet_ShowCursor(int toggle) {
-	SDL_ShowCursor(toggle);
+    SDL_ShowCursor(toggle);
 }
 
 /* Get an absolute string to an asset from the assets folder */

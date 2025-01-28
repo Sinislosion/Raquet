@@ -99,4 +99,10 @@ void Raquet_DrawPoint(int x, int y, Palette pal, int alpha);
  */
 void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha);
 
+/**
+ * @brief Frees a Raquet_CHR from memory
+ * @param chr The pointer to the CHR you want to destroy
+ */
+void Raquet_FreeCHR(Raquet_CHR* chr);
+
 #endif

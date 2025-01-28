@@ -278,3 +278,8 @@ void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
     SDL_RenderDrawLine(Raquet_Renderer, x1, y1, x2, y2);
 }
+
+void Raquet_FreeCHR(Raquet_CHR* chr) {
+    SDL_DestroyTexture(chr -> tex);
+    free(chr);
+}

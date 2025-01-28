@@ -33,4 +33,10 @@ void Raquet_DrawActor(Raquet_Actor * act);
  */
 int Raquet_ActorColliding(int x, int y, Raquet_Actor * act1, Raquet_Actor * act2);
 
+/**
+ * @brief Frees an Actor from memory
+ * @param actor The pointer to the Actor you want to destroy
+ */
+void Raquet_FreeActor(Raquet_Actor* actor);
+
 #endif

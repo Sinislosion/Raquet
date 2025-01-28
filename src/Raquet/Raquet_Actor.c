@@ -34,3 +34,7 @@ void Raquet_DrawActor(Raquet_Actor * act) {
 int Raquet_ActorColliding(int x, int y, Raquet_Actor * act1, Raquet_Actor * act2) {
     return (x - act1 -> origin.x + act1 -> bbox.x2 > act2 -> position.x - act2 -> origin.x + act2 -> bbox.x1) && (x - act1 -> origin.x + act1 -> bbox.x1 < act2 -> position.x - act2 -> origin.x + act2 -> bbox.x2) && (y - act1 -> origin.y + act1 -> bbox.y2 > act2 -> position.y - act2 -> origin.y + act2 -> bbox.y1) && (y - act1 -> origin.y + act1 -> bbox.y1 < act2 -> position.y - act2 -> origin.y + act2 -> bbox.y2);
 }
+
+void Raquet_FreeActor(Raquet_Actor* actor) {
+    free(actor);
+}

@@ -267,6 +267,8 @@ void Raquet_SwapCHRPalette(Raquet_CHR* chr, Palette pal[4]) {
     }
     SDL_UpdateTexture(chr->tex, NULL, pixels, chr->width * sizeof(Palette));
 
+    free(pixels);
+
 }
 
 void Raquet_DrawPoint(int x, int y, Palette pal, int alpha) {

@@ -4,10 +4,10 @@
 /** @file */
 
 /** @brief The internal screen width */
-#define SCREEN_WIDTH 256
+#define SCREEN_WIDTH 640
 
 /** @brief The internal screen height */
-#define SCREEN_HEIGHT 240
+#define SCREEN_HEIGHT 360
 
 /** @brief The integer scale of the window at startup */
 #define SCREEN_SCALE 3

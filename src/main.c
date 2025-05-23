@@ -109,6 +109,8 @@ int arr_logo_text[] = {'G', 'A', 'M', 'E', -1, 'E', 'N', 'G', 'I', 'N', 'E'};
 Raquet_CHR chr_logo_r, chr_logo_a, chr_logo_q, chr_logo_u, chr_logo_e, chr_logo_t, chr_logo_text;
 Raquet_CHR * chr_logo[] = {&chr_logo_r, &chr_logo_a, &chr_logo_q, &chr_logo_u, &chr_logo_e, &chr_logo_t};
 
+Palette pal_logo[3][4];
+
 /**
  *****************
  *     STARS     *
@@ -130,6 +132,12 @@ void Stars_Init() {
     }
 }
 
+/*
+ **************************
+ *     LOGO VARIABLES     *
+ **************************
+*/
+
 int logoX = (SCREEN_WIDTH / 2) - 168;
 const int logoY = (SCREEN_HEIGHT / 2) - 66;
 
@@ -141,8 +149,6 @@ int animTick = 0;
 int tick = 2;
 float sinTick = 0;
 float sinOffset = 16;
-
-Palette pal_logo[3][4];
 
 /*
  **************************
@@ -186,6 +192,7 @@ void runthedog(void) {
     }
 
     int move = Raquet_KeyCheck(SDL_SCANCODE_RIGHT) - Raquet_KeyCheck(SDL_SCANCODE_LEFT);
+    
     logoX += move * 2;
 
     Raquet_PlaceCHR(chr_logo_r, logoX, logoY + (sin(sinTick / 32) * 16));

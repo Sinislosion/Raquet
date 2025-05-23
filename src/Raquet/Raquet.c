@@ -38,13 +38,6 @@ int Raquet_InitSDL(void) {
         #endif
         return 0;
     } else {
-        // Init SDL_mixer
-        if (Mix_OpenAudio(AUDIO_SAMPLE_RATE, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-            #ifdef PRINT_DEBUG
-                printf("FAILED TO INITIALIZE SDL MIXER.\n");
-            #endif
-            return 0;
-        }
         // Create window
         Raquet_Window = SDL_CreateWindow(GAME_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         if (Raquet_Window == NULL) {

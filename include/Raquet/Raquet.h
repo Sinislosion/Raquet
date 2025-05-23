@@ -13,7 +13,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 /* More Constants */
 
@@ -59,10 +60,10 @@ extern SDL_Event Raquet_Event;
 #include "Raquet_Math.h"
 #include "Raquet_Misc.h"
 #include "Raquet_Palette.h"
-#include "Raquet_Sound.h"
 #include "Raquet_Video.h"
 #include "Raquet_CHR.h"
 #include "Raquet_PPF.h"
+#include "Raquet_Sound.h"
 
 /*
  ****************************

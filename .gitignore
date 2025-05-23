@@ -1,4 +1,5 @@
 bin/
+build/
 .vscode/
 compile_commands.json
 doxygen/html

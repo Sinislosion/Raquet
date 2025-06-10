@@ -13,8 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include <AL/al.h>
-#include <AL/alc.h>
+#include <SDL2/SDL_mixer.h>
 
 /* More Constants */
 

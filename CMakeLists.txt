@@ -1,8 +1,12 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 project(Raquet)
 
 find_package(SDL2 REQUIRED)
+
+if (WIN32)
+	add_compile_definitions(-Dmwindows)
+endif()
 
 file(GLOB_RECURSE SOURCES "src/*.c" "src/*.cpp" "include/*.h" "include/*.hpp")
 

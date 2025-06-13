@@ -14,6 +14,9 @@ set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY C_STANDARD 99)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include/Raquet)
 
+if (WIN32)
+	target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -mwindows)
+endif()
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE m SDL2 SDL2main SDL2_mixer)
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD

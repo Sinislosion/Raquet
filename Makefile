@@ -5,7 +5,7 @@ CC := clang
 ifeq ($(OS),Windows_NT)
 	INSULT := "Windows Dev? I am so sorry."
 else
-	INSULT := "*Nix Dev? How's your waifu wallpaper holding up?
+	INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
 endif
 
 # CODE #

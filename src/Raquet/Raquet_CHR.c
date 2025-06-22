@@ -92,24 +92,24 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
 
 void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y) {
     SDL_Point size = { chr.width, chr.height };
-    SDL_Rect dstrect = {
+    const SDL_FRect dstrect = {
         x,
         y,
         size.x,
         size.y
     };
-    SDL_RenderCopy(Raquet_Renderer, chr.tex, NULL, & dstrect);
+    SDL_RenderTexture(Raquet_Renderer, chr.tex, NULL, & dstrect);
 }
 
-/* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels, horizontal flip, vertical flip) */
-void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_RendererFlip flip) {
-    SDL_Rect dstrect = {
+/* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels, SDL flip mode) */
+void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_FlipMode flip) {
+    const SDL_FRect dstrect = {
         x - center.x,
         y - center.y,
         xsize,
         ysize
     };
-    SDL_RenderCopyEx(Raquet_Renderer, chr.tex, NULL, & dstrect, angle, & center, flip);
+    SDL_RenderTextureRotated(Raquet_Renderer, chr.tex, NULL, & dstrect, angle, & center, flip);
 }
 
 /* Swap a CHR's Palette */

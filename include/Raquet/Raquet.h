@@ -12,8 +12,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL3/SDL.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 /* More Constants */
 
@@ -30,22 +30,17 @@ extern uint8_t Raquet_Fullscreen;
 /**
  * @brief The Rendering context used by Raquet
  */
-extern SDL_Renderer * Raquet_Renderer;
-
-/**
- * @brief The final texture rendered onto if Integer Scaling is enabled ( See Raquet_Settings.h )
- */
-extern SDL_Texture * Raquet_FinalTexture;
+extern SDL_Renderer* Raquet_Renderer;
 
 /**
  * @brief The size of the Rendering context as a Rectangle
  */
-extern const SDL_Rect Raquet_RectScreen;
+extern const SDL_FRect Raquet_RectScreen;
 
 /**
  * @brief The multiple the Rendering context is multiplied by
  */
-extern SDL_Rect Raquet_RectScreenScale;
+extern SDL_FRect Raquet_RectScreenScale;
 
 /**
  * @brief Window event handeler used by Raquet

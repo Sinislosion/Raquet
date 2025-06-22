@@ -15,9 +15,6 @@
 /** @brief Whether or not to allow the user to fullscreen by pressing F11 */
 #define ALLOW_FULLSCREEN
 
-/** @brief Whether or not to force Integer Scaling */
-#define INTEGER_SCALING
-
 /** @brief Whether or not to use Hardware VSYNC */
 #define VSYNC
 

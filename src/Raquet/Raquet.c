@@ -1,15 +1,14 @@
 #include "Raquet.h"
 
-SDL_Window * Raquet_Window;
+SDL_Window* Raquet_Window;
 uint8_t Raquet_Fullscreen = -1;
-SDL_Renderer * Raquet_Renderer;
-SDL_Texture * Raquet_FinalTexture;
+SDL_Renderer* Raquet_Renderer;
 
-const SDL_Rect Raquet_RectScreen = {
+const SDL_FRect Raquet_RectScreen = {
     0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 };
 
-SDL_Rect Raquet_RectScreenScale = {
+SDL_FRect Raquet_RectScreenScale = {
 	0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 };
 
@@ -32,14 +31,14 @@ Uint64 Raquet_LastTick = 0;
 double Raquet_DeltaTime = 1;
 
 int Raquet_InitSDL(void) {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == false) {
         #ifdef PRINT_DEBUG
             printf("FAILED TO INITIALIZE SDL VIDEO.\n");
         #endif
         return 0;
     } else {
         // Create window
-        Raquet_Window = SDL_CreateWindow(GAME_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        Raquet_Window = SDL_CreateWindow(GAME_NAME, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, SDL_WINDOW_RESIZABLE);
         if (Raquet_Window == NULL) {
             #ifdef PRINT_DEBUG
                 printf("FAILED TO CREATE SDL WINDOW.\n");
@@ -52,24 +51,16 @@ int Raquet_InitSDL(void) {
             fflush(stdout);
 
             // Init Window Renderer
-            #ifdef VSYNC
-            	Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
-                if (SDL_GL_SetSwapInterval(-1) < 0) {
-                    SDL_GL_SetSwapInterval(1);
-                }
-            #else
-            	Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-            #endif
+            Raquet_Renderer = SDL_CreateRenderer(Raquet_Window, NULL);
+            if (SDL_GL_SetSwapInterval(-1) == false) {
+                SDL_GL_SetSwapInterval(1);
+            }
 
-            #ifdef INTEGER_SCALING
-                Raquet_FinalTexture = SDL_CreateTexture(Raquet_Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
-            #else
-                SDL_RenderSetLogicalSize(Raquet_Renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-            #endif
+            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 
-            SDL_RenderSetViewport(Raquet_Renderer, NULL);
+            SDL_SetRenderViewport(Raquet_Renderer, NULL);
 
-
+	    SDL_SetRenderLogicalPresentation(Raquet_Renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
 
             SDL_SetRenderDrawBlendMode(Raquet_Renderer, SDL_BLENDMODE_BLEND);
 
@@ -97,29 +88,6 @@ int Raquet_Init(void) {
 /* This is used to update the Window within the Raquet_Main function */
 void Raquet_Update(void) {
     SDL_UpdateWindowSurface(Raquet_Window);
-    SDL_SetRenderTarget(Raquet_Renderer, NULL);
-
-    #ifdef INTEGER_SCALING
-        /* Integer Scaling Math */
-        int windowWidth, windowHeight;
-        SDL_GetWindowSize(Raquet_Window, &windowWidth, &windowHeight);
-
-        int mult1, mult2, mult3;
-
-        mult1 = (windowHeight / SCREEN_HEIGHT);
-        mult2 = (windowWidth / SCREEN_WIDTH);
-
-        mult3 = Raquet_Min(mult1, mult2);
-
-        Raquet_RectScreenScale.w = Raquet_Max(SCREEN_WIDTH, SCREEN_WIDTH * mult3);
-        Raquet_RectScreenScale.h = Raquet_Max(SCREEN_HEIGHT, SCREEN_HEIGHT * mult3);
-
-        Raquet_RectScreenScale.x = windowWidth/2 - (Raquet_RectScreenScale.w / 2);
-        Raquet_RectScreenScale.y = windowHeight/2 - (Raquet_RectScreenScale.h / 2);
-
-        SDL_RenderCopy(Raquet_Renderer, Raquet_FinalTexture, &Raquet_RectScreen, &Raquet_RectScreenScale);
-
-    #endif
 
     SDL_RenderPresent(Raquet_Renderer);
 
@@ -150,7 +118,7 @@ void Raquet_Main(void) {
         while (1) {
             while (SDL_PollEvent(&Raquet_Event)) {
                 switch (Raquet_Event.type) {
-                case SDL_QUIT:
+                case SDL_EVENT_QUIT:
                     return;
                     break;
                 }
@@ -164,26 +132,22 @@ void Raquet_Main(void) {
 
             switch (Raquet_Fullscreen) {
             default:
-                SDL_SetWindowFullscreen(Raquet_Window, 0);
+                SDL_SetWindowFullscreen(Raquet_Window, false);
                 break;
 
             case 1:
-                SDL_SetWindowFullscreen(Raquet_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                SDL_SetWindowFullscreen(Raquet_Window, true);
                 break;
             }
             #endif
 
             Raquet_SDLMouse = SDL_GetMouseState(NULL, NULL);
 
-            #ifdef INTEGER_SCALING
-                SDL_SetRenderTarget(Raquet_Renderer, Raquet_FinalTexture);
-            #endif
-
-            Raquet_StartTick = SDL_GetTicks64();
+            Raquet_StartTick = SDL_GetTicks();
             runthedog();
             Raquet_Update();
 
-            for (int i = 0; i < SDL_NUM_SCANCODES; i++) {Raquet_PrevSDLKeys[i] = Raquet_SDLKeys[i];}
+            for (int i = 0; i < SDL_SCANCODE_COUNT; i++) {Raquet_PrevSDLKeys[i] = Raquet_SDLKeys[i];}
             Raquet_PrevSDLMouse = Raquet_SDLMouse;
 
             #ifdef DELTA_TIME
@@ -191,7 +155,7 @@ void Raquet_Main(void) {
                 Raquet_LastTick = Raquet_StartTick;
                 SDL_Delay(1);
             #else
-                int cur_tick = SDL_GetTicks64();
+                int cur_tick = SDL_GetTicks();
                 if ((1000.0f / FRAMERATE_CAP) > cur_tick - Raquet_StartTick) {
                     SDL_Delay(1000.0f / FRAMERATE_CAP - (cur_tick - Raquet_StartTick));
                 }

@@ -6,10 +6,10 @@
 #include "Raquet.h"
 
 /** @brief The current map of keyboard inputs */
-extern const uint8_t * Raquet_SDLKeys;
+extern const bool* Raquet_SDLKeys;
 
 /** @brief The previous map of keyboard inputs */
-extern uint8_t Raquet_PrevSDLKeys[SDL_NUM_SCANCODES];
+extern uint8_t Raquet_PrevSDLKeys[SDL_SCANCODE_COUNT];
 
 /** @brief The current mouse state */
 extern uint8_t Raquet_SDLMouse;

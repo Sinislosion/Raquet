@@ -56,12 +56,11 @@ int Raquet_InitSDL(void) {
                 SDL_GL_SetSwapInterval(1);
             }
 
-            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+            SDL_SetHint("SDL_RENDER_SCALE_QUALITY", 0);
 
             SDL_SetRenderViewport(Raquet_Renderer, NULL);
 
-	    SDL_SetRenderLogicalPresentation(Raquet_Renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
-
+	        SDL_SetRenderLogicalPresentation(Raquet_Renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
             SDL_SetRenderDrawBlendMode(Raquet_Renderer, SDL_BLENDMODE_BLEND);
 
         }

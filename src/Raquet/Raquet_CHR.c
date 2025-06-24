@@ -37,8 +37,8 @@ Raquet_CHR Raquet_LoadCHR(PPF_Bank ppfbank, int id, Palette pal[4]) {
         }
     }
 
-    SDL_SetTextureBlendMode(ret.tex, SDL_BLENDMODE_BLEND);
     SDL_UpdateTexture(ret.tex, NULL, pixels, 8 * sizeof(Palette));
+    SDL_SetTextureScaleMode(ret.tex, SDL_SCALEMODE_NEAREST);
 
     return ret;
 }
@@ -82,9 +82,9 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
         }
     }
 
-    SDL_SetTextureBlendMode(ret.tex, SDL_BLENDMODE_BLEND);
     SDL_UpdateTexture(ret.tex, NULL, pixels, ret.width * sizeof(Palette));
-
+    SDL_SetTextureScaleMode(ret.tex, SDL_SCALEMODE_NEAREST);
+    
     return ret;
 
 }

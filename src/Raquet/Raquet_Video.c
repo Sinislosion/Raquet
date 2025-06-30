@@ -43,7 +43,7 @@ void Raquet_Clear(Palette pal) {
 
 /* Draw a rectangle (x position, y position, width, height, color, alpha, fill) */
 void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, int alpha, int fill) {
-    SDL_Rect rect = {
+    const SDL_FRect rect = {
         x1,
         y1,
         width,
@@ -53,10 +53,10 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
     switch (fill) {
     default:
-        SDL_RenderDrawRect(Raquet_Renderer, & rect);
+        SDL_RenderRect(Raquet_Renderer, & rect);
         break;
 
-    case 1:
+    case 1: 
         SDL_RenderFillRect(Raquet_Renderer, & rect);
         break;
     }
@@ -65,11 +65,11 @@ void Raquet_DrawRectangle(int x1, int y1, int width, int height, Palette pal, in
 
 void Raquet_DrawPoint(int x, int y, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
-    SDL_RenderDrawPoint(Raquet_Renderer, x, y);
+    SDL_RenderPoint(Raquet_Renderer, x, y);
 }
 
 void Raquet_DrawLine(int x1, int y1, int x2, int y2, Palette pal, int alpha) {
     Raquet_SetDrawColor(pal, alpha);
-    SDL_RenderDrawLine(Raquet_Renderer, x1, y1, x2, y2);
+    SDL_RenderLine(Raquet_Renderer, x1, y1, x2, y2);
 }
 

@@ -6,8 +6,8 @@
  ***************************
  */
 
-const uint8_t * Raquet_SDLKeys;
-uint8_t Raquet_PrevSDLKeys[SDL_NUM_SCANCODES];
+const bool* Raquet_SDLKeys;
+uint8_t Raquet_PrevSDLKeys[SDL_SCANCODE_COUNT];
 uint8_t Raquet_SDLMouse;
 uint8_t Raquet_PrevSDLMouse;
 

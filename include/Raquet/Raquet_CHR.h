@@ -40,7 +40,7 @@ void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y);
  * @param center The Raquet_Point to use as an origin point to rotate and scale the sprite around
  * @param flip The SDL_RendererFlip value of how the sprite should be flipped
  */
-void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_RendererFlip flip);
+void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_FlipMode flip);
 
 /**
  * @brief Swaps a CHR's color palette with a different one

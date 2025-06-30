@@ -1,4 +1,4 @@
-![Version Badge](https://img.shields.io/badge/Pre_Release-1.1.0-%2365aaff) ![SDL Badge](https://img.shields.io/badge/Backend-SDL2-%23dd6fff)<br>
+![Version Badge](https://img.shields.io/badge/Pre_Release-1.1.0-%2365aaff) ![SDL Badge](https://img.shields.io/badge/Backend-SDL3-%23dd6fff)<br>
 # Raquet Game Engine
 ![Raquet Game Engine -- Logo by Chris S.](https://raw.githubusercontent.com/Sinislosion/Raquet/refs/heads/master/raquetlogo.png)<br>
 Lightweight free (as in free speech AND free beer) SDL2 based Game Engine/Framework to providing tools to make games resembling the computers of yesteryear.<br>
@@ -15,7 +15,7 @@ Documentation can be found at [https://raquet.sinislosion.net/](https://raquet.s
 - Basic Game Object Management (Actors)
 
 ## Compilation
-For Compilation instructions, please check the [enclosed instruction book](https://raquet.sinislosion.net/v1x/Compilation/)
+For Compilation instructions, please check the [enclosed instruction book](https://raquet.sinislosion.net/v1x/Compilation/) though make sure you use SDL3 instead of SDL2
 
 # License/Credits
 - "2A03_Kevvviiinnn-Superfusion.wav" exported from Famitracker's demo included songs is licensed under the GPL v2.0 and was created by [symfonikev](https://www.youtube.com/watch?v=gvhjNV9uKl8)<br>

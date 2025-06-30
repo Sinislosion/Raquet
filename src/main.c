@@ -179,11 +179,11 @@ void createthedog(void)
 }
 
 void runthedog(void) {
-    Raquet_Clear(Raquet_GlobalPalette[0x0F]);
+    Raquet_Clear(Raquet_GlobalPalette[0x11]);
 
     for (int i = 0; i < 3; ++i) {
         for (int o = 0; o < SCREEN_HEIGHT; ++o) {
-            Raquet_DrawPoint(stars[i][o].x, stars[i][o].y, Raquet_GlobalPalette[0x12], 255 / (i + 1));
+            Raquet_DrawPoint(stars[i][o].x, stars[i][o].y, Raquet_GlobalPalette[0x30], 255 / (i + 1));
             stars[i][o].x -= 1.0 / (i + 1);
             if (stars[i][o].x < 0) {
                 stars[i][o].x += SCREEN_WIDTH;

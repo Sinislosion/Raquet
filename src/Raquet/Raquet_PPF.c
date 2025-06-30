@@ -31,13 +31,13 @@ const unsigned int Raquet_PPFBitmask[8] = {
 int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 
     // check if ppf data is a valid directory
-    if (SDL_RWFromFile(dir, "rb") != NULL) {
-        SDL_RWops* ppfdata = SDL_RWFromFile(dir, "rb");
-        long long sizeoffile = SDL_RWseek(ppfdata, 0, RW_SEEK_END);
-        SDL_RWseek(ppfdata, 0, RW_SEEK_SET);
+    if (SDL_IOFromFile(dir, "rb") != NULL) {
+        SDL_IOStream* ppfdata = SDL_IOFromFile(dir, "rb");
+        long long sizeoffile = SDL_SeekIO(ppfdata, 0, SDL_IO_SEEK_END);
+        SDL_SeekIO(ppfdata, 0, SDL_IO_SEEK_SET);
         *targetarray = (char*)malloc(sizeoffile * sizeof(char));
 
-        SDL_RWread(ppfdata, *targetarray, 8, 1024);
+        SDL_ReadIO(ppfdata, *targetarray, sizeoffile / sizeof(char));
 
         for (int i = 0; i < 8; i++) {
             if ((*targetarray)[i] != Raquet_PPFHeader[i]) {
@@ -49,7 +49,7 @@ int Raquet_LoadPPFBank(PPF_Bank* targetarray, const char* dir) {
 
         }
 
-        SDL_RWclose(ppfdata);
+        SDL_CloseIO(ppfdata);
 
         #ifdef PRINT_DEBUG
             printf("Loaded PPF Data at: %s successfully\n", dir);

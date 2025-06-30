@@ -2,12 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 set(GAME_NAME Raquet CACHE STRING "The name of the final executable")
 
-set(CMAKE_C_FLAGS "-O2 -Wall -Wextra -Werror -flto")
+set(CMAKE_C_FLAGS "-O2 -Wall -Wextra -Werror")
 
 project(${GAME_NAME})
 
 find_package(SDL3 REQUIRED)
-find_package(SDL3_mixer REQUIRED)
+
+include(FetchContent)
+FetchContent_Declare(SDL3_mixer GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer GIT_TAG 30c1301055a35ee87b8679279b6fc88e10d28fa3 )
+FetchContent_MakeAvailable(SDL3_mixer)
 
 file(GLOB_RECURSE SOURCES "src/*.c" "src/*.cpp" "include/*.h" "include/*.hpp")
 
@@ -20,7 +23,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include/Raquet)
 if(WIN32)
     target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -mwindows)
 endif()
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC m SDL3 SDL3_mixer)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE m SDL3 SDL3_mixer::SDL3_mixer)
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

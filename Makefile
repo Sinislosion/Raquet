@@ -20,6 +20,10 @@ all: build
 	@echo "Running Ninja"
 	@echo
 	@ninja -C build/ -j 20
+ifeq ($(OS),Windows_NT)
+	@cp ./build/_deps/sdl3_mixer-build/SDL3_mixer.dll ./build/
+
+endif
 	@echo
 	@echo "Running $(GAME_NAME)"
 	@echo
@@ -33,25 +37,18 @@ build/windeps:
 ifeq ($(OS),Windows_NT)
 	@echo "Creating Windows Dependency Directory"
 	@mkdir build/windeps
-	@echo "Downloading SDL2_Mixer"
-	@wget -q https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.1/SDL2_mixer-devel-2.8.1-mingw.zip -O build/windeps/mixer.zip
-	@echo "Unzipping SDL2_Mixer"
-	@unzip -q build/windeps/mixer.zip -d build/windeps
+	@echo "Downloading SDL3"
+	@wget -q https://github.com/libsdl-org/SDL/releases/download/release-3.2.16/SDL3-devel-3.2.16-mingw.zip -O build/windeps/sdl3.zip
+	@echo "Unzipping SDL3"
+	@unzip -q build/windeps/sdl3.zip -d build/windeps
 	@echo "Copying to the build folder"
-	@cp build/windeps/SDL2_mixer-2.8.1/x86_64-w64-mingw32/bin/SDL2_mixer.dll build/
-	@echo
-	@echo "Downloading SDL2"
-	@wget -q https://github.com/libsdl-org/SDL/releases/download/release-2.32.6/SDL2-devel-2.32.6-mingw.zip -O build/windeps/sdl2.zip
-	@echo "Unzipping SDL2"
-	@unzip -q build/windeps/sdl2.zip -d build/windeps
-	@echo "Copying to the build folder"
-	@cp build/windeps/SDL2-2.32.6/x86_64-w64-mingw32/bin/SDL2.dll build/
+	@cp build/windeps/SDL3-3.2.16/x86_64-w64-mingw32/bin/SDL3.dll build/
 
 endif
 
 package: build/windeps
 ifeq ($(OS),Windows_NT)
-	@zip -qj Release.zip build/$(GAME_NAME).exe build/SDL2.dll build/SDL2_mixer.dll
+	@zip -qj Release.zip build/$(GAME_NAME).exe build/SDL3.dll build/SDL3_mixer.dll
 	@zip -qr Release.zip assets
 endif
 

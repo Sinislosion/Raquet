@@ -50,6 +50,9 @@ package: build/windeps
 ifeq ($(OS),Windows_NT)
 	@zip -qj Release.zip build/$(GAME_NAME).exe build/SDL3.dll build/SDL3_mixer.dll
 	@zip -qr Release.zip assets
+else
+	@zip -qj Release.zip build/$(GAME_NAME) build/_deps/sdl3_mixer-build/libSDL3_mixer.so
+	@zip -qr Release.zip assets
 endif
 
 clean: removebuilddir all

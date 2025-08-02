@@ -15,7 +15,7 @@ typedef struct Raquet_Camera {
 extern Raquet_Camera Camera;
 
 /** @brief Contains an x and y coordinate */
-typedef SDL_Point Raquet_Point;
+typedef SDL_FPoint Raquet_Point;
 
 /** @brief The 2-bit color container for graphical data. Holds an array of 8x8 tiles */
 typedef char * PPF_Bank;
@@ -53,7 +53,7 @@ typedef struct Raquet_Actor {
 
     Raquet_BoundingBox bbox;    /**< The Raquet_BoundingBox used to check for collision */
 
-    SDL_RendererFlip flip;      /**< How we should be flipped. Uses an SDL_RendererFlip value */
+    SDL_FlipMode flip;      /**< How we should be flipped. Uses an SDL_FlipMode value */
 
 } Raquet_Actor;
 

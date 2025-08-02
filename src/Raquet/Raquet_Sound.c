@@ -11,3 +11,4 @@ void Raquet_PlaySound(Raquet_Sound wav, int loops) {
 void Raquet_DestroySound(Raquet_Sound wav) {
     Mix_FreeChunk(wav);
 }
+

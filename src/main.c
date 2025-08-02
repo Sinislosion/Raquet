@@ -1,114 +1,154 @@
 // put your libs here.
 #include "Raquet.h"
+#include "Raquet_Shorthands.h"
 
-// PPF Banks
+/*
+ ********************
+ *     PPF BANK     *
+ ********************
+*/
 PPF_Bank ppf_main;
 
-// Global Demo Vars
-float demotime = 0;
 
-// BG Stars
-#define PARTICLE_AMOUNT		SCREEN_WIDTH/4
-typedef struct Star {
-	int x, y;
-} Star;
+/**
+ *******************
+ *     SPRITES     *
+ *******************
+*/
+int arr_logo_r[] = {
+     0,  0,  0,  0,  0,  1, -1, -1,
+     0,  0, -1, -1,  0,  0, -1, -1,
+    16,  0, 19, -1,  0,  0, -1, -1,
+     0,  0,  0,  0,  0,  3, -1, -1,
+     0,  0, 17, 16,  0,  1, -1, -1,
+     0,  0, -1, 17,  0, 16,  1, -1,
+     0,  0, -1, -1, 18,  0,  0,  1,
+    20, 19, -1, -1, -1, 17,  0, -1,
+    -1,  0, -1, -1, -1, 17, 18, -1,
+    -1, 18, -1, -1, -1, -1, 17, -1,
+    -1, 18, -1, -1, -1, -1, -1, -1,
+    -1, 17, -1, -1, -1, -1, -1, -1
+};
 
-Star stararray[PARTICLE_AMOUNT];
+int arr_logo_a[] = {
+    -1, -1,  2,  0,  0, 18,
+    -1, -1, 16,  0,  0, 19,
+    -1,  2,  0,  3,  0,  0,
+    -1,  0,  0, -1,  0,  0,
+     2,  0,  0,  5,  0,  0,
+     4,  0,  6, 17,  0, 16,
+    -1,  4, -1, -1,  0,  0,
+    -1, -1, -1, -1,  0, 17,
+    -1, -1, -1, -1,  0, 17,
+    -1, -1, -1, -1, 16, -1,
+    -1, -1, -1, -1, 17, -1
 
-// Palettes
-Palette pal_face[4];
-Palette pal_face2[4];
 
-Palette pal_logo[4];
+};
 
-// Characters
-Raquet_CHR chr_placeface;
-Raquet_CHR chr_raquetlogo_R;
-Raquet_CHR chr_raquetlogo_A;
-Raquet_CHR chr_raquetlogo_Q;
-Raquet_CHR chr_raquetlogo_U;
-Raquet_CHR chr_raquetlogo_E;
-Raquet_CHR chr_raquetlogo_T;
+int arr_logo_q[] = {
+     2,  0,  0,  0,  0,  1,
+     0,  0,  6, -1,  0,  0,
+     0,  0, -1, -1, 16,  0,
+     0,  0, -1, -1,  0,  0,
+     0,  0, -1,  1,  0,  0,
+    16,  0, 19,  4,  0,  3,
+     4,  0,  0,  3,  4,  0,
+    -1, 16,  0, -1, -1, 16,
+    -1, -1, 17, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1,
+    -1, -1,  7, -1, -1, -1
+};
+
+int arr_logo_u[] = {
+     0,  0, -1, -1,  0,  0,
+     0,  0, -1, -1,  0,  0,
+     0,  0, -1, -1,  0,  0,
+     0,  0, -1, -1,  0, 16,
+     0,  0, -1, -1,  0,  0,
+     0,  0,  1, -1,  0,  0,
+     4,  0,  0,  0,  0,  4,
+    -1,  0,  0,  8, 16, -1,
+    -1,  0, 17,  0, 16, -1,
+    -1,  9, -1, -1, -1, -1,
+    -1, 17, -1, -1, -1, -1
+};
+
+int arr_logo_e[] = {
+    10, 10,  0,  0,  0,  0,
+     0,  0, -1, -1, -1, -1,
+     0, 16, -1, -1, -1, -1,
+     0,  0, 10, 10, -1, -1,
+     0,  0, -1, -1, -1, -1,
+     0,  0, -1, -1, -1, -1,
+     0,  0,  0,  0,  0, 16,
+    -1,  0,  0,  8,  0, 11,
+    -1,  0, 18, 16, 20, -1,
+    -1,  9, 18, -1, -1, -1,
+    -1, 16, -1, -1, -1, -1,
+    -1, -1, -1, -1,  7, -1
+};
+
+int arr_logo_t[] = {
+    12, 12,  0, 16, 12, 12,
+    -1, -1,  0,  0, -1, -1,
+    -1, -1,  0,  0, -1, -1,
+    -1, -1,  0,  0, -1, -1,
+    -1, -1,  0,  0, -1, -1,
+    -1, -1,  0,  0, -1, -1,
+    -1, -1,  0,  0, -1, -1,
+    -1, -1,  0, 17, -1, -1,
+    -1, -1,  0, 17, -1, -1,
+    -1, -1,  0, -1, -1, -1,
+    -1, -1, 16, -1, -1, -1,
+    -1, -1, 17, -1, -1, -1
+};
+
+int arr_logo_text[] = {'G', 'A', 'M', 'E', -1, 'E', 'N', 'G', 'I', 'N', 'E'};
+
+Raquet_CHR chr_logo_r, chr_logo_a, chr_logo_q, chr_logo_u, chr_logo_e, chr_logo_t, chr_logo_text;
+Raquet_CHR * chr_logo[] = {&chr_logo_r, &chr_logo_a, &chr_logo_q, &chr_logo_u, &chr_logo_e, &chr_logo_t};
+
+Palette pal_logo[3][4];
+
+/**
+ *****************
+ *     STARS     *
+ *****************
+*/
+typedef struct Stars {
+    float x;
+    float y;
+} Stars;
+
+Stars stars[3][SCREEN_HEIGHT];
+
+void Stars_Init() {
+    for (int i = 0; i < 3; ++i) {
+        for (int o = 0; o < SCREEN_HEIGHT; ++o) {
+            stars[i][o].x = rand() % (SCREEN_WIDTH + 1);
+            stars[i][o].y = o;
+        }
+    }
+}
 
 /*
  **************************
- *     STAR FUNCTIONS     *
+ *     LOGO VARIABLES     *
  **************************
 */
 
-// Init each star particle
-Star createStars(void) {
-	int pos  = (rand() % (SCREEN_HEIGHT + 1));
-	Star par;
-	par.x = 0;
-	par.y = pos;
+int logoX = (SCREEN_WIDTH / 2) - 168;
+const int logoY = (SCREEN_HEIGHT / 2) - 66;
 
-	return par;
-}
+const int textX = (SCREEN_WIDTH / 2) - 44;
+const int textY = logoY + 108;
 
-// init all our stars
-void initStars(void) {
-	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
-		stararray[i] = createStars();
-		stararray[i].x = i * 4;
-	}
-}
-
-// draw the stars
-void drawStars(void) {
-
-	// for every star we know exists, and for every 4 points we need to draw.
-	for (int i = 0; i < PARTICLE_AMOUNT; i++) {
-		stararray[i].x -= 1;
-		for (int o = 0; o < 4; o++) {
-			int tempx = stararray[i].x;
-			Raquet_DrawPoint(tempx + o, stararray[i].y, Raquet_GlobalPalette[0x30], 255 - (64 * o));
-		}
-
-		// if a point exceeds 0, plus its length, loop it back to the screen width
-		if (stararray[i].x <= -4) {
-			stararray[i] = createStars();
-			stararray[i].x += SCREEN_WIDTH;
-		}
-	}
-}
-
-/*
- *********************
- *     PLACEFACE     *
- *********************
-*/
-Raquet_Actor* act_placeface;
-Raquet_Actor* act_placeface2;
-void bePlaceface(void) {
-	int key_up = Raquet_KeyCheck(SDL_SCANCODE_UP);
-	int key_down = Raquet_KeyCheck(SDL_SCANCODE_DOWN);
-	int key_left = Raquet_KeyCheck(SDL_SCANCODE_LEFT);
-	int key_right = Raquet_KeyCheck(SDL_SCANCODE_RIGHT);
-
-	int move_x = key_right - key_left;
-	int move_y = key_down - key_up;;
-
-	if (Raquet_ActorColliding(act_placeface->position.x + (move_x * 2), act_placeface->position.y, act_placeface, act_placeface2)) {
-		while (!Raquet_ActorColliding(act_placeface->position.x + Raquet_Sign(move_x), act_placeface->position.y, act_placeface, act_placeface2)) {
-			act_placeface->position.x += Raquet_Sign(move_x);
-		}
-		move_x = 0;
-	}
-
-	act_placeface->position.x += (move_x * 2);
-
-	if (Raquet_ActorColliding(act_placeface->position.x, act_placeface->position.y + (move_y * 2), act_placeface, act_placeface2))  {
-		while (!Raquet_ActorColliding(act_placeface->position.x, act_placeface->position.y + Raquet_Sign(move_y), act_placeface, act_placeface2)) {
-			act_placeface->position.y += Raquet_Sign(move_y);
-		}
-		move_y = 0;
-	}
-	act_placeface->position.y += (move_y * 2);
-
-	Raquet_DrawActor(act_placeface);
-	Raquet_DrawActor(act_placeface2);
-}
+uint8_t playAnim = 0;
+int animTick = 0;
+int tick = 2;
+float sinTick = 0;
+float sinOffset = 16;
 
 /*
  **************************
@@ -118,106 +158,106 @@ void bePlaceface(void) {
 
 void createthedog(void)
 {
-	/* Graphical */
-	Raquet_LoadPPFBank(&ppf_main, Raquet_AbsoluteToAsset("main.ppf"));
 
-	/* Setup our palettes */
-	Raquet_SetPalette(pal_face, Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x00], Raquet_GlobalPalette[0x20]);
-	Raquet_SetPalette(pal_face2, Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x0D], Raquet_GlobalPalette[0x05], Raquet_GlobalPalette[0x25]);
-	Raquet_SetPalette(pal_logo, Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20]);
+    /* Graphical */
+    Raquet_LoadPPFBank(&ppf_main, Raquet_AbsoluteToAsset("main.ppf"));
+    Stars_Init();
 
-	/* Create our CHRs */
+    Raquet_SetPalette(pal_logo[0], RQ_PAL(0x0F), RQ_PAL(0x27), RQ_PAL(0x00), RQ_PAL(0x00));
+    Raquet_SetPalette(pal_logo[1], RQ_PAL(0x0F), RQ_PAL(0x37), RQ_PAL(0x10), RQ_PAL(0x10));
+    Raquet_SetPalette(pal_logo[2], RQ_PAL(0x0F), RQ_PAL(0x20), RQ_PAL(0x20), RQ_PAL(0x20));
 
-	// placeface
-	chr_placeface = Raquet_LoadCHR(ppf_main, 0, pal_face);
+    chr_logo_r = Raquet_LoadCHRMult(ppf_main, arr_logo_r, 8, 12, pal_logo[2]);
+    chr_logo_a = Raquet_LoadCHRMult(ppf_main, arr_logo_a, 6, 11, pal_logo[2]);
+    chr_logo_q = Raquet_LoadCHRMult(ppf_main, arr_logo_q, 6, 11, pal_logo[2]);
+    chr_logo_u = Raquet_LoadCHRMult(ppf_main, arr_logo_u, 6, 11, pal_logo[2]);
+    chr_logo_e = Raquet_LoadCHRMult(ppf_main, arr_logo_e, 6, 12, pal_logo[2]);
+    chr_logo_t = Raquet_LoadCHRMult(ppf_main, arr_logo_t, 6, 12, pal_logo[2]);
 
-	// RAQUET logo
-	int arr_raquetlogo_R[2] = {1, 7};
-	int arr_raquetlogo_A[2] = {2, 8};
-	int arr_raquetlogo_Q[2] = {3, 9};
-	int arr_raquetlogo_U[2] = {4, 10};
-	int arr_raquetlogo_E[2] = {5, 11};
-	int arr_raquetlogo_T[2] = {6, 12};
-	chr_raquetlogo_R = Raquet_LoadCHRMult(ppf_main, arr_raquetlogo_R, 1, 2, pal_logo);
-	chr_raquetlogo_A = Raquet_LoadCHRMult(ppf_main, arr_raquetlogo_A, 1, 2, pal_logo);
-	chr_raquetlogo_Q = Raquet_LoadCHRMult(ppf_main, arr_raquetlogo_Q, 1, 2, pal_logo);
-	chr_raquetlogo_U = Raquet_LoadCHRMult(ppf_main, arr_raquetlogo_U, 1, 2, pal_logo);
-	chr_raquetlogo_E = Raquet_LoadCHRMult(ppf_main, arr_raquetlogo_E, 1, 2, pal_logo);
-	chr_raquetlogo_T = Raquet_LoadCHRMult(ppf_main, arr_raquetlogo_T, 1, 2, pal_logo);
-
-	/* Initialize our Stars */
-	initStars();
-
-	/* Create the Actors */
-	act_placeface = Raquet_AllocateActor();
-	Raquet_CreateActor(act_placeface, chr_placeface);
-
-	act_placeface2 = Raquet_AllocateActor();
-	Raquet_CreateActor(act_placeface2, chr_placeface);
-
-	/* Setup our actors */
-	act_placeface->position.x = SCREEN_WIDTH/2;
-	act_placeface->position.y = 64;
-
-	act_placeface2->width = 32;
-	act_placeface2->height = 32;
-	act_placeface2->bbox.x2 = act_placeface2->width;
-	act_placeface2->bbox.y2 = act_placeface2->height;
-	act_placeface2->position.x = 64;
-	act_placeface2->position.y = 64;
-
-	/* Audio */
-	Raquet_Sound snd_placeface = Raquet_LoadSound(Raquet_AbsoluteToAsset("2A03_Kevvviiinnn-Superfusion.wav"));
-	Raquet_PlaySound(snd_placeface, 0);
+    chr_logo_text = Raquet_LoadCHRMult(ppf_main, arr_logo_text, 11, 1, pal_logo[2]);
 
 }
 
-void runthedog(void)
-{
-	demotime++;
+void runthedog(void) {
+    Raquet_Clear(RQ_PAL(0x11));
 
-	// Draw our stuffs
-	Raquet_Clear(Raquet_GlobalPalette[0x12]);
+    for (int i = 0; i < 3; ++i) {
+        for (int o = 0; o < SCREEN_HEIGHT; ++o) {
+            Raquet_DrawPoint(stars[i][o].x, stars[i][o].y, RQ_PAL(0x30), 255 / (i + 1));
+            stars[i][o].x -= 1.0 / (i + 1);
+            if (stars[i][o].x < 0) {
+                stars[i][o].x += SCREEN_WIDTH;
+            }
+        }
+    }
 
-	drawStars();
+    int move = Raquet_KeyCheck(SDL_SCANCODE_RIGHT) - Raquet_KeyCheck(SDL_SCANCODE_LEFT);
+    
+    logoX += move * 2;
 
-	for (int i = 0; i < 6; i++) {
-		Raquet_CHR arr[6] = {
-			chr_raquetlogo_R, chr_raquetlogo_A, chr_raquetlogo_Q,
-			chr_raquetlogo_U, chr_raquetlogo_E, chr_raquetlogo_T
-		};
-		Raquet_PlaceCHR(arr[i], ((SCREEN_WIDTH/2) - 24) + (8 * i) - Camera.x, ((SCREEN_HEIGHT/2) - 8) + (sin((demotime + (i * 8)) * .1) * 4) - Camera.y);
-	}
+    Raquet_PlaceCHR(chr_logo_r, logoX, logoY + (sin(sinTick / 32) * 16));
+    Raquet_PlaceCHR(chr_logo_a, logoX + 56, logoY + (sin((sinTick - sinOffset) / 32) * 16));
+    Raquet_PlaceCHR(chr_logo_q, logoX + 112, logoY + (sin((sinTick - sinOffset * 2) / 32) * 16));
+    Raquet_PlaceCHR(chr_logo_u, logoX + 168, logoY + (sin((sinTick - sinOffset * 3) / 32) * 16));
+    Raquet_PlaceCHR(chr_logo_e, logoX + 224, logoY + (sin((sinTick - sinOffset * 4) / 32) * 16));
+    Raquet_PlaceCHR(chr_logo_t, logoX + 280, logoY + (sin((sinTick - sinOffset * 5) / 32) * 16));
 
-	bePlaceface();
+    Raquet_PlaceCHR(chr_logo_text, textX, textY);
 
-	int move_x = Raquet_KeyCheck(SDL_SCANCODE_D) - Raquet_KeyCheck(SDL_SCANCODE_A);
-	int move_y = Raquet_KeyCheck(SDL_SCANCODE_S) - Raquet_KeyCheck(SDL_SCANCODE_W);
+    ++sinTick;
 
-	Camera.x += move_x;
-	Camera.y += move_y;
+    if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_UP) && playAnim == 0) {
+        playAnim = 1;
+    }
 
-	if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_1)) {
-		Palette swap1 = Raquet_GlobalPalette[0x12];
-		Palette swap2 = Raquet_GlobalPalette[0x15];
+    switch (playAnim) {
+        case 1:
+            animTick = 0;
+            tick = 1;
+            playAnim = 2;
+            break;
 
-		Raquet_GlobalPalette[0x12] = swap2;
-		Raquet_GlobalPalette[0x15] = swap1;
+        case 2:
+            ++animTick;
 
-		Palette swap3[4];
-		Palette swap4[4];
-		Raquet_CopyPalette(swap3, pal_face);
-		Raquet_CopyPalette(swap4, pal_face2);
+            if (animTick > 5) {
+                animTick = 0;
+                --tick;
+            }
 
-		Raquet_CopyPalette(pal_face, swap4);
-		Raquet_CopyPalette(pal_face2, swap3);
+            for (int i = 0; i < 6; ++i) {
+                Raquet_SwapCHRPalette(chr_logo[i], pal_logo[tick]);
+            }
 
-		Raquet_SwapCHRPalette(&act_placeface->chr, pal_face);
-	}
+            if (tick == 0) {
+                playAnim = 3;
+                animTick = 0;
+            }
+            break;
+
+        case 3:
+            ++animTick;
+
+            if (animTick > 5) {
+                animTick = 0;
+                ++tick;
+            }
+
+            for (int i = 0; i < 6; ++i) {
+                Raquet_SwapCHRPalette(chr_logo[i], pal_logo[tick]);
+            }
+
+            if (tick == 2) {
+                playAnim = 0;
+                animTick = 0;
+            }
+            break;
+
+    }
 
 }
 
 int main(void) {
-	Raquet_Main();
-	return 0;
+    Raquet_Main();
+    return 0;
 }

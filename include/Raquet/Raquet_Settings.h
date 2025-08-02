@@ -4,19 +4,16 @@
 /** @file */
 
 /** @brief The internal screen width */
-#define SCREEN_WIDTH 256
+#define SCREEN_WIDTH 640
 
 /** @brief The internal screen height */
-#define SCREEN_HEIGHT 240
+#define SCREEN_HEIGHT 360
 
 /** @brief The integer scale of the window at startup */
 #define SCREEN_SCALE 3
 
 /** @brief Whether or not to allow the user to fullscreen by pressing F11 */
 #define ALLOW_FULLSCREEN
-
-/** @brief Whether or not to force Integer Scaling */
-#define INTEGER_SCALING
 
 /** @brief Whether or not to use Hardware VSYNC */
 #define VSYNC
@@ -25,7 +22,7 @@
 //#define DELTA_TIME
 
 // Whether or not to make Raquet_Clear also change the window background */
-//#define BACKGROUND_CLEARING_COLOR
+#define BACKGROUND_CLEARING_COLOR
 
 /** @brief The initial window title */
 #define GAME_NAME "Raquet Game Engine"

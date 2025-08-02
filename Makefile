@@ -1,97 +1,61 @@
-# Modify these if you need
-COMPILER := clang
-CFLAGS := --std=c99 -Wall -Wextra -O3  # Change CFLAGS to C++ flags
+# OPTIONS #
+GAME_NAME := Raquet
+CC := clang
 
-# Name of the final executable
-TARGET := Raquet
-
-INCLUDES := -Iinclude/ -Iinclude/Raquet
-
-# Build and Source directories.
-BUILD_DIR := bin
-SRC_DIR := src
-
-ifeq ($(OS), Windows_NT)
-    LIBS := -Lwinclude/lib/ -lSDL2 -lSDL2_mixer -lm -lSDL2main -mwindows
-    PLATFORM := win
-    INSULT := "Windows Dev? I am so sorry."
-    EXTENSION := .exe
+ifeq ($(OS),Windows_NT)
+	INSULT := "Windows Dev? I am so sorry."
 else
-    LIBS := -lSDL2 -lSDL2_mixer -lSDL2main -lm
-    PLATFORM := nix
-    INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
-    EXTENSION := .x86_64
+	INSULT := "*Nix Dev? How's your waifu wallpaper holding up?"
 endif
 
-# Recursive wildcard function
-rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+# CODE #
 
-# Find all source files recursively
-SRCS_C := $(call rwildcard, $(SRC_DIR), *.c)
-# Find C++ files
-SRCS_CPP := $(call rwildcard, $(SRC_DIR), *.cpp)
-# Round up everything
-SRCS := $(SRCS_C) $(SRCS_CPP)
-
-# Create object file paths maintaining directory structure
-OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS_C)) \
-        $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS_CPP))
-
-all: announce $(BUILD_DIR)/ $(TARGET)$(EXTENSION)
-
-# Bash command hell
-$(TARGET)$(EXTENSION): $(OBJS)
-	@mkdir -p $(BUILD_DIR)/$(PLATFORM)
+all: build
 	@echo $(INSULT)
-ifeq ($(OS), Windows_NT)
 	@echo
-	@echo "Adding icon to executable"
-	@windres winclude/program.rc -o $(BUILD_DIR)/program.o
+	@echo "Generating CMake Project"
 	@echo
-	@echo "Compiling the final program"
-	@$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(BUILD_DIR)/program.o $(LIBS)
+	@cmake . -G Ninja -B build/ -DGAME_NAME=$(GAME_NAME) -DCMAKE_C_COMPILER=$(CC)
 	@echo
-	@echo "Copying DLL Files"
-	@cp -r winclude/$(BUILD_DIR)/* $(BUILD_DIR)/$(PLATFORM)
-else
+	@echo "Running Ninja"
 	@echo
-	@echo "Compiling the final program"
-	@$(COMPILER) -o $(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION) $^ $(LIBS)
+	@ninja -C build/ -j 20
+ifeq ($(OS),Windows_NT)
+	@cp ./build/_deps/sdl3_mixer-build/SDL3_mixer.dll ./build/
+
 endif
 	@echo
-	@echo "Copying assets"
-	@cp -r assets/ $(BUILD_DIR)/$(PLATFORM)
+	@echo "Running $(GAME_NAME)"
 	@echo
-	@echo "Running $(TARGET)"
-	@./$(BUILD_DIR)/$(PLATFORM)/$(TARGET)$(EXTENSION)
+	@./build/$(GAME_NAME)
 
-$(BUILD_DIR)/:
-	@echo "No build directory, creating one now"
-	@mkdir -p $(BUILD_DIR)
+build:
+	@echo "Creating Build Directory"
+	@mkdir build
 
-# Rule for building object files
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)  # Create the directory structure in BUILD_DIR
-	@$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
-	@echo "CC	$<" 
+build/windeps:
+ifeq ($(OS),Windows_NT)
+	@echo "Creating Windows Dependency Directory"
+	@mkdir build/windeps
+	@echo "Downloading SDL3"
+	@wget -q https://github.com/libsdl-org/SDL/releases/download/release-3.2.16/SDL3-devel-3.2.16-mingw.zip -O build/windeps/sdl3.zip
+	@echo "Unzipping SDL3"
+	@unzip -q build/windeps/sdl3.zip -d build/windeps
+	@echo "Copying to the build folder"
+	@cp build/windeps/SDL3-3.2.16/x86_64-w64-mingw32/bin/SDL3.dll build/
 
-# Rule for building C++ object files
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(dir $@)  # Create the directory structure in BUILD_DIR
-	@$(COMPILER) $(CFLAGS) -c $< $(INCLUDES) -o $@
-	@echo "CC	$<"
+endif
 
-announce:
-	@echo
-	@echo "Starting compilation"
-	@echo
+package: build/windeps
+ifeq ($(OS),Windows_NT)
+	@zip -qj Release.zip build/$(GAME_NAME).exe build/SDL3.dll build/SDL3_mixer.dll
+	@zip -qr Release.zip assets
+else
+	@zip -qj Release.zip build/$(GAME_NAME) build/_deps/sdl3_mixer-build/libSDL3_mixer.so
+	@zip -qr Release.zip assets
+endif
 
-clean: delete all announce
+clean: removebuilddir all
 
-delete:
-	@echo
-	@echo "Deleting all build files"
-	@rm -rf $(BUILD_DIR)/
-
-.PHONY: all clean delete announce
-.NOTPARALLEL: announce clean delete $(BUILD_DIR)/ all
+removebuilddir:
+	@rm -rf build

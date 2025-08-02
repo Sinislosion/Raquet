@@ -1,7 +1,7 @@
 #include "Raquet.h"
 
 Raquet_Actor * Raquet_AllocateActor(void) {
-    return (Raquet_Actor * ) malloc(sizeof(Raquet_Actor));
+    return ( Raquet_Actor * ) malloc(sizeof(Raquet_Actor));
 }
 
 void Raquet_CreateActor(Raquet_Actor * act, Raquet_CHR chr) {

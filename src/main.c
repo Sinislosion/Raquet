@@ -1,6 +1,6 @@
 // put your libs here.
 #include "Raquet.h"
-
+#include "Raquet_Shorthands.h"
 
 /*
  ********************
@@ -163,9 +163,9 @@ void createthedog(void)
     Raquet_LoadPPFBank(&ppf_main, Raquet_AbsoluteToAsset("main.ppf"));
     Stars_Init();
 
-    Raquet_SetPalette(pal_logo[0], Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x27], Raquet_GlobalPalette[0x00], Raquet_GlobalPalette[0x00]);
-    Raquet_SetPalette(pal_logo[1], Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x37], Raquet_GlobalPalette[0x10], Raquet_GlobalPalette[0x10]);
-    Raquet_SetPalette(pal_logo[2], Raquet_GlobalPalette[0x0F], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20], Raquet_GlobalPalette[0x20]);
+    Raquet_SetPalette(pal_logo[0], RQ_PAL(0x0F), RQ_PAL(0x27), RQ_PAL(0x00), RQ_PAL(0x00));
+    Raquet_SetPalette(pal_logo[1], RQ_PAL(0x0F), RQ_PAL(0x37), RQ_PAL(0x10), RQ_PAL(0x10));
+    Raquet_SetPalette(pal_logo[2], RQ_PAL(0x0F), RQ_PAL(0x20), RQ_PAL(0x20), RQ_PAL(0x20));
 
     chr_logo_r = Raquet_LoadCHRMult(ppf_main, arr_logo_r, 8, 12, pal_logo[2]);
     chr_logo_a = Raquet_LoadCHRMult(ppf_main, arr_logo_a, 6, 11, pal_logo[2]);
@@ -179,11 +179,11 @@ void createthedog(void)
 }
 
 void runthedog(void) {
-    Raquet_Clear(Raquet_GlobalPalette[0x11]);
+    Raquet_Clear(RQ_PAL(0x11));
 
     for (int i = 0; i < 3; ++i) {
         for (int o = 0; o < SCREEN_HEIGHT; ++o) {
-            Raquet_DrawPoint(stars[i][o].x, stars[i][o].y, Raquet_GlobalPalette[0x30], 255 / (i + 1));
+            Raquet_DrawPoint(stars[i][o].x, stars[i][o].y, RQ_PAL(0x30), 255 / (i + 1));
             stars[i][o].x -= 1.0 / (i + 1);
             if (stars[i][o].x < 0) {
                 stars[i][o].x += SCREEN_WIDTH;

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 
 set(GAME_NAME Raquet CACHE STRING "The name of the final executable")
 
-set(CMAKE_C_FLAGS "-O3 -Wall -Wextra -Werror")
+set(CMAKE_C_FLAGS "-O2 -Wall -Werror")
 
 project(${GAME_NAME})
 

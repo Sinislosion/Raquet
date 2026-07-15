@@ -69,7 +69,7 @@ else()
   endif()
 endif()
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3::SDL3 SDL3_mixer::SDL3_mixer)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3::SDL3 SDL3_mixer::SDL3_mixer m)
 
 add_custom_command (
   TARGET ${CMAKE_PROJECT_NAME} POST_BUILD

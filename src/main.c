@@ -126,8 +126,8 @@ Stars stars[3][SCREEN_HEIGHT];
 void Stars_Init() {
     for (int i = 0; i < 3; ++i) {
         for (int o = 0; o < SCREEN_HEIGHT; ++o) {
-            stars[i][o].x = rand() % (SCREEN_WIDTH + 1);
-            stars[i][o].y = o;
+            stars[i][o].x = (float)(rand() % (SCREEN_WIDTH + 1));
+            stars[i][o].y = (float)o;
         }
     }
 }
@@ -139,16 +139,18 @@ void Stars_Init() {
 */
 
 int logoX = (SCREEN_WIDTH / 2) - 168;
-const int logoY = (SCREEN_HEIGHT / 2) - 66;
+int logoY = (SCREEN_HEIGHT / 2) - 66;
 
-const int textX = (SCREEN_WIDTH / 2) - 44;
-const int textY = logoY + 108;
+int textX = (SCREEN_WIDTH / 2) - 44;
+int textY = (SCREEN_HEIGHT / 2) + 108;
 
 uint8_t playAnim = 0;
 int animTick = 0;
 int tick = 2;
 float sinTick = 0;
 float sinOffset = 16;
+
+Raquet_Sound snd_bgm;
 
 /*
  **************************
@@ -176,6 +178,10 @@ void createthedog(void)
 
     chr_logo_text = Raquet_LoadCHRMult(ppf_main, arr_logo_text, 11, 1, pal_logo[2]);
 
+    /* Audio */
+    snd_bgm = Raquet_LoadSound(Raquet_AbsoluteToAsset("2A03_Kevvviiinnn-Superfusion.wav"));
+    Raquet_PlaySound(snd_bgm, 0);
+
 }
 
 void runthedog(void) {
@@ -183,8 +189,8 @@ void runthedog(void) {
 
     for (int i = 0; i < 3; ++i) {
         for (int o = 0; o < SCREEN_HEIGHT; ++o) {
-            Raquet_DrawPoint(stars[i][o].x, stars[i][o].y, RQ_PAL(0x30), 255 / (i + 1));
-            stars[i][o].x -= 1.0 / (i + 1);
+            Raquet_DrawPoint((int)stars[i][o].x, (int)stars[i][o].y, RQ_PAL(0x30), 255 / (i + 1));
+            stars[i][o].x -= 1.0f / (float)(i + 1);
             if (stars[i][o].x < 0) {
                 stars[i][o].x += SCREEN_WIDTH;
             }
@@ -195,12 +201,12 @@ void runthedog(void) {
     
     logoX += move * 2;
 
-    Raquet_PlaceCHR(chr_logo_r, logoX, logoY + (sin(sinTick / 32) * 16));
-    Raquet_PlaceCHR(chr_logo_a, logoX + 56, logoY + (sin((sinTick - sinOffset) / 32) * 16));
-    Raquet_PlaceCHR(chr_logo_q, logoX + 112, logoY + (sin((sinTick - sinOffset * 2) / 32) * 16));
-    Raquet_PlaceCHR(chr_logo_u, logoX + 168, logoY + (sin((sinTick - sinOffset * 3) / 32) * 16));
-    Raquet_PlaceCHR(chr_logo_e, logoX + 224, logoY + (sin((sinTick - sinOffset * 4) / 32) * 16));
-    Raquet_PlaceCHR(chr_logo_t, logoX + 280, logoY + (sin((sinTick - sinOffset * 5) / 32) * 16));
+    Raquet_PlaceCHR(chr_logo_r, logoX, (int)(logoY + (float)(sin(sinTick / 32) * 16)));
+    Raquet_PlaceCHR(chr_logo_a, logoX + 56, (int)(logoY + (float)(sin((sinTick - sinOffset) / 32) * 16)));
+    Raquet_PlaceCHR(chr_logo_q, logoX + 112, (int)(logoY + (float)(sin((sinTick - sinOffset * 2) / 32) * 16)));
+    Raquet_PlaceCHR(chr_logo_u, logoX + 168, (int)(logoY + (float)(sin((sinTick - sinOffset * 3) / 32) * 16)));
+    Raquet_PlaceCHR(chr_logo_e, logoX + 224, (int)(logoY + (float)(sin((sinTick - sinOffset * 4) / 32) * 16)));
+    Raquet_PlaceCHR(chr_logo_t, logoX + 280, (int)(logoY + (float)(sin((sinTick - sinOffset * 5) / 32) * 16)));
 
     Raquet_PlaceCHR(chr_logo_text, textX, textY);
 
@@ -208,6 +214,7 @@ void runthedog(void) {
 
     if (Raquet_KeyCheck_Pressed(SDL_SCANCODE_UP) && playAnim == 0) {
         playAnim = 1;
+        Raquet_PlaySound(snd_bgm, 0);
     }
 
     switch (playAnim) {

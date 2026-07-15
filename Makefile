@@ -20,10 +20,6 @@ all: build
 	@echo "Running Ninja"
 	@echo
 	@ninja -C build/ -j 20
-ifeq ($(OS),Windows_NT)
-	@cp ./build/_deps/sdl3_mixer-build/SDL3_mixer.dll ./build/
-
-endif
 	@echo
 	@echo "Running $(GAME_NAME)"
 	@echo
@@ -33,25 +29,12 @@ build:
 	@echo "Creating Build Directory"
 	@mkdir build
 
-build/windeps:
-ifeq ($(OS),Windows_NT)
-	@echo "Creating Windows Dependency Directory"
-	@mkdir build/windeps
-	@echo "Downloading SDL3"
-	@wget -q https://github.com/libsdl-org/SDL/releases/download/release-3.2.16/SDL3-devel-3.2.16-mingw.zip -O build/windeps/sdl3.zip
-	@echo "Unzipping SDL3"
-	@unzip -q build/windeps/sdl3.zip -d build/windeps
-	@echo "Copying to the build folder"
-	@cp build/windeps/SDL3-3.2.16/x86_64-w64-mingw32/bin/SDL3.dll build/
-
-endif
-
-package: build/windeps
+package:
 ifeq ($(OS),Windows_NT)
 	@zip -qj Release.zip build/$(GAME_NAME).exe build/SDL3.dll build/SDL3_mixer.dll
 	@zip -qr Release.zip assets
 else
-	@zip -qj Release.zip build/$(GAME_NAME) build/_deps/sdl3_mixer-build/libSDL3_mixer.so
+	@zip -qj Release.zip build/$(GAME_NAME) build/_deps/sdl3-build/libSDL3.so.0.* build/_deps/sdl3_mixer-build/libSDL3_mixer.so.0.*
 	@zip -qr Release.zip assets
 endif
 

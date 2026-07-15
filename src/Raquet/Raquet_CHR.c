@@ -93,10 +93,10 @@ Raquet_CHR Raquet_LoadCHRMult(PPF_Bank ppfbank, int * id, int xwrap, int ywrap, 
 void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y) {
     SDL_Point size = { chr.width, chr.height };
     const SDL_FRect dstrect = {
-        x,
-        y,
-        size.x,
-        size.y
+        (float)x,
+        (float)y,
+        (float)size.x,
+        (float)size.y
     };
     SDL_RenderTexture(Raquet_Renderer, chr.tex, NULL, & dstrect);
 }
@@ -104,10 +104,10 @@ void Raquet_PlaceCHR(Raquet_CHR chr, int x, int y) {
 /* Place a CHR sprite, with additional control (chr data, x, y, width in pixels, height in pixels, SDL flip mode) */
 void Raquet_PlaceCHR_ext(Raquet_CHR chr, int x, int y, int xsize, int ysize, double angle, Raquet_Point center, SDL_FlipMode flip) {
     const SDL_FRect dstrect = {
-        x - center.x,
-        y - center.y,
-        xsize,
-        ysize
+        (float)x - center.x,
+        (float)y - center.y,
+        (float)xsize,
+        (float)ysize
     };
     SDL_RenderTextureRotated(Raquet_Renderer, chr.tex, NULL, & dstrect, angle, & center, flip);
 }

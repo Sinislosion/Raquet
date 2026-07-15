@@ -18,9 +18,6 @@
 /** @brief Whether or not to use Hardware VSYNC */
 #define VSYNC
 
-// Whether or not to enable the Raquet_DeltaTime variable
-//#define DELTA_TIME
-
 // Whether or not to make Raquet_Clear also change the window background */
 #define BACKGROUND_CLEARING_COLOR
 
@@ -30,7 +27,9 @@
 /** @brief The audio sample rate. Lower value gives lower quality sound */
 #define AUDIO_SAMPLE_RATE 44100
 
-/** @brief The internal framerate cap. Can be disabled if using Delta Time */
+/** @brief The internal framerate cap. Can be disabled if using Delta Time.
+ * Setting to 0 will make the cap infinite
+ */
 #define FRAMERATE_CAP 60
 
 // When defined, allows you to see any actors' bounding boxes */

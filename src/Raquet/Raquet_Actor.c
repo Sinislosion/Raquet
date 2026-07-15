@@ -11,19 +11,19 @@ void Raquet_CreateActor(Raquet_Actor * act, Raquet_CHR chr) {
     act -> origin.y = 0;
     act -> angle = 0;
     act -> flip = SDL_FLIP_NONE;
-    Raquet_Point size = { chr.width, chr.height };
+    Raquet_Point size = { (float)chr.width, (float)chr.height };
     act -> chr = chr;
-    act -> width = size.x;
-    act -> height = size.y;
+    act -> width = (int)size.x;
+    act -> height = (int)size.y;
     act -> bbox.x1 = 0;
     act -> bbox.y1 = 0;
-    act -> bbox.x2 = size.x;
-    act -> bbox.y2 = size.y;
+    act -> bbox.x2 = (int)size.x;
+    act -> bbox.y2 = (int)size.y;
 
 }
 
 void Raquet_DrawActor(Raquet_Actor * act) {
-    Raquet_PlaceCHR_ext(act -> chr, act -> position.x - Camera.x, act -> position.y - Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
+    Raquet_PlaceCHR_ext(act -> chr, (int)act -> position.x - (int)Camera.x, (int)act -> position.y - (int)Camera.y, act -> width, act -> height, act -> angle, act -> origin, act -> flip);
     #ifdef VISUALIZE_BBOX
         int* x = &act -> position.x;
         int* y = &act -> position.y;

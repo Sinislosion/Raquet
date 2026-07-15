@@ -11,9 +11,11 @@ void Raquet_ShowCursor(int toggle) {
 
 /* Get an absolute string to an asset from the assets folder */
 const char* Raquet_AbsoluteToAsset(const char* relativepath) {
-    char ret[1024] = "";
-    strcpy(ret, SDL_GetBasePath());
-    strcat(ret, "assets/");
-    strcat(ret, relativepath);
-    return (const char*)strcpy((char*)malloc(sizeof(char*) * strlen(ret)), ret);
+    const char* newpath = calloc(512, sizeof(char));
+    #ifndef _MSC_VER
+        sprintf(newpath, "%sassets/%s", SDL_GetBasePath(), relativepath);
+    #else
+        sprintf_s(newpath, 512, "%sassets\\%s", SDL_GetBasePath(), relativepath);
+    #endif
+    return newpath;
 }

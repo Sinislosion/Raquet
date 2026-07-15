@@ -81,9 +81,9 @@ extern Uint64 Raquet_LastTick;
 extern double Raquet_DeltaTime;
 
 /**
- * @brief Initializes the SDL2 Context that Raquet uses
+ * @brief Initializes the SDL3 Context that Raquet uses
  */
-extern int Raquet_InitSDL(void);
+extern int Raquet_InitVideo(void);
 
 /**
  * @brief Initializes the Raquet Engine
@@ -94,7 +94,7 @@ extern int Raquet_Init(void);
 /**
  * @brief Used to update the Window within the Raquet_Main function
  */
-extern void Raquet_Update(void);
+extern void Raquet_Render(void);
 
 /**
  * @brief The main Raquet function. This needs to be in the main() function of your program.
